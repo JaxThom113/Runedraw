@@ -31,6 +31,15 @@ public class EnemyHandView : Singleton<EnemyHandView>
         Destroy(applyCard.gameObject, 0.5f);
         
     } 
+    public void ClearEnemyHand() { 
+        foreach(var card in cards) { 
+            Destroy(card.gameObject, 0.5f);
+        } 
+        cards.Clear();
+       
+    }
+    
+   
     public List<Card> GetShownCards() { 
         return new List<Card>(cards.ConvertAll(applyCard => applyCard.card));
     } 

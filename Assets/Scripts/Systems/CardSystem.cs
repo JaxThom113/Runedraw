@@ -38,7 +38,8 @@ public class CardSystem : Singleton<CardSystem>
         ActionSystem.AttachPerformer<PlayCardGA>(PlayCardPerformer);
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE); //same thing as above, but if prereaction or postreaction we call subscribe reaction instead of attach perfomer
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST); 
-        
+        ActionSystem.SubscribeReaction<KillEnemyGA>(DiscardEnemyCardPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<KillEnemyGA>(RefillDeckPostReaction, ReactionTiming.POST);
      } 
     private void OnDisable() 
     {  
@@ -49,6 +50,8 @@ public class CardSystem : Singleton<CardSystem>
         ActionSystem.DetachPerformer<PlayCardGA>();
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE); 
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST); 
+        ActionSystem.UnsubscribeReaction<KillEnemyGA>(DiscardEnemyCardPostReaction, ReactionTiming.POST);
+        ActionSystem.UnsubscribeReaction<KillEnemyGA>(RefillDeckPostReaction, ReactionTiming.POST);
         //Remove from dictionary so we wont get an error when unsubscribing reaction
     }  
     //Public Methods 
@@ -94,7 +97,12 @@ public class CardSystem : Singleton<CardSystem>
     }
     private IEnumerator DrawCardPerformer(DrawCardGA drawCardGA)
     { 
-        int cardAmount = Mathf.Min(drawCardGA.Amount, drawPile.Count); 
+        int cardAmount = Mathf.Min(drawCardGA.Amount, drawPile.Count);  
+        if(cardAmount < drawCardGA.Amount) {  
+            Debug.Log("Refilling Deck");
+            RefillDeck();
+            cardAmount = Mathf.Min(drawCardGA.Amount, drawPile.Count);
+        }
         int notDrawnAmount = drawCardGA.Amount - cardAmount; 
         for (int i = 0; i < cardAmount; i++) 
         { 
@@ -111,13 +119,14 @@ public class CardSystem : Singleton<CardSystem>
     private IEnumerator DrawEnemyCardPerformer(DrawEnemyCardGA drawEnemyCardGA)
     {  
         Debug.Log("Drawing Enemy Cards: " + EnemySystem.Instance.GetDrawAmount());
-        int cardAmount = Mathf.Min(drawEnemyCardGA.Amount, EnemySystem.Instance.GetDrawAmount()); 
+        int cardAmount = Mathf.Min(drawEnemyCardGA.Amount, EnemySystem.Instance.GetDrawAmount());  
+        
         int notDrawnAmount = drawEnemyCardGA.Amount - cardAmount; 
         for(int i = 0; i < cardAmount; i++) { 
             yield return DrawEnemyCard();
         }
     } 
-
+   
     private IEnumerator DiscardCardPerformer(DiscardCardGA discardCardGA)
     { 
         foreach(var card in hand) { 
@@ -126,6 +135,15 @@ public class CardSystem : Singleton<CardSystem>
             yield return DiscardCard(applyCard);
         }
         hand.Clear();
+    } 
+    private void DiscardEnemyCardPostReaction(KillEnemyGA killEnemyGA)
+    {
+        foreach(var card in enemyDeck) { 
+            
+           EnemyHandView.Instance.ClearEnemyHand(); 
+            
+        }
+        enemyDeck.Clear();
     }
       
     // Reactions 
@@ -169,7 +187,11 @@ public class CardSystem : Singleton<CardSystem>
         drawPile.AddRange(discardPile);
         discardPile.Clear();
         
-    } 
+    }  
+    private void RefillDeckPostReaction(KillEnemyGA killEnemyGA)
+    {
+        RefillDeck();
+    }
 
     private IEnumerator DiscardCard(ApplyCard applyCard) 
     {  

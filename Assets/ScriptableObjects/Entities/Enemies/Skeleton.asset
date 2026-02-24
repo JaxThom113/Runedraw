@@ -14,13 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityName: Skeleton
   entityIcon: {fileID: 21300000, guid: ebbdbb520b201054998bba960f8067d5, type: 3}
-  entityHealth: 7
+  entityHealth: 4
   enemyDeck:
-  - enemyHand:
-    - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
-  - enemyHand:
-    - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
-  - enemyHand:
-    - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
   - enemyHand:
     - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}

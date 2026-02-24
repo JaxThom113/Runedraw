@@ -45,13 +45,22 @@ public class EnemySystem : Singleton<EnemySystem>
             
         } 
           yield return new WaitForSeconds(1f); 
-          enemyTurnCount++;
+          enemyTurnCount++; 
+          if(enemyTurnCount >= enemy.enemyDeck.Count) {
+            enemyTurnCount = 0;
+          }
     }   
     private IEnumerator KillEnemyPerformer(KillEnemyGA killEnemyGA)
-    {
+    {  
+         DiscardCardGA discardCardGA = new(); 
+        ActionSystem.Instance.AddReaction(discardCardGA);  
+        
+
         yield return new WaitForSeconds(1f); 
         overworldEnemy.gameObject.SetActive(false); 
-        CameraTransitionSystem.Instance.endGame();
+        CameraTransitionSystem.Instance.endGame(); 
+        
+          
     }
     public List<CardSO> GetCurrentEnemyHand()
     {

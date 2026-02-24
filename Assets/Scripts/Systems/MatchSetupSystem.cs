@@ -1,17 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine; 
+using Cinemachine;
 
 public class MatchSetupSystem : MonoBehaviour
 { 
 
     [SerializeField] public PlayerSO playerData; //FIXME: add different characters later
     [SerializeField] public PlayerView playerView;
-    [SerializeField] public EnemyView enemyView;
+    [SerializeField] public EnemyView enemyView; 
+    [SerializeField] public CinemachineVirtualCamera playerCamera;
       
     public void SetupMatch(OverworldEnemy overworldEnemy){  
         EnemySO enemyData = overworldEnemy.enemyData;
-        playerView.Setup(playerData);
+        playerView.Setup(playerData); 
+        playerCamera.Follow = overworldEnemy.SpriteGameObject.transform;
         enemyView.Setup(enemyData); 
         PlayerSystem.Instance.Setup(playerData);
         EnemySystem.Instance.Setup(overworldEnemy); 
@@ -31,7 +34,8 @@ public class MatchSetupSystem : MonoBehaviour
         
         DrawCardGA drawCardGA = new(5);   
         ActionSystem.Instance.Perform(drawCardGA, ()=> {
-            ActionSystem.Instance.Perform(drawEnemyCardGA); 
+            ActionSystem.Instance.Perform(drawEnemyCardGA, () => 
+            ManaSystem.Instance.InitializeMana());
         }); 
     }
 }
