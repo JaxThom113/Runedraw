@@ -9,7 +9,7 @@ public class LevelBounds : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             // Debug.Log("Player entered top bound");
-            LevelManager.Instance.NextLevel();
+            LevelSystem.Instance.NextLevel();
         }
     }
 }

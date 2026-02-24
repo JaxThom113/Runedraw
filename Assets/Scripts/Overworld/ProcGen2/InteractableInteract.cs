@@ -9,6 +9,17 @@ public class InteractableInteract : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             Debug.Log("Player collided with Interactable");
+
+            // could later add different interactables
+            // int r = Random.Range(1, 4);
+            // if (r == 1)
+            //     LevelManager.Instance.LootBox();
+            // else if (r == 2)
+            //     LevelManager.Instance.MerchantShop();
+            // else
+            //     LevelManager.Instance.TrapPlayer();
+
+            LevelSystem.Instance.LootBox(this.gameObject);
         }
     }
 }
