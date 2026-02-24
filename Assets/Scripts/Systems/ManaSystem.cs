@@ -6,15 +6,19 @@ public class ManaSystem : Singleton<ManaSystem>
 {
     [SerializeField] public ManaUI manaUI; 
 
-    public int maxMana = 10;
+    public int maxMana = 10; 
     private int currentMana;   
 
-    private void Start() 
-    {  
+    void Start()
+    {
         
-        currentMana = maxMana; 
-        manaUI.UpdateManaText(currentMana);
-    } 
+    }
+    public void InitializeMana()
+    {
+        currentMana = maxMana;
+        manaUI.UpdateMana(currentMana);
+        StartCoroutine(manaUI.StartRound());
+    }
     private void OnEnable(){ 
         ActionSystem.AttachPerformer<SpendManaGA>(SpendManaPerformer);
         ActionSystem.AttachPerformer<RefillManaGA>(RefillManaPerformer); 
@@ -36,19 +40,19 @@ public class ManaSystem : Singleton<ManaSystem>
 
     private IEnumerator SpendManaPerformer(SpendManaGA spendManaGA)
     {
-        currentMana -= spendManaGA.manaAmount;
-        manaUI.UpdateManaText(currentMana);
-        yield return null;
+       
+        yield return StartCoroutine(manaUI.SpendManaCoroutine(spendManaGA.manaAmount));
     } 
     private IEnumerator RefillManaPerformer(RefillManaGA refillManaGA)
     {
         currentMana = refillManaGA.manaAmount;
-        manaUI.UpdateManaText(currentMana);
-        yield return null;
+        manaUI.UpdateMana(currentMana);
+        yield return StartCoroutine(manaUI.StartRound());
     } 
     private void EnemyTurnPostReaction(EnemyTurnGA enemyTurnGA) 
-    { 
-        RefillManaGA refillManaGA = new(maxMana);  
+    {  
+        maxMana++;
+        RefillManaGA refillManaGA = new(maxMana);  //add one extra mana for each turn
         ActionSystem.Instance.AddReaction(refillManaGA); 
          //Flow will find the performer for RefillManaGA in mana system and call it 
         //since we attached the performer for RefillManaGA in mana system
