@@ -6,20 +6,23 @@ public class EnemySystem : Singleton<EnemySystem>
 { 
     [SerializeField] public Enemy enemy {get; private set;}   
     [SerializeField] public int enemyTurnCount {get;  set;} = 0;
-    public void Setup(EnemySO enemyData)
+    [SerializeField] public OverworldEnemy overworldEnemy;
+    public void Setup(OverworldEnemy overworldEnemy)
     {
         enemy = new Enemy();
-        enemy.Setup(enemyData); 
-       
+        enemy.Setup(overworldEnemy.enemyData); 
+        this.overworldEnemy = overworldEnemy;
     }
     //Performers are created in the system
     void OnEnable()
     {
-        ActionSystem.AttachPerformer<EnemyTurnGA>(EnemyTurnPerformer);
+        ActionSystem.AttachPerformer<EnemyTurnGA>(EnemyTurnPerformer); 
+        ActionSystem.AttachPerformer<KillEnemyGA>(KillEnemyPerformer);
     }
     void OnDisable()
     {
         ActionSystem.DetachPerformer<EnemyTurnGA>();
+        ActionSystem.DetachPerformer<KillEnemyGA>();
     } 
 
     private IEnumerator EnemyTurnPerformer(EnemyTurnGA enemyTurnGA) 
@@ -41,10 +44,24 @@ public class EnemySystem : Singleton<EnemySystem>
             yield return EnemyHandView.Instance.RemoveEnemyCard(card); 
             
         } 
-          yield return new WaitForSeconds(1f);
+          yield return new WaitForSeconds(1f); 
+          enemyTurnCount++; 
+          if(enemyTurnCount >= enemy.enemyDeck.Count) {
+            enemyTurnCount = 0;
+          }
+    }   
+    private IEnumerator KillEnemyPerformer(KillEnemyGA killEnemyGA)
+    {  
+         DiscardCardGA discardCardGA = new(); 
+        ActionSystem.Instance.AddReaction(discardCardGA);  
         
 
-    }  
+        yield return new WaitForSeconds(1f); 
+        overworldEnemy.gameObject.SetActive(false); 
+        CameraTransitionSystem.Instance.endGame(); 
+        
+          
+    }
     public List<CardSO> GetCurrentEnemyHand()
     {
         return enemy.enemyDeck[enemyTurnCount].enemyHand;
@@ -52,9 +69,7 @@ public class EnemySystem : Singleton<EnemySystem>
     public int GetDrawAmount() { 
         if(enemyTurnCount >= enemy.enemyDeck.Count ) {
             enemyTurnCount = 0;
-        } else {
-            enemyTurnCount++;
-        }
+        } 
         return enemy.enemyDeck[enemyTurnCount].enemyHand.Count;
     }
 

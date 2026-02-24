@@ -114,13 +114,14 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if(InventoryCard) return;
+        if(InventoryCard) return; 
+       
         if( transform.localPosition.y > 200f && ManaSystem.Instance.HasEnoughMana(card.cardCost)) 
         {  
            
             PlayCardGA playCardGA = new(card); 
             ActionSystem.Instance.Perform(playCardGA);  //action
-            Debug.Log("Played card: " + card.cardName);
+          
         } 
         else
         {

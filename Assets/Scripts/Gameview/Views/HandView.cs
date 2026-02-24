@@ -45,7 +45,7 @@ public class HandView : Singleton<HandView>
 
        
         if(cards.Count == 0) yield break; // Stop if no cards
-        float cardSpacing = 1.5f/10f; // spacing between cards along the spline
+        float cardSpacing = 1.2f/10f; // spacing between cards along the spline
         float firstCardPosition = 0.5f - (cards.Count-1)*cardSpacing/2f; //Finds the center to place the first card 
         //spline is percentage based, so 0.5 is the center, but takes into account number of cards so new card will always be in the center
         Spline spline = splineContainer.Spline; 

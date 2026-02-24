@@ -23,7 +23,11 @@ public class DamageSystem : Singleton<DamageSystem>
     private IEnumerator DealDamagePerformer(DealDamageGA dealDamageGA) { 
         int damageAmount = dealDamageGA.Amount;  
         if(dealDamageGA.isPlayer) { 
-            enemyView.ReduceHealth(damageAmount);
+            enemyView.ReduceHealth(damageAmount); 
+            if(enemyView.currentHealth <= 0) { 
+                KillEnemyGA killEnemyGA = new(enemyView);
+                ActionSystem.Instance.AddReaction(killEnemyGA);
+            }
         } else { 
             playerView.ReduceHealth(damageAmount);
         }

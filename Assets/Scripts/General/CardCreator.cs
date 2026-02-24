@@ -14,7 +14,11 @@ public class CardCreator : Singleton<CardCreator>
         applyCard.transform.position = position; 
         applyCard.transform.rotation = rotation;  
         applyCard.Setup(card); 
-        applyCard.InventoryCard = isEnemy;
+        applyCard.InventoryCard = isEnemy;  
+        if(isEnemy){
+          applyCard.wrapper.transform.Find("CardTypeIcon").gameObject.SetActive(false); 
+        }
+        cardScale = isEnemy ? 0.15f : 0.25f;
         applyCard.transform.DOScale(Vector3.one*cardScale, 0.15f ); 
         return applyCard; 
     }

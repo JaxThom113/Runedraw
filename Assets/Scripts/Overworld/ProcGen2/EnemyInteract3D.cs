@@ -9,7 +9,7 @@ public class EnemyInteract3D : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             //Debug.Log("Player collided with enemy");
-            CameraTransitionSystem.Instance.startGame(gameObject.transform.GetChild(0).gameObject);
+            CameraTransitionSystem.Instance.startGame(GetComponent<OverworldEnemy>());
         }
     }
 }

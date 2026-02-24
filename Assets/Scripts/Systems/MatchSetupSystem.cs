@@ -1,26 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using UnityEngine; 
+using Cinemachine;
 
 public class MatchSetupSystem : MonoBehaviour
 { 
 
-    [SerializeField] public PlayerSO playerData;
-    [SerializeField] public EnemySO enemyData; 
+    [SerializeField] public PlayerSO playerData; //FIXME: add different characters later
     [SerializeField] public PlayerView playerView;
-    [SerializeField] public EnemyView enemyView;
-    private void OnEnable(){  
-        
-        SetupViews();
-        StartCoroutine(SetupCards()); 
-
-    }   
-    private void SetupViews(){ 
-        playerView.Setup(playerData);
+    [SerializeField] public EnemyView enemyView; 
+    [SerializeField] public CinemachineVirtualCamera playerCamera;
+      
+    public void SetupMatch(OverworldEnemy overworldEnemy){  
+        EnemySO enemyData = overworldEnemy.enemyData;
+        playerView.Setup(playerData); 
+        playerCamera.Follow = overworldEnemy.SpriteGameObject.transform;
         enemyView.Setup(enemyData); 
         PlayerSystem.Instance.Setup(playerData);
-        EnemySystem.Instance.Setup(enemyData); 
-        DamageSystem.Instance.Setup(playerView, enemyView);
+        EnemySystem.Instance.Setup(overworldEnemy); 
+        DamageSystem.Instance.Setup(playerView, enemyView); 
+         StartCoroutine(SetupCards());
     }
  
 
@@ -34,8 +33,9 @@ public class MatchSetupSystem : MonoBehaviour
         DrawEnemyCardGA drawEnemyCardGA = new(EnemySystem.Instance.GetDrawAmount()); 
         
         DrawCardGA drawCardGA = new(5);   
-        ActionSystem.Instance.Perform(drawEnemyCardGA, ()=> {
-            ActionSystem.Instance.Perform(drawCardGA); 
+        ActionSystem.Instance.Perform(drawCardGA, ()=> {
+            ActionSystem.Instance.Perform(drawEnemyCardGA, () => 
+            ManaSystem.Instance.InitializeMana());
         }); 
     }
 }

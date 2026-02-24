@@ -29,7 +29,8 @@ public class ProcGen3 : MonoBehaviour
 
     [Header("Entity References")]
     public GameObject player;
-    public GameObject enemy;
+    public GameObject enemy; 
+    public EnemyBank enemyBank;
     public GameObject chest;
 
     [Header("3D Elements")]
@@ -332,7 +333,8 @@ public class ProcGen3 : MonoBehaviour
             Vector3 pos = floorTilemap.GetCellCenterWorld(gridPos);
             Vector3 offsetPos = new Vector3(pos.x, pos.y, 0);
 
-            Instantiate(enemy, offsetPos, Quaternion.identity, enemyContainer.transform);
+            GameObject enemyObject = Instantiate(enemy, offsetPos, Quaternion.identity, enemyContainer.transform);
+            enemyObject.GetComponent<OverworldEnemy>().UpdateEnemy(enemyBank.GetRandomEnemy());
         }
     }
 
