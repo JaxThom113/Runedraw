@@ -63,8 +63,7 @@ public class ProcGen2 : MonoBehaviour
     private const int gridSize = 15;
     private Vector2Int start = new Vector2Int(0, 0);
     private Vector2Int end = new Vector2Int(0, gridSize - 1);
-    private List<Vector2Int> correctPath;
-    private List<Vector2Int> deadEnds;
+    private List<Vector2Int> correctPath = new List< Vector2Int>();
 
     // containers for enemy/interactable prefabs
     private GameObject enemyContainer;
@@ -331,9 +330,8 @@ public class ProcGen2 : MonoBehaviour
 
             Vector3Int gridPos = new Vector3Int(correctPath[i].x, correctPath[i].y, 0);
             Vector3 pos = floorTilemap.GetCellCenterWorld(gridPos);
-            Vector3 offsetPos = new Vector3(pos.x, pos.y, 0);
 
-            Instantiate(enemy, offsetPos, Quaternion.identity, enemyContainer.transform);
+            Instantiate(enemy, pos, Quaternion.identity, enemyContainer.transform);
         }
     }
 
@@ -393,11 +391,8 @@ public class ProcGen2 : MonoBehaviour
 
                     Vector3Int gridPos = new Vector3Int(y, x, 0);
                     Vector3 pos = floorTilemap.GetCellCenterWorld(gridPos);
-                    Vector3 offsetPos = new Vector3(pos.x - 0.5f, pos.y - 0.5f, 0);
 
-                    Instantiate(interactable, offsetPos, Quaternion.identity, interactableContainer.transform);
-                    
-                    //deadEnds.Add(new Vector2Int(gridPos.x, gridPos.y));
+                    Instantiate(interactable, pos, Quaternion.identity, interactableContainer.transform);
                 }
             }
         }
@@ -405,9 +400,42 @@ public class ProcGen2 : MonoBehaviour
 
     void SpawnEnemiesBranchingPaths()
     {
-        // place enemies in front of high-priority loot
-        int step = Random.Range(8, 16);
+        List<Vector2Int> openFloorTiles = new List<Vector2Int>();
 
+        // create a list of all of the open floor tiles (0s) and place a random range of enemies in random positions from that list
+        for (int y = 0; y < gridSize; y++)
+        {
+            for (int x = 0; x < gridSize; x++)
+            {
+                if (grid[y][x] == 0)
+                    openFloorTiles.Add(new Vector2Int(y, x));
+            }
+        }
+
+        // number of enemies to be placed on branching paths, changes depending on how many open tiles there are
+        int numEnemies;
+
+        if (openFloorTiles.Count >= 80)
+            numEnemies = Random.Range(5, 11);
+        else if (openFloorTiles.Count >= 60)
+            numEnemies = Random.Range(4, 9);
+        else if (openFloorTiles.Count >= 40)
+            numEnemies = Random.Range(3, 7);
+        else if (openFloorTiles.Count >= 20)
+            numEnemies = Random.Range(2, 5);
+        else
+            numEnemies = Random.Range(1, 3);
+        
         // place enemies randomly on branching paths
+        for (int i = 0; i < numEnemies; i++)
+        {
+            int randPos = Random.Range(0, openFloorTiles.Count);
+            grid[openFloorTiles[randPos].x][openFloorTiles[randPos].y] = 3;
+
+            Vector3Int gridPos = new Vector3Int(openFloorTiles[randPos].x, openFloorTiles[randPos].y, 0);
+            Vector3 pos = floorTilemap.GetCellCenterWorld(gridPos);
+
+            Instantiate(enemy, pos, Quaternion.identity, enemyContainer.transform);
+        }
     }
 }
