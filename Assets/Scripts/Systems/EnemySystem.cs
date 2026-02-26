@@ -28,11 +28,8 @@ public class EnemySystem : Singleton<EnemySystem>
     private IEnumerator EnemyTurnPerformer(EnemyTurnGA enemyTurnGA) 
     {  
    
-        Debug.Log("Enemy Turn");
-          
         foreach(var card in EnemyHandView.Instance.GetShownCards()) {  
               
-            Debug.Log("Playing Enemy Card: " + card.cardName);
             PlayEnemyCardGA playEnemyCardGA = new PlayEnemyCardGA(card); 
             ActionSystem.Instance.AddReaction(playEnemyCardGA);  
             foreach(var effect in card.effects) { 

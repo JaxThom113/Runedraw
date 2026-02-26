@@ -29,7 +29,12 @@ public class DamageSystem : Singleton<DamageSystem>
                 ActionSystem.Instance.AddReaction(killEnemyGA);
             }
         } else { 
-            playerView.ReduceHealth(damageAmount);
+            playerView.ReduceHealth(damageAmount); 
+            if(playerView.currentHealth <= 0) {  
+                Debug.Log("Game Over");
+                GameOverGA gameOverGA = new();
+                ActionSystem.Instance.AddReaction(gameOverGA);
+            }
         }
         yield return null;
     }

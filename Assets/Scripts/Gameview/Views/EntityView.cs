@@ -11,17 +11,27 @@ public class EntityView : MonoBehaviour
     [SerializeField] public Animator animator;
 
     public int maxHealth;
-    public int currentHealth;
+    public int currentHealth; 
+    public bool firstSetup = true;
 
     protected void SetupBase(EntitySO entityData)
-    {
-      maxHealth = currentHealth = entityData.entityHealth;
-      if (healthSlider != null)
-      {
-        healthSlider.minValue = 0f;
-        healthSlider.maxValue = 1f;
-      }
-      UpdateHealthDisplay();
+    { 
+        if(firstSetup)
+        { 
+            maxHealth = currentHealth = entityData.entityHealth;
+            if (healthSlider != null)
+            {
+                healthSlider.minValue = 0f;
+                healthSlider.maxValue = 1f;
+            }
+            
+            firstSetup = false; 
+            UpdateHealthDisplay(); 
+            return;
+            
+        } 
+       
+      
     }
     private void UpdateHealthDisplay()
     {

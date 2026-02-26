@@ -5,8 +5,11 @@ using TMPro;
 public class EnemyView : EntityView
 { 
     [SerializeField] public TMP_Text enemyNameText;
-    public void Setup(EnemySO enemyData) { 
+    public void Setup(EnemySO enemyData) {  
+        firstSetup = true;
         SetupBase(enemyData); 
-        enemyNameText.text = enemyData.entityName;
+        enemyNameText.text = enemyData.entityName; 
+       
+        
     } 
 }
