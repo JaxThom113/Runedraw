@@ -42,8 +42,7 @@ public class CardSystem : Singleton<CardSystem>
         ActionSystem.SubscribeReaction<KillEnemyGA>(RefillDeckPostReaction, ReactionTiming.POST);
      } 
     private void OnDisable() 
-    {  
-        UnityEngine.Debug.Log("CardSystem Disabled");
+    {   
         ActionSystem.DetachPerformer<DrawCardGA>(); //remove from dictionary so we wont get an error when detaching performer
         ActionSystem.DetachPerformer<DrawEnemyCardGA>();
         ActionSystem.DetachPerformer<DiscardCardGA>(); 
@@ -99,7 +98,6 @@ public class CardSystem : Singleton<CardSystem>
     { 
         int cardAmount = Mathf.Min(drawCardGA.Amount, drawPile.Count);  
         if(cardAmount < drawCardGA.Amount) {  
-            Debug.Log("Refilling Deck");
             RefillDeck();
             cardAmount = Mathf.Min(drawCardGA.Amount, drawPile.Count);
         }
@@ -118,7 +116,6 @@ public class CardSystem : Singleton<CardSystem>
     } 
     private IEnumerator DrawEnemyCardPerformer(DrawEnemyCardGA drawEnemyCardGA)
     {  
-        Debug.Log("Drawing Enemy Cards: " + EnemySystem.Instance.GetDrawAmount());
         int cardAmount = Mathf.Min(drawEnemyCardGA.Amount, EnemySystem.Instance.GetDrawAmount());  
         
         int notDrawnAmount = drawEnemyCardGA.Amount - cardAmount; 
