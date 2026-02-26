@@ -1,21 +1,5 @@
 {
   "dependencies": {
-    "com.autodesk.fbx": {
-      "version": "5.1.1",
-      "depth": 2,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
-    },
-    "com.houkii.ezroomgenerator": {
-      "version": "https://github.com/jastrz/EZRoomGenerator.git",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.formats.fbx": "5.1.5"
-      },
-      "hash": "2592cab9e347c0fe85a26dbfc0d8424e62d5eaa4"
-    },
     "com.unity.2d.animation": {
       "version": "9.2.0",
       "depth": 1,
@@ -190,16 +174,6 @@
         "com.unity.test-framework": "1.1.33",
         "com.unity.testtools.codecoverage": "1.2.6"
       }
-    },
-    "com.unity.formats.fbx": {
-      "version": "5.1.5",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {
-        "com.autodesk.fbx": "5.1.1",
-        "com.unity.timeline": "1.7.1"
-      },
-      "url": "https://packages.unity.com"
     },
     "com.unity.ide.rider": {
       "version": "3.0.36",
