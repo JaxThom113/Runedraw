@@ -11,12 +11,13 @@ public class MatchSetupSystem : MonoBehaviour
     [SerializeField] public EnemyView enemyView; 
     [SerializeField] public CinemachineVirtualCamera playerCamera;
       
-    public void SetupMatch(OverworldEnemy overworldEnemy){  
+    public void SetupMatch(OverworldEnemy overworldEnemy){   
+        playerCamera.Follow = overworldEnemy.SpriteGameObject.transform;
         EnemySO enemyData = overworldEnemy.enemyData;
         playerView.Setup(playerData); 
-        playerCamera.Follow = overworldEnemy.SpriteGameObject.transform;
+        
         enemyView.Setup(enemyData); 
-        PlayerSystem.Instance.Setup(playerData);
+        PlayerSystem.Instance.Setup(playerData, playerView);
         EnemySystem.Instance.Setup(overworldEnemy); 
         DamageSystem.Instance.Setup(playerView, enemyView); 
          StartCoroutine(SetupCards());

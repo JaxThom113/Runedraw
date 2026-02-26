@@ -15,32 +15,23 @@ public class PlayerMovement : MonoBehaviour
     public float jumpPower = 0.4f;
     public float jumpDuration = 0.2f;
 
-    [Header("Camera")]
-    [Tooltip("Must be a CHILD of the player (so rotating it doesn't move the player). Assign the camera rig or GameViewCamera.")]
-    [SerializeField] Transform cameraRig;
-    [Tooltip("Use separate keys so Horizontal (A/D) only moves; camera doesn't rotate when moving.")]
+   
+
+   
     [SerializeField] KeyCode cameraRotateLeft = KeyCode.Q;
     [SerializeField] KeyCode cameraRotateRight = KeyCode.E;
 
     private bool isMoving = false;
-    private float cameraRotationX;   // only this changes with input
-    private float cameraBaseY, cameraBaseZ;  // fixed, never touched
+
 
     void Awake()
     {
-        if (cameraRig == null)
-            cameraRig = transform.Find("GameViewCamera");
+      
     }
 
     void Start()
     {
-        if (cameraRig != null)
-        {
-            Vector3 e = cameraRig.localEulerAngles;
-            cameraRotationX = e.x;
-            cameraBaseY = e.y;
-            cameraBaseZ = e.z;
-        }
+       
     }
 
     void Update()
@@ -48,24 +39,11 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.G))
             ResetMovePoint();
 
-        // // Camera rotate: separate keys (Q/E) so Horizontal doesn't rotate camera
-        // if (cameraRig != null)
-        // {
-        //     if (Input.GetKeyDown(cameraRotateLeft))
-        //     {
-        //         cameraRotationX -= 90f;
-        //         cameraRig.localRotation = Quaternion.Euler(cameraRotationX, cameraBaseY, cameraBaseZ);
-        //     }
-        //     else if (Input.GetKeyDown(cameraRotateRight))
-        //     {
-        //         cameraRotationX += 90f;
-        //         cameraRig.localRotation = Quaternion.Euler(cameraRotationX, cameraBaseY, cameraBaseZ);
-        //     }
-        // }
+        transform.rotation = Quaternion.Euler(0f, 0f, 0f);
 
         if (Vector3.Distance(transform.position, movePoint.position) <= 0.05f && !isMoving)
         {
-            // Movement: Horizontal = left/right, Vertical = up/down (no camera rotation here)
+           
             Vector3 dir = Vector3.zero;
             if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 1f)
                 dir = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f);

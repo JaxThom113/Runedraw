@@ -18,3 +18,12 @@ MonoBehaviour:
   enemyDeck:
   - enemyHand:
     - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
+    - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
+  - enemyHand:
+    - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
+    - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
+    - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
+  - enemyHand:
+    - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
+    - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
+    - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
