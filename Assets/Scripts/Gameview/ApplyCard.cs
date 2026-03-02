@@ -85,7 +85,8 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if(LootCard){ 
             PlayerSystem.Instance.player.AddCardToDeck(card.data); 
             LevelSystem.Instance.LootView.SetActive(false);
-           
+            PlayerWinGA playerWinGA = new();
+            ActionSystem.Instance.Perform(playerWinGA);
             return;
         }
         if(InventoryCard) return; 

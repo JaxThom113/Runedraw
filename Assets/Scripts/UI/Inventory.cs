@@ -48,7 +48,23 @@ public class Inventory : Singleton<Inventory>
         } else {
             DisplayCards();
         }
+    } 
+    private void OnEnable()
+    {
+        ActionSystem.SubscribeReaction<PlayerWinGA>(PlayerWinPostReaction, ReactionTiming.POST);
+       
     }
+    private void OnDisable()
+    {
+        ActionSystem.UnsubscribeReaction<PlayerWinGA>(PlayerWinPostReaction, ReactionTiming.POST);
+        
+    }
+    public void PlayerWinPostReaction(PlayerWinGA playerWinGA)
+    {
+        
+        Setup(PlayerSystem.Instance.player.playerDeck); 
+    }
+   
     private void HideCards() { 
         displayed = false; 
         inventoryContainer.transform.parent.gameObject.SetActive(false);

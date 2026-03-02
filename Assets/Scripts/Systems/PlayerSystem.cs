@@ -25,6 +25,7 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
         // First time setup inventory cards are not available, so we use the PlayerSO deck as a fallback
         List<CardSO> inventoryCards = Inventory.Instance != null ? Inventory.Instance.GetCards() : null;
+        
         if (inventoryCards != null && inventoryCards.Count > 0)
             player.SetupDeck(inventoryCards);
 

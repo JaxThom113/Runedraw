@@ -28,10 +28,8 @@ public class DamageSystem : Singleton<DamageSystem>
             if(enemyView.currentHealth <= 0) {  
                 Debug.Log("Enemy killed");
                 KillEnemyGA killEnemyGA = new(enemyView); 
-                LootCardGA lootCardGA = new LootCardGA(3);  
-                 PlayerWinGA playerWinGA = new(); 
+                LootCardGA lootCardGA = new LootCardGA(3);
                  ActionSystem.Instance.AddReaction(killEnemyGA);
-                ActionSystem.Instance.AddReaction(playerWinGA);
                 ActionSystem.Instance.AddReaction(lootCardGA);
                 
             }
