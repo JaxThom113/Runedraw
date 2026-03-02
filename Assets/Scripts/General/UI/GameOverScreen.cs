@@ -6,7 +6,6 @@ public class GameOverScreen : MonoBehaviour
 {
     public void RestartScene()
     { 
-        Debug.Log("Restarting Scene");
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 

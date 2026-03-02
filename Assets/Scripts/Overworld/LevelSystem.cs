@@ -18,7 +18,7 @@ public class LevelSystem: Singleton<LevelSystem>
     public TextMeshProUGUI areaLevel;
 
     [Header("Card Pickup UI References")]
-    public GameObject cardPickupUI;
+    public GameObject LootView;
 
     [Header("Script References")]
     public ProcGen procGen;
@@ -41,7 +41,14 @@ public class LevelSystem: Singleton<LevelSystem>
     /*
         Level/Area Transitions
     */
-
+    void OnEnable()
+    {
+        ActionSystem.AttachPerformer<LootCardGA>(LootBoxPerformer);
+    }
+    void OnDisable()
+    {
+        ActionSystem.DetachPerformer<LootCardGA>();
+    }
     public void NextLevel()
     {
         if (currentLevel == 5)
@@ -56,7 +63,6 @@ public class LevelSystem: Singleton<LevelSystem>
         }
 
         currentLevel++;
-        Debug.Log($"Moving to level {currentLevel}");
 
         StartCoroutine(LevelTransition());
 
@@ -67,7 +73,6 @@ public class LevelSystem: Singleton<LevelSystem>
     {
         currentArea++;
         currentLevel = 1;
-        Debug.Log($"Moving to area {currentArea}");
 
         // load next area scene
         // SceneManager.LoadScene($"Level{currentLevel}");
@@ -125,14 +130,12 @@ public class LevelSystem: Singleton<LevelSystem>
 
         // return control to the player  
         playerMovement.enabled = true;
-        Debug.Log("Level transition complete");
 
         yield return null;
     }
 
     IEnumerator AreaTransition()
     {
-        Debug.Log($"Will work on this coroutine later!");
 
         yield return null;
     }
@@ -171,8 +174,6 @@ public class LevelSystem: Singleton<LevelSystem>
         // return control to the player  
         playerMovement.enabled = true;
 
-        Debug.Log("Battle scene transition complete");
-
         yield return null;
     }
 
@@ -180,21 +181,21 @@ public class LevelSystem: Singleton<LevelSystem>
         Interactables
     */
 
-    public void LootBox(GameObject interactable)
+    public IEnumerator LootBoxPerformer(LootCardGA lootCardGA)
     {
         // store the interactable instance for later deletion
-        currentInteractable = interactable;
+        //currentInteractable = interactable;
 
-        // display card pickup UI, start card pickup coroutine
-        cardPickupUI.SetActive(true);
+        // display card pickup UI, start card pickup coroutine 
+        LootView.SetActive(true);
 
-        StartCoroutine(LootBoxActivate());
+        yield return null;
     }
 
     public void OnSkipButtonClick()
     {
         // skip button clicked, disable UI and delete the interactable
-        cardPickupUI.SetActive(false);
+        LootView.SetActive(false);
         
         if (currentInteractable != null)
         {
@@ -210,10 +211,8 @@ public class LevelSystem: Singleton<LevelSystem>
         // given the current level and area, allow player to pick a card
         // weaker cards appear at earlier levels/areas, stronger cards appear later
         skipPressed = false;
-        
-        Debug.Log("Loot Box Activated!");
 
         yield return new WaitUntil(() => skipPressed);
-        cardPickupUI.SetActive(false);
+        LootView.SetActive(false);
     }
 }

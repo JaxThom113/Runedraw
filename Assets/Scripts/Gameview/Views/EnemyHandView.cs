@@ -16,10 +16,17 @@ public class EnemyHandView : Singleton<EnemyHandView>
     {
         cards.Add(card);
         yield return UpdateCardPositions(card); 
-    } 
+    }  
+    void OnDisable()
+    {
+        foreach(var card in cards)
+        {
+            Destroy(card.gameObject);
+        }
+        cards.Clear();
+    }
     public IEnumerator RemoveEnemyCard(Card card)
     {  
-        Debug.Log("Removing Card: " + card.cardName);
         ApplyCard applyCard = GetApplyCard(card); 
         if (applyCard == null) { 
             Debug.LogError("Card not found in enemy hand");

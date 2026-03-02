@@ -9,6 +9,20 @@ public class Player : Entity
     public void Setup(PlayerSO playerData)
     {
         SetupBase(playerData); 
-        playerDeck = playerData.playerDeck;
+        playerDeck = new List<CardSO>(playerData.playerDeck);
+    }  
+    public void SetupDeck(List<CardSO> deck)
+    {
+        playerDeck = new List<CardSO>(deck);
+    }
+    public void AddCardToDeck(CardSO card)
+    { 
+        if(card == null) return;
+        playerDeck.Add(card);
+    }
+    public void RemoveCardFromDeck(CardSO card)
+    { 
+        if(card == null) return;
+        playerDeck.Remove(card);
     }
 }

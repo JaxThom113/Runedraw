@@ -8,7 +8,6 @@ public class InteractableCollision : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            Debug.Log("Player collided with Event");
 
             // could later add different events
 
@@ -20,7 +19,9 @@ public class InteractableCollision : MonoBehaviour
             // else
             //     LevelManager.Instance.TrapPlayer();
 
-            LevelSystem.Instance.LootBox(this.gameObject);
+            LootCardGA lootCardGA = new LootCardGA(3); 
+            ActionSystem.Instance.Perform(lootCardGA);
+            Destroy(this.gameObject);
         }
     }
 }

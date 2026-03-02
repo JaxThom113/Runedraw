@@ -19,7 +19,8 @@ public class Inventory : Singleton<Inventory>
     private float totalContentHeight;
 
     [Header("Settings")]
-    public List<CardSO> cards = new List<CardSO>(); 
+    public List<CardSO> cards = new List<CardSO>();  
+    [SerializeField] private float cardScale = 0.3f;
     [SerializeField] private int cardsPerRow = 5;  
     [SerializeField] private float padding = 90; 
     [SerializeField] private float lineSpacing = 200;
@@ -36,11 +37,13 @@ public class Inventory : Singleton<Inventory>
     public int GetCardCount() => cards.Count; 
     public void Setup(List<CardSO> cards)
     {
-        this.cards = cards;
+        this.cards = cards; 
+        
     }
- 
+    public List<CardSO> GetCards() => cards;
     public void ToggleCards() { 
-        if(displayed) {
+        if(displayed) { 
+            Setup(PlayerSystem.Instance.player.playerDeck);
             HideCards();
         } else {
             DisplayCards();
@@ -103,7 +106,7 @@ public class Inventory : Singleton<Inventory>
             ApplyCard applyCard = cardObject.GetComponent<ApplyCard>();
             applyCard.InventoryCard = true;
             applyCard.Setup(newCard); 
-              
+            applyCard.transform.localScale = new Vector3(cardScale, cardScale, cardScale);
             // Debug.Log("Card added: " + card.cardName);
         }
         
