@@ -13,7 +13,8 @@ public class OverworldHealth : MonoBehaviour
     if(PlayerSystem.Instance == null)
     {
        healthSlider.value = defaultPlayerData.entityHealth; 
-       healthText.text = defaultPlayerData.entityHealth.ToString();
+       healthText.text = defaultPlayerData.entityHealth.ToString(); 
+       
     }
     else
     {

@@ -28,7 +28,6 @@ public class DamageSystem : Singleton<DamageSystem>
             if(enemyView.currentHealth <= 0) {  
                 Debug.Log("Enemy killed");
                 KillEnemyGA killEnemyGA = new(enemyView); 
-               
                 ActionSystem.Instance.AddReaction(killEnemyGA);
                 
                 
