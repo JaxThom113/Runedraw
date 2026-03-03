@@ -27,11 +27,15 @@ public class CardSystem : Singleton<CardSystem>
     private List<Card> discardPile = new();  
     private List<Card> hand = new();    
     public List<Card> enemyDeck = new();  
+    private bool actionHooksBound = false;
+    private EnemyTurnGA lastProcessedEnemyTurnGA = null;
 
     
     // Action System Setup
     private void OnEnable() 
     {  
+        if (actionHooksBound) return;
+        actionHooksBound = true;
         //Attach Performer to add to dictionary so we wont get an error when performperformer/performsubscriber
         ActionSystem.AttachPerformer<DrawCardGA>(DrawCardPerformer);
         ActionSystem.AttachPerformer<DrawEnemyCardGA>(DrawEnemyCardPerformer);
@@ -45,11 +49,15 @@ public class CardSystem : Singleton<CardSystem>
      } 
     private void OnDisable() 
     {   
+        if (!actionHooksBound) return;
+        actionHooksBound = false;
         UnsubscribeAll();
     }
     private void OnDestroy()
     { 
         Debug.LogError("CardSystem OnDestroy");
+        if (!actionHooksBound) return;
+        actionHooksBound = false;
         UnsubscribeAll(); // static subscriber list outlives this instance; remove so destroyed instance is never invoked
     }
     private void UnsubscribeAll()
@@ -88,6 +96,7 @@ public class CardSystem : Singleton<CardSystem>
         }
     } 
     private void SetupEnemyDeck(List<CardSOList> enemyCardSOs){ 
+        enemyDeck.Clear();
         List<CardSO> enemyHand = EnemySystem.Instance.GetCurrentEnemyHand();
         foreach(var cardSO in enemyHand) {  
             Card card = new Card(cardSO);
@@ -172,6 +181,14 @@ public class CardSystem : Singleton<CardSystem>
     } 
     private void EnemyTurnPostReaction(EnemyTurnGA enemyTurnGA) 
     {   
+        // Guard against duplicate callback registration executing the same turn action multiple times.
+        if (ReferenceEquals(lastProcessedEnemyTurnGA, enemyTurnGA))
+        {
+            Debug.LogWarning("[CardSystem] EnemyTurnPostReaction duplicate call skipped for same EnemyTurnGA.");
+            return;
+        }
+        lastProcessedEnemyTurnGA = enemyTurnGA;
+        Debug.Log($"[CardSystem] EnemyTurnPostReaction processing EnemyTurnGA. enemyTurnCount={EnemySystem.Instance.enemyTurnCount}, playerDraw=5, enemyDraw={EnemySystem.Instance.GetDrawAmount()}");
         
         SetupEnemyDeck(EnemySystem.Instance.enemy.enemyDeck);
         DrawCardGA drawCardGA = new(5); 
@@ -220,6 +237,8 @@ public class CardSystem : Singleton<CardSystem>
     private void RefillDeckPostReaction(KillEnemyGA killEnemyGA)
     {
         RefillDeck();
+        LootCardGA lootCardGA = new LootCardGA(3);
+        ActionSystem.Instance.AddReaction(lootCardGA);
     }
 
     private IEnumerator DiscardCard(ApplyCard applyCard) 

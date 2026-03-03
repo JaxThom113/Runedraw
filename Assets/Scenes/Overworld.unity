@@ -9588,7 +9588,7 @@ MonoBehaviour:
   playerView: {fileID: 438367852}
   DeathView: {fileID: 0}
   GameView: {fileID: 1858245879}
-  storedHealth: 0
+  storedHealth: 44
 --- !u!1 &929866528
 GameObject:
   m_ObjectHideFlags: 0
