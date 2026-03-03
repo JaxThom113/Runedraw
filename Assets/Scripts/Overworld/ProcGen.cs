@@ -343,8 +343,8 @@ public class ProcGen : MonoBehaviour
 
             // spawn a random enemy from the enemy bank for this level
             //Instantiate(enemy, pos, Quaternion.identity, enemyContainer.transform);
-            // GameObject enemyObject = Instantiate(enemy, pos, Quaternion.identity, enemyContainer.transform);
-            // enemyObject.GetComponent<OverworldEnemy>().UpdateEnemy(enemyBank.GetRandomEnemy());
+            GameObject enemyObject = Instantiate(enemy, pos, Quaternion.identity, enemyContainer.transform);
+            enemyObject.GetComponent<OverworldEnemy>().UpdateEnemy(enemyBank.GetRandomEnemy());
         }
     }
 
