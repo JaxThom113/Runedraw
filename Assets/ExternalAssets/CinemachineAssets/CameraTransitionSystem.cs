@@ -8,7 +8,7 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
     [SerializeField] GameObject GameViewContainer; 
     [SerializeField] MatchSetupSystem matchSetupSystem;
     [SerializeField] GameObject playerContainer; 
-    [SerializeField] GameObject AreaLevelInfo;
+    [SerializeField] GameObject OverworldHUD;
     [SerializeField] CinemachineVirtualCamera gameViewCamera; 
     [SerializeField] CinemachineVirtualCamera overworldViewCamera;   
     [SerializeField] int gameOverVirtualCameraPriority;
@@ -21,23 +21,32 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
     { 
         playerSprite = playerContainer.transform.Find("Sprite");
        
+    } 
+    void OnEnable()
+    {
+        ActionSystem.AttachPerformer<PlayerWinGA>(endGamePerformer); 
+        //ActionSystem.SubscribeReaction<LootCardGA>(endGameViewPreReaction, ReactionTiming.PRE);
+    }
+    void OnDisable()
+    {
+        ActionSystem.DetachPerformer<PlayerWinGA>();
+        //ActionSystem.UnsubscribeReaction<LootCardGA>(endGameViewPreReaction, ReactionTiming.PRE);
     }
 
    
    
     public void startGame(OverworldEnemy overworldEnemy) {    
-
+        OverworldHUD.SetActive(false);
          StartCoroutine(showGameView(overworldEnemy)); 
         GameObject EnemySprite = overworldEnemy.SpriteGameObject;
          
-        AreaLevelInfo.SetActive(false);
+        
        
         EnemySprite.transform.DOLocalRotate(new Vector3(-90f, 0f, 0f), rotationTweenDuration); 
         EnemySprite.transform.DOLocalMove(new Vector3(0.0f, 2.3f, -3f), rotationTweenDuration); 
         EnemySprite.transform.DOScale(new Vector3(0.15f, 0.15f, 0.15f), rotationTweenDuration); 
         playerContainer.transform.DOLocalMove(new Vector3(0f, -1f, 0f), rotationTweenDuration);
         playerSprite.transform.DOLocalRotate(new Vector3(90f, 0f, 0f), rotationTweenDuration);
-        Debug.Log("Camera has transitioned"); 
     }  
     private IEnumerator showGameView(OverworldEnemy overworldEnemy) {  
         GameViewContainer.SetActive(true); 
@@ -48,21 +57,20 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
         
         
     } 
-    private IEnumerator endGameView() { 
-        yield return new WaitForSeconds(rotationTweenDuration);
-        GameViewContainer.SetActive(false);
-        AreaLevelInfo.SetActive(true);
-        Debug.Log("Camera has transitioned");
+    private void endGameViewPreReaction(LootCardGA lootCardGA) {  
+       
+        
     }
-    public void endGame() {    
+    public IEnumerator endGamePerformer(PlayerWinGA playerWinGA) {    
         overworldViewCamera.Priority = 10;  
         gameViewCamera.Priority = 0;  
-        StartCoroutine(endGameView());  
+         
         playerContainer.transform.parent.DOLocalRotate(new Vector3(0f, 0f, 0f), rotationTweenDuration);
         playerContainer.transform.DOLocalMove(new Vector3(0f, 0f, 0f), rotationTweenDuration);
         playerSprite.transform.DOLocalRotate(new Vector3(-23f, 0f, 0f), rotationTweenDuration);
-        AreaLevelInfo.SetActive(true);
-        Debug.Log("Camera has transitioned"); 
+        OverworldHUD.SetActive(true); 
+         GameViewContainer.SetActive(false);
+        yield return null; 
     }
 
     

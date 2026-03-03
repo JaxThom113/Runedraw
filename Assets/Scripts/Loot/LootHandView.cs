@@ -6,18 +6,20 @@ using DG.Tweening;
 using UnityEngine.Splines; 
 using UnityEngine.Events;
 
-public class HandView : Singleton<HandView>
+
+public class LootHandView : Singleton<LootHandView>
 {
     [SerializeField] private SplineContainer splineContainer; 
-    public float duration = 0.5f;  
+    public float duration = 0.01f;  
     private List<ApplyCard> cards = new();  
-    public bool IsTweening {get; set;} = false;  
-    //public static UnityEvent<ApplyCard> OnHandUpdated = new UnityEvent<ApplyCard>();
-
-    // private void Awake() { 
-    //    //OnHandUpdated.AddListener(AddCardHelper); 
-        
-    // } 
+    void OnDisable()
+    {
+        foreach(var card in cards)
+        {
+            Destroy(card.gameObject);
+        }
+        cards.Clear();
+    }
     public void AddCardHelper(ApplyCard card) { 
         StartCoroutine(AddCard(card)); 
     }
@@ -45,7 +47,7 @@ public class HandView : Singleton<HandView>
 
        
         if(cards.Count == 0) yield break; // Stop if no cards
-        float cardSpacing = 1.2f/10f; // spacing between cards along the spline
+        float cardSpacing = 3f/10f; // spacing between cards along the spline
         float firstCardPosition = 0.5f - (cards.Count-1)*cardSpacing/2f; //Finds the center to place the first card 
         //spline is percentage based, so 0.5 is the center, but takes into account number of cards so new card will always be in the center
         Spline spline = splineContainer.Spline; 
@@ -54,12 +56,9 @@ public class HandView : Singleton<HandView>
             Vector3 splinePosition = spline.EvaluatePosition(p); //gets world position of spline
             Vector3 forwardSpline = spline.EvaluateTangent(p); // we need forward and up vectors to rotate the card
             Vector3 outSpline = spline.EvaluateUpVector(p);  
-            Quaternion rotation = Quaternion.LookRotation(-outSpline, Vector3.Cross(-outSpline, forwardSpline).normalized); // rotates card alone the spline axis
             cards[i].transform.DOMove(splinePosition +transform.position + 0.01f*i*Vector3.back, duration); 
-            cards[i].transform.DORotateQuaternion(rotation, duration);
         } 
         yield return new WaitForSeconds(duration); 
       
     }
-
 }

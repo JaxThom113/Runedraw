@@ -15,6 +15,7 @@ public class CardSystem : Singleton<CardSystem>
     EnemyTurnGA -> EnemyTurnPostReaction -> DrawCardGA -> AddReaction()
     */     
 
+    [SerializeField] public LootCardBank lootCardBank;
     // Start is called before the first frame update 
     [SerializeField] private CardSO cardSO; 
     
@@ -26,16 +27,21 @@ public class CardSystem : Singleton<CardSystem>
     private List<Card> discardPile = new();  
     private List<Card> hand = new();    
     public List<Card> enemyDeck = new();  
+    private bool actionHooksBound = false;
+    private EnemyTurnGA lastProcessedEnemyTurnGA = null;
 
     
     // Action System Setup
     private void OnEnable() 
     {  
+        if (actionHooksBound) return;
+        actionHooksBound = true;
         //Attach Performer to add to dictionary so we wont get an error when performperformer/performsubscriber
         ActionSystem.AttachPerformer<DrawCardGA>(DrawCardPerformer);
         ActionSystem.AttachPerformer<DrawEnemyCardGA>(DrawEnemyCardPerformer);
         ActionSystem.AttachPerformer<DiscardCardGA>(DiscardCardPerformer);  
-        ActionSystem.AttachPerformer<PlayCardGA>(PlayCardPerformer);
+        ActionSystem.AttachPerformer<PlayCardGA>(PlayCardPerformer); 
+        ActionSystem.SubscribeReaction<LootCardGA>(CreateLootCardsPostReaction, ReactionTiming.POST);
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE); //same thing as above, but if prereaction or postreaction we call subscribe reaction instead of attach perfomer
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST); 
         ActionSystem.SubscribeReaction<KillEnemyGA>(DiscardEnemyCardPostReaction, ReactionTiming.POST);
@@ -43,10 +49,24 @@ public class CardSystem : Singleton<CardSystem>
      } 
     private void OnDisable() 
     {   
+        if (!actionHooksBound) return;
+        actionHooksBound = false;
+        UnsubscribeAll();
+    }
+    private void OnDestroy()
+    { 
+        Debug.LogError("CardSystem OnDestroy");
+        if (!actionHooksBound) return;
+        actionHooksBound = false;
+        UnsubscribeAll(); // static subscriber list outlives this instance; remove so destroyed instance is never invoked
+    }
+    private void UnsubscribeAll()
+    {
         ActionSystem.DetachPerformer<DrawCardGA>(); //remove from dictionary so we wont get an error when detaching performer
         ActionSystem.DetachPerformer<DrawEnemyCardGA>();
         ActionSystem.DetachPerformer<DiscardCardGA>(); 
-        ActionSystem.DetachPerformer<PlayCardGA>();
+        ActionSystem.DetachPerformer<PlayCardGA>();     
+        ActionSystem.UnsubscribeReaction<LootCardGA>(CreateLootCardsPostReaction, ReactionTiming.POST);
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE); 
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST); 
         ActionSystem.UnsubscribeReaction<KillEnemyGA>(DiscardEnemyCardPostReaction, ReactionTiming.POST);
@@ -56,8 +76,17 @@ public class CardSystem : Singleton<CardSystem>
     //Public Methods 
     public void Setup(List<CardSO> cardSOs, List<CardSOList> enemyCardSOs)  
     {  
-        foreach(var cardSO in cardSOs) {  
-            Card card = new Card(cardSO);
+        drawPile.Clear();
+        foreach(var cardSO in cardSOs) {
+            if (cardSO == null) { 
+                Debug.LogError("CardSO is null in CardSystem Setup"); 
+                continue;
+            }; // skip null refs (e.g. empty slots in SO list)
+            Card card = new Card(cardSO); 
+            if (card == null) { 
+                Debug.LogError("Card is null in CardSystem Setup"); 
+                continue;
+            };
             drawPile.Add(card);
         } 
         List<CardSO> enemyHand = EnemySystem.Instance.GetCurrentEnemyHand();
@@ -67,6 +96,7 @@ public class CardSystem : Singleton<CardSystem>
         }
     } 
     private void SetupEnemyDeck(List<CardSOList> enemyCardSOs){ 
+        enemyDeck.Clear();
         List<CardSO> enemyHand = EnemySystem.Instance.GetCurrentEnemyHand();
         foreach(var cardSO in enemyHand) {  
             Card card = new Card(cardSO);
@@ -151,6 +181,14 @@ public class CardSystem : Singleton<CardSystem>
     } 
     private void EnemyTurnPostReaction(EnemyTurnGA enemyTurnGA) 
     {   
+        // Guard against duplicate callback registration executing the same turn action multiple times.
+        if (ReferenceEquals(lastProcessedEnemyTurnGA, enemyTurnGA))
+        {
+            Debug.LogWarning("[CardSystem] EnemyTurnPostReaction duplicate call skipped for same EnemyTurnGA.");
+            return;
+        }
+        lastProcessedEnemyTurnGA = enemyTurnGA;
+        Debug.Log($"[CardSystem] EnemyTurnPostReaction processing EnemyTurnGA. enemyTurnCount={EnemySystem.Instance.enemyTurnCount}, playerDraw=5, enemyDraw={EnemySystem.Instance.GetDrawAmount()}");
         
         SetupEnemyDeck(EnemySystem.Instance.enemy.enemyDeck);
         DrawCardGA drawCardGA = new(5); 
@@ -165,15 +203,26 @@ public class CardSystem : Singleton<CardSystem>
     private IEnumerator DrawCard() 
     { 
         Card card = drawPile.Draw(); 
+        if (card == null) { 
+            Debug.LogError("Card is null in DrawCard"); 
+            yield break;
+        };
         hand.Add(card);
         ApplyCard applyCard = CardCreator.Instance.CreateCard(card, drawPileTransform.position, drawPileTransform.rotation, false);    
-        //HandView.OnHandUpdated.Invoke(applyCard);         
-
         yield return  StartCoroutine(HandView.Instance.AddCard(applyCard));
     } 
+    private void CreateLootCardsPostReaction(LootCardGA lootCardGA)  
+    { 
+        List<CardSO> lootCards = lootCardBank.GetRandomCards(lootCardGA.amount);
+        foreach(var cardSO in lootCards) {
+            Card card = new Card(cardSO);
+            ApplyCard applyCard = LootCardCreator.Instance.CreateCard(card, Vector3.zero, Quaternion.identity, false);
+             StartCoroutine(LootHandView.Instance.AddCard(applyCard));
+        }
+    }
     private IEnumerator DrawEnemyCard() 
     { 
-        Card card = enemyDeck.Draw(); 
+        Card card = enemyDeck.Draw();
         enemyDeck.Add(card);
         ApplyCard applyCard = CardCreator.Instance.CreateCard(card, enemyHandTransform.position, enemyHandTransform.rotation, true);                   
         yield return  StartCoroutine(EnemyHandView.Instance.AddCard(applyCard));
@@ -188,10 +237,13 @@ public class CardSystem : Singleton<CardSystem>
     private void RefillDeckPostReaction(KillEnemyGA killEnemyGA)
     {
         RefillDeck();
+        LootCardGA lootCardGA = new LootCardGA(3);
+        ActionSystem.Instance.AddReaction(lootCardGA);
     }
 
     private IEnumerator DiscardCard(ApplyCard applyCard) 
     {  
+        if(applyCard == null || !applyCard.gameObject.activeInHierarchy) yield break;
         applyCard.transform.DOScale(Vector3.zero, 0.15f);
         Tween tween = applyCard.transform.DOMove(discardPileTransform.position, 0.15f); 
         yield return tween.WaitForCompletion();

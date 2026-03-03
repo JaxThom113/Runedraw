@@ -55,7 +55,7 @@ public class EnemySystem : Singleton<EnemySystem>
 
         yield return new WaitForSeconds(1f); 
         overworldEnemy.gameObject.SetActive(false); 
-        CameraTransitionSystem.Instance.endGame(); 
+        
         
           
     }

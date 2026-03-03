@@ -21,17 +21,21 @@ public class DamageSystem : Singleton<DamageSystem>
         this.enemyView = enemyView;
     }
     private IEnumerator DealDamagePerformer(DealDamageGA dealDamageGA) { 
-        int damageAmount = dealDamageGA.Amount;  
+        int damageAmount = dealDamageGA.Amount;   
+        Debug.Log("Dealing damage: " + damageAmount);
         if(dealDamageGA.isPlayer) { 
             enemyView.ReduceHealth(damageAmount); 
-            if(enemyView.currentHealth <= 0) { 
-                KillEnemyGA killEnemyGA = new(enemyView);
+            if(enemyView.currentHealth <= 0) {  
+                Debug.Log("Enemy killed");
+                KillEnemyGA killEnemyGA = new(enemyView); 
+               
                 ActionSystem.Instance.AddReaction(killEnemyGA);
+                
+                
             }
         } else { 
             playerView.ReduceHealth(damageAmount); 
             if(playerView.currentHealth <= 0) {  
-                Debug.Log("Game Over");
                 GameOverGA gameOverGA = new();
                 ActionSystem.Instance.AddReaction(gameOverGA);
             }

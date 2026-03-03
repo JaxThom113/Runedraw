@@ -3,19 +3,35 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerSystem : Singleton<PlayerSystem>
-{
+{ 
+    [SerializeField] public PlayerSO starterPlayerData;
     public Player player; 
     public PlayerView playerView; 
     public GameObject DeathView; 
     public GameObject GameView;
-    public int storedHealth;
+    public int storedHealth; 
+    void Start(){   
+
+        playerView.Setup(starterPlayerData);
+        Setup(starterPlayerData, playerView); 
+        Inventory.Instance.Setup(player.playerDeck);
+    }
+
     public void Setup(PlayerSO playerData, PlayerView playerView)
-    {  
-        Debug.Log("PlayerSystem Setup");
+    {
+        starterPlayerData = playerData;
         player = new Player();
-        player.Setup(playerData); 
+        player.Setup(starterPlayerData);
+
+        // First time setup inventory cards are not available, so we use the PlayerSO deck as a fallback
+        List<CardSO> inventoryCards = Inventory.Instance != null ? Inventory.Instance.GetCards() : null;
+        
+        if (inventoryCards != null && inventoryCards.Count > 0)
+            player.SetupDeck(inventoryCards);
+
         this.playerView = playerView;
-    } 
+        storedHealth = playerView.currentHealth; // sync so OnEnable restores correct value
+    }
     private void OnEnable()
     {
         ActionSystem.SubscribeReaction<KillEnemyGA>(StoreHealthPostReaction, ReactionTiming.POST);
@@ -28,12 +44,10 @@ public class PlayerSystem : Singleton<PlayerSystem>
     } 
     private void StoreHealthPostReaction(KillEnemyGA killEnemyGA)
     { 
-        Debug.Log("StoreHealthPostReaction: " + playerView.currentHealth);
         storedHealth = playerView.currentHealth;
     } 
     private IEnumerator GameOverPerformer(GameOverGA gameOverGA)
     { 
-        Debug.Log("Performed GameOverPerformer");
         DeathView.SetActive(true);
         GameView.SetActive(false);
         yield return null;

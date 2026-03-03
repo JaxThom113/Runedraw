@@ -6,9 +6,9 @@ public class ManaSystem : Singleton<ManaSystem>
 {
     [SerializeField] public ManaUI manaUI; 
 
-    public int maxMana = 10; 
+    public int maxMana = 1; 
     private int currentMana;   
-    private int startingMana = 10;
+    private int startingMana = 1;
     void Start()
     {
         

@@ -9,7 +9,8 @@ public class PlayerView : EntityView
     } 
     private void OnEnable()
     { 
-        currentHealth = PlayerSystem.Instance.storedHealth; 
+        currentHealth = PlayerSystem.Instance.storedHealth;  
+        Debug.Log("PlayerView OnEnable: " + currentHealth);
     }
 
 

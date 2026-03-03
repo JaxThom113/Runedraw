@@ -148,8 +148,6 @@ public class ProcGen : MonoBehaviour
     void GenerateMaze()
     {
         grid = Dfs.DfsMazeGenerate(grid, gridSize, 0, 0);
-
-        Debug.Log("New maze - Start: " + start + " End: " + end);
     }
 
     void StartFinish()
@@ -204,8 +202,6 @@ public class ProcGen : MonoBehaviour
 
         if (path != null && path.Count > 0)
         {
-            Debug.Log("Path found with " + path.Count + " tiles");
-
             // Highlight the path on the floor tilemap
             foreach (Vector2Int pos in path)
             {

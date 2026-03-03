@@ -29,7 +29,7 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     private bool tweening = true;
     private Vector3 initialPosition;
     private Quaternion initialRotation; 
-
+    public bool LootCard = false;
     public bool InventoryCard = false;
     //ALL TYPES MUST BE THE SAME
     // Start is called before the first frame update
@@ -72,7 +72,7 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     // UI Event System - works for UI objects (Image, Button, etc.)
     public void OnPointerEnter(PointerEventData eventData)
     {  
-        if(InventoryCard) return;
+        if(InventoryCard || LootCard) return;
         //if(tweening) return;
         if(!Interactions.Instance.PlayerCanHover()) return;
         wrapper.SetActive(false);
@@ -81,15 +81,19 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         CardViewHoverSystem.Instance.Show(card, transform.position);
     } 
     public void OnPointerDown(PointerEventData eventData)
-    {
-        if(InventoryCard) return;
+    { 
+        if(LootCard){ 
+            PlayerSystem.Instance.player.AddCardToDeck(card.data); 
+            LevelSystem.Instance.LootView.SetActive(false);
+            PlayerWinGA playerWinGA = new();
+            ActionSystem.Instance.Perform(playerWinGA);
+            return;
+        }
+        if(InventoryCard) return; 
         if (!Interactions.Instance.PlayerCanInteract()) return;
-
         Interactions.Instance.PlayerIsDragging = true;
-        
         initialPosition = transform.position;
         initialRotation = transform.rotation;
-
         CardViewHoverSystem.Instance.Hide();
         wrapper.SetActive(true);
         transform.rotation = Quaternion.identity;
@@ -97,7 +101,7 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void OnDrag(PointerEventData eventData)
     {
-        if(InventoryCard) return;
+        if(InventoryCard || LootCard) return;
         if (!Interactions.Instance.PlayerIsDragging) return;
 
         Vector3 worldPoint; 
@@ -114,26 +118,28 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public void OnPointerUp(PointerEventData eventData)
     {
-        if(InventoryCard) return; 
-       
+        if(InventoryCard || LootCard) return;
+        
+        if (card == null ) 
+        {
+            Debug.LogError("Card is null");
+            return;
+        }
         if( transform.localPosition.y > 200f && ManaSystem.Instance.HasEnoughMana(card.cardCost)) 
         {  
-           
             PlayCardGA playCardGA = new(card); 
             ActionSystem.Instance.Perform(playCardGA);  //action
-          
         } 
         else
         {
             transform.DOMove(initialPosition, 0.2f);
             transform.DORotateQuaternion(initialRotation, 0.2f);
         }
-        
     }
     
     public void OnPointerExit(PointerEventData eventData)
     {
-        if(InventoryCard) return;
+        if(InventoryCard || LootCard) return;
        //if(tweening) return;
         if(!Interactions.Instance.PlayerCanHover()) return;
         wrapper.SetActive(true);
