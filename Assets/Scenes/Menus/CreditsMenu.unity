@@ -614,9 +614,10 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "Programmers\n     - Elijah Lowe [Card Gane System Design]\n     - Jaxon
-    Kundrat [Overworld Generation]\n\nArtists\n     - Tyler Hudelson [Team Lead]\n    
-    - Duane Huynh [3D Modeler]\n     - Connor Benson [Character/Card Design]\n    
-    - Khaleed Kirkland [Character/Card Design]\n"
+    Kundrat [Overworld Generation]\n\nArtists\n     - Tyler Hudelson [Team Lead,
+    Audio Design]\n     - Duane Huynh [3D Modeler, Environmental Design]\n     -
+    Connor Benson [Character/Card Design]\n     - Khaleed Kirkland [Character/Card
+    Design]\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
