@@ -5,22 +5,25 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Menus/MainMenu.unity
     guid: b7ab3d53a6fd5cd44816e642e92bcc38
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Menus/OptionsMenu.unity
     guid: 90ff4b4670f827445b414463aecc7c55
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Menus/CreditsMenu.unity
     guid: 07af365e2545a65449da0fcb3ff2e4e1
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Menus/Splash.unity
     guid: 5848e8c69606ff545a935a5154ece667
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Overworld.unity
     guid: 12cf47fdda9a09a47a51d69636bfdf4e
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/ProcGenWithBattleScene.unity
     guid: a507b8b62025c2e48a310f301f837501
+  - enabled: 1
+    path: Assets/Scenes/EliBranch.unity
+    guid: 8dd816d6a8d5be248b8c2c4d13b6ad6c
   m_configObjects: {}
