@@ -24,16 +24,14 @@ public class DamageSystem : Singleton<DamageSystem>
         int damageAmount = dealDamageGA.Amount;   
         Debug.Log("Dealing damage: " + damageAmount);
         if(dealDamageGA.isPlayer) { 
-            enemyView.ReduceHealth(damageAmount); 
+            enemyView.TakeDamage(damageAmount); 
             if(enemyView.currentHealth <= 0) {  
                 Debug.Log("Enemy killed");
                 KillEnemyGA killEnemyGA = new(enemyView); 
                 ActionSystem.Instance.AddReaction(killEnemyGA);
-                
-                
             }
         } else { 
-            playerView.ReduceHealth(damageAmount); 
+            playerView.TakeDamage(damageAmount); 
             if(playerView.currentHealth <= 0) {  
                 GameOverGA gameOverGA = new();
                 ActionSystem.Instance.AddReaction(gameOverGA);

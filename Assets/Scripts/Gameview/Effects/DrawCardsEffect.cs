@@ -11,5 +11,9 @@ public class DrawCardsEffect : Effect
     { 
         DrawCardGA drawCardGA = new(drawAmount);
         return drawCardGA;
+    } 
+    public override string GetDescription()
+    {
+        return $"Draw {drawAmount} cards";
     }
 }

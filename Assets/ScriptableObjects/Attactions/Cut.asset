@@ -30,4 +30,5 @@ MonoBehaviour:
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         isPlayer: 1
-        damageAmount: 2
+        playWhenDrawnByEnemy: 0
+        damageAmount: 10

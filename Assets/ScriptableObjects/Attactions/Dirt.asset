@@ -17,7 +17,7 @@ MonoBehaviour:
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
   cardIcon: {fileID: 21300000, guid: b03f56a2ed75dbd4dbfe8f87da8fcf12, type: 3}
   cardDescription: Deals 10 Dirt Damage
-  cardElement: 0
+  cardElement: 3
   cardElementIcon: {fileID: 21300000, guid: 0ad7c8a63d1b7184b9944b0e7a08a71d, type: 3}
   cardType: 0
   cardTypeIcon: {fileID: 21300000, guid: e9991a45ec777704292b3ff19c127d84, type: 3}
@@ -30,4 +30,5 @@ MonoBehaviour:
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         isPlayer: 0
+        playWhenDrawnByEnemy: 0
         damageAmount: 10

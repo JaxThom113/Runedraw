@@ -164,7 +164,8 @@ public class CardSystem : Singleton<CardSystem>
         hand.Clear();
     } 
     private void DiscardEnemyCardPostReaction(KillEnemyGA killEnemyGA)
-    {
+    { 
+        ShieldSystem.Instance.ClearAllShields();
         foreach(var card in enemyDeck) { 
             
            EnemyHandView.Instance.ClearEnemyHand(); 
@@ -181,15 +182,14 @@ public class CardSystem : Singleton<CardSystem>
     } 
     private void EnemyTurnPostReaction(EnemyTurnGA enemyTurnGA) 
     {   
-        // Guard against duplicate callback registration executing the same turn action multiple times.
+        // Defense against infinite loop
         if (ReferenceEquals(lastProcessedEnemyTurnGA, enemyTurnGA))
         {
-            Debug.LogWarning("[CardSystem] EnemyTurnPostReaction duplicate call skipped for same EnemyTurnGA.");
             return;
         }
         lastProcessedEnemyTurnGA = enemyTurnGA;
-        Debug.Log($"[CardSystem] EnemyTurnPostReaction processing EnemyTurnGA. enemyTurnCount={EnemySystem.Instance.enemyTurnCount}, playerDraw=5, enemyDraw={EnemySystem.Instance.GetDrawAmount()}");
-        
+
+        ShieldSystem.Instance.ClearAllShields();
         SetupEnemyDeck(EnemySystem.Instance.enemy.enemyDeck);
         DrawCardGA drawCardGA = new(5); 
         ActionSystem.Instance.AddReaction(drawCardGA);  
@@ -223,9 +223,23 @@ public class CardSystem : Singleton<CardSystem>
     private IEnumerator DrawEnemyCard() 
     { 
         Card card = enemyDeck.Draw();
+          
         enemyDeck.Add(card);
-        ApplyCard applyCard = CardCreator.Instance.CreateCard(card, enemyHandTransform.position, enemyHandTransform.rotation, true);                   
-        yield return  StartCoroutine(EnemyHandView.Instance.AddCard(applyCard));
+        ApplyCard applyCard = CardCreator.Instance.CreateCard(card, enemyHandTransform.position, enemyHandTransform.rotation, true);    
+       yield return StartCoroutine(EnemyHandView.Instance.AddCard(applyCard));
+        bool playWhenDrawn = card.effects != null && card.effects.Exists(e => e.playWhenDrawnByEnemy);
+        if (playWhenDrawn)
+        {
+            foreach (var effect in card.effects)
+            {
+                effect.isPlayer = false; 
+                PerformEffectGA performEffectGA = new(effect);
+                ActionSystem.Instance.AddReaction(performEffectGA); 
+            }
+            yield return EnemyHandView.Instance.RemoveEnemyCard(card); 
+            
+        }                  
+        
     }
 
     private void RefillDeck() 
@@ -250,7 +264,5 @@ public class CardSystem : Singleton<CardSystem>
         Destroy(applyCard.gameObject);
         
     }
-
-    // Update is called once per frame
     
 }

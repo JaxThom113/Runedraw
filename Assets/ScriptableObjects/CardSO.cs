@@ -7,9 +7,9 @@ public enum Element
 { 
     None, 
     Fire, 
-    Cold, 
-    Lightning, 
-    Poison
+    Water, 
+    Earth, 
+    Air
 } 
 public enum CardType
 {
