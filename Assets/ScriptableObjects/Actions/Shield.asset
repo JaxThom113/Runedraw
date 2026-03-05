@@ -9,26 +9,26 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8ffff4e899a37b4d95d00cf1a992051, type: 3}
-  m_Name: Spark
+  m_Script: {fileID: 11500000, guid: 7ac92f85d5c46e74283afb23a91a686b, type: 3}
+  m_Name: Shield
   m_EditorClassIdentifier: 
-  cardName: Spark
-  cardCost: 2
+  cardName: Draw
+  cardCost: 1
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
-  cardIcon: {fileID: 21300000, guid: ec8356fd305b0dd44a0cbaecbfdf98f4, type: 3}
-  cardDescription: Deals spark damage
-  cardElement: 1
-  cardElementIcon: {fileID: 21300000, guid: 6904c290dbd2c324c9793f88052c3f04, type: 3}
-  cardType: 0
+  cardIcon: {fileID: 21300000, guid: 3eba5dfd6c3fd284ab27501387a1a861, type: 3}
+  cardDescription: Apply 2 Shield
+  cardElement: 0
+  cardElementIcon: {fileID: 21300000, guid: 7b6c5390240409445a46abfb97e084ec, type: 3}
+  cardType: 1
   cardTypeIcon: {fileID: 21300000, guid: e9991a45ec777704292b3ff19c127d84, type: 3}
   effects:
-  - rid: 3501867012751622144
+  - rid: 5118776472692064256
   references:
     version: 2
     RefIds:
-    - rid: 3501867012751622144
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+    - rid: 5118776472692064256
+      type: {class: ApplyShieldEffect, ns: , asm: Assembly-CSharp}
       data:
         isPlayer: 0
-        playWhenDrawnByEnemy: 0
-        damageAmount: 4
+        playWhenDrawnByEnemy: 1
+        shieldAmount: 2

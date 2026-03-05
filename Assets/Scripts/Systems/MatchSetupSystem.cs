@@ -19,7 +19,8 @@ public class MatchSetupSystem : MonoBehaviour
         EnemySO enemyData = overworldEnemy.enemyData; 
         PlayerSystem.Instance.Setup(playerData, playerView);
         EnemySystem.Instance.Setup(overworldEnemy); 
-        DamageSystem.Instance.Setup(playerView, enemyView); 
+        DamageSystem.Instance.Setup(playerView, enemyView);
+        ShieldSystem.Instance.Setup(playerView, enemyView);
         playerView.Setup(playerData); 
         
         enemyView.Setup(enemyData); 

@@ -23,11 +23,32 @@ public class Card
 
     public CardSO data;
     public Card(CardSO dataSO) { 
-        data = dataSO;
-        cardDescription = dataSO.cardDescription;  
+        data = dataSO; 
+         cardElement = dataSO.cardElement;  
+        DescribeCard();  
         cardCost = dataSO.cardCost;     
-        cardElement = dataSO.cardElement;  
+       
         cardType = dataSO.cardType; 
+    } 
+    void DescribeCard()
+    { 
+        cardDescription = "";
+        if(effects != null){ 
+            foreach(var effect in effects){
+                cardDescription += effect.GetDescription() + ", "; 
+               
+            
+                
+               
+            }
+            if(cardElement != Element.None){
+                cardDescription += cardElement.ToString();
+            } 
+            else{
+                cardDescription = cardDescription.TrimEnd(',', ' ');
+            }
+
+        }
     }
     
 }

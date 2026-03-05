@@ -11,5 +11,9 @@ public class DealDamageEffect : Effect
         DealDamageGA dealDamageGA = new(damageAmount, isPlayer);  
         return dealDamageGA;
 
+    } 
+    public override string GetDescription()
+    {
+        return $"Deal {damageAmount} damage";
     }
 }
