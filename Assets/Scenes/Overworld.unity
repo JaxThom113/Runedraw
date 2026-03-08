@@ -1923,7 +1923,7 @@ RectTransform:
   m_GameObject: {fileID: 223255654}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1707856710}
@@ -10694,7 +10694,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 99
   m_Sprite: {fileID: 10907, guid: 0000000000000000f000000000000000, type: 0}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
@@ -21505,7 +21505,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 1478471631}
   m_FillRect: {fileID: 465862131}
   m_HandleRect: {fileID: 1478471630}
@@ -25684,7 +25684,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: af437950c3b10b549b62466ad84eb38b, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.5
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -27068,7 +27068,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 540841473}
   m_FillRect: {fileID: 967968284}
   m_HandleRect: {fileID: 540841471}
@@ -27702,7 +27702,7 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 1
+  m_Interactable: 0
   m_TargetGraphic: {fileID: 0}
   m_FillRect: {fileID: 1106307462}
   m_HandleRect: {fileID: 0}
@@ -27759,8 +27759,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1973981565}
-  - component: {fileID: 1973981567}
   - component: {fileID: 1973981566}
+  - component: {fileID: 1973981567}
   m_Layer: 0
   m_Name: Top
   m_TagString: Untagged
