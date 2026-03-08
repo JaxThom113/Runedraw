@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Spark
   cardCost: 2
-  cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
-  cardIcon: {fileID: 21300000, guid: ec8356fd305b0dd44a0cbaecbfdf98f4, type: 3}
+  cardBorder: {fileID: 21300000, guid: 50c948eb6a4581e40a4444ec0b5d8b91, type: 3}
+  cardIcon: {fileID: 21300000, guid: d13a55af393ac13439a427a4c493c054, type: 3}
   cardDescription: Deals spark damage
   cardElement: 1
   cardElementIcon: {fileID: 21300000, guid: 6904c290dbd2c324c9793f88052c3f04, type: 3}
