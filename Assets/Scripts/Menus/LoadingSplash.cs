@@ -8,18 +8,21 @@ using TMPro;
 
 public class LoadingSplash : MonoBehaviour
 {
+    // assign this variable before switching scenes to Splash
+    public static string targetScene;
+
     public Slider progressBar;
     public TextMeshProUGUI progressText;
 
     void Start()
     {
-        StartCoroutine(LoadSceneAsync("Overworld"));
+        StartCoroutine(LoadSceneAsync());
     }
 
-    private IEnumerator LoadSceneAsync(string sceneName)
+    IEnumerator LoadSceneAsync()
     {
         // start loading Overworld scene in the background
-        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName);
+        AsyncOperation operation = SceneManager.LoadSceneAsync(targetScene);
 
         // prevent it from activating immediately when done
         operation.allowSceneActivation = false;
