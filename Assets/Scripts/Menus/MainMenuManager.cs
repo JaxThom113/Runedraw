@@ -36,4 +36,6 @@ public class MainMenuManager : MonoBehaviour
         // quit the game
         Application.Quit();
     }
+
+    // something
 }
