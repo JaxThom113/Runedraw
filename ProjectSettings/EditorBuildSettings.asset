@@ -21,9 +21,9 @@ EditorBuildSettings:
     path: Assets/Scenes/Overworld.unity
     guid: 84d07fc19d95fbd42a24e5bd86720005
   - enabled: 1
-    path: Assets/Scenes/ProcGenWithBattleScene.unity
-    guid: a507b8b62025c2e48a310f301f837501
-  - enabled: 1
     path: Assets/Scenes/EliBranch.unity
     guid: 8dd816d6a8d5be248b8c2c4d13b6ad6c
+  - enabled: 1
+    path: Assets/Scenes/ProcGenWithBattleScene.unity
+    guid: a507b8b62025c2e48a310f301f837501
   m_configObjects: {}

@@ -325,7 +325,7 @@ public class ProcGen : MonoBehaviour
             Destroy(enemyContainer);
         }
         enemyContainer = new GameObject("EnemyContainer"); // recreate container
-
+       
         // have one enemy spawn for each unit of distance along the intended path
         int step = Random.Range(8, 16);
 
@@ -435,7 +435,7 @@ public class ProcGen : MonoBehaviour
         else
             numEnemies = Random.Range(1, 3);
         
-        // place enemies randomly on branching paths
+        // place enemies randomly on branching paths (from enemy bank like along path)
         for (int i = 0; i < numEnemies; i++)
         {
             int randPos = Random.Range(0, openFloorTiles.Count);
@@ -444,7 +444,8 @@ public class ProcGen : MonoBehaviour
             Vector3Int gridPos = new Vector3Int(openFloorTiles[randPos].x, openFloorTiles[randPos].y, 0);
             Vector3 pos = floorTilemap.GetCellCenterWorld(gridPos);
 
-            Instantiate(enemy, pos, Quaternion.identity, enemyContainer.transform);
+            GameObject enemyObject = Instantiate(enemy, pos, Quaternion.identity, enemyContainer.transform);
+            enemyObject.GetComponent<OverworldEnemy>().UpdateEnemy(enemyBank.GetRandomEnemy());
         }
     }
 }

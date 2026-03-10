@@ -41,7 +41,8 @@ public class Inventory : Singleton<Inventory>
         
     }
     public List<CardSO> GetCards() => cards;
-    public void ToggleCards() { 
+    public void ToggleCards() {
+        SoundEffectSystem.Instance.PlayButtonClickSound();
         if(displayed) { 
             Setup(PlayerSystem.Instance.player.playerDeck);
             HideCards();
@@ -88,7 +89,7 @@ public class Inventory : Singleton<Inventory>
 
         float cardsWidth = cardWidth * cardsPerRow; 
         float remainingWidth = containerW - cardsWidth - (padding*2);  
-        float spacingX = remainingWidth / (cardsPerRow - 1);  
+        float spacingX = cardsPerRow > 1 ? remainingWidth / (cardsPerRow - 1) : 0f;  
       
         
         for (int i = 0; i < cards.Count; i++) {  
@@ -126,12 +127,17 @@ public class Inventory : Singleton<Inventory>
             // Debug.Log("Card added: " + card.cardName);
         }
         
-        // Calculate scroll limits based on content height
-        totalRows = Mathf.FloorToInt((float)cards.Count / cardsPerRow); 
-        totalContentHeight = (totalRows-1) * (cardHeight + lineSpacing) + cardHeight + lineSpacing/2;
-        minScrollY = Mathf.Min(0f, -(totalContentHeight - containerH + padding));
-        maxScrollY = Mathf.Max(0f, -(totalContentHeight - containerH + padding/4));
-        currentScrollY = 0f; // Reset scroll when cards are displayed 
+        // Calculate scroll limits based on content height (use Ceil so 6 cards with 5 per row = 2 rows)
+        totalRows = cards.Count == 0 ? 0 : Mathf.CeilToInt((float)cards.Count / cardsPerRow);
+        totalContentHeight = totalRows == 0 ? 0f : (totalRows - 1) * (cardHeight + lineSpacing) + cardHeight + lineSpacing;
+        float scrollRange = Mathf.Max(0f, totalContentHeight - containerH + padding);
+        maxScrollY = scrollRange;  // positive offset: 0 = top, maxScrollY = bottom
+        minScrollY = 0f;
+        currentScrollY = 0f; // Reset scroll when cards are displayed
+        if (scrollbar != null)
+        {
+            scrollbar.size = scrollRange > 0.01f ? Mathf.Clamp01(containerH / totalContentHeight) : 1f;
+        }
         ApplyScroll();
 
     }
@@ -152,7 +158,6 @@ public class Inventory : Singleton<Inventory>
         {
             Transform cardTransform = inventoryContainer.transform.GetChild(i);
             RectTransform rectTransform = cardTransform.GetComponent<RectTransform>();
-            scrollbar.value = Mathf.Clamp01((currentScrollY - minScrollY) / (maxScrollY - minScrollY));
             if (rectTransform != null)
             {
                 Vector2 basePos = cardBasePositions[i];
@@ -164,14 +169,24 @@ public class Inventory : Singleton<Inventory>
                 cardTransform.localPosition = new Vector3(basePos.x, basePos.y + currentScrollY, 0);
             }
         }
+        // Scrollbar: value 0 = top of list, value 1 = bottom — value going UP moves cards UP and reveals hidden lower cards
+        if (scrollbar != null)
+        {
+            float range = maxScrollY - minScrollY;
+            if (range > 0.01f)
+                scrollbar.SetValueWithoutNotify(Mathf.Clamp01(currentScrollY / range));
+            else
+                scrollbar.SetValueWithoutNotify(0f);
+        }
     }  
     //Method to determine the max and min scroll values
     
-    private void OnScrollbarValueChanged(float value) {
-        float scrollRange = maxScrollY - minScrollY;  
-        if(scrollRange > 0.1f) { 
-            float newScrollY = minScrollY + (value) * scrollRange; 
-            if(Mathf.Abs(newScrollY - currentScrollY) > 0.1f) {
+    private void OnScrollbarValueChanged(float value) { 
+        float range = maxScrollY - minScrollY;  
+        if(range > 0.01f) { 
+            // value 0 = top, value 1 = bottom — value going UP = currentScrollY up = cards move UP = reveal the 5 hidden cards
+            float newScrollY = value * range; 
+            if(Mathf.Abs(newScrollY - currentScrollY) > 0.01f) {
                 currentScrollY = newScrollY;   
                 ApplyScroll();
             }
@@ -189,7 +204,7 @@ public class Inventory : Singleton<Inventory>
 
         float scrollDelta = -Input.mouseScrollDelta.y;
         
-        if (scrollDelta != 0 && inventoryContainer != null)
+        if (scrollDelta != 0 && inventoryContainer != null && displayed)
         {
             currentScrollY += scrollDelta * scrollSpeed * Time.deltaTime;
             currentScrollY = Mathf.Clamp(currentScrollY, minScrollY, maxScrollY);

@@ -6,6 +6,7 @@ public class EndTurnButton : MonoBehaviour
 {
     public void OnClick()
     {
+        SoundEffectSystem.Instance.PlayButtonClickSound();
         EnemyTurnGA enemyTurnGA = new(); 
         ActionSystem.Instance.Perform(enemyTurnGA); //always need a performer for game action
     }

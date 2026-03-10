@@ -52,11 +52,13 @@ public class PlayerMovement : MonoBehaviour
 
             if (dir != Vector3.zero)
             {
+                
                 movePoint.parent = null;
 
                 // if nothing in the position the player is trying to move to, then allow movement
                 if (!Physics2D.OverlapCircle(movePoint.position + dir, 0.2f, whatStopsMovement))
-                {
+                { 
+                    SoundEffectSystem.Instance.PlayWalkSound();
                     movePoint.position += dir;
 
                     isMoving = true;

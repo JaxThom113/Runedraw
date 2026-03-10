@@ -111,7 +111,12 @@ public class CardSystem : Singleton<CardSystem>
         hand.Remove(playCardGA.card); 
         discardPile.Add(playCardGA.card);
         ApplyCard applyCard = HandView.Instance.RemoveCard(playCardGA.card);
-        yield return DiscardCard(applyCard);  
+        yield return DiscardCard(applyCard);
+        
+        if (playCardGA.card.sound != null)
+        {
+            ActionSystem.Instance.AddReaction(new SoundEffectGA(playCardGA.card.sound));
+        }  
 
         //ManaSystem.Instance.SpendMana(playCardGA.card.cardCost);  
         //DONT SPEND MANA DIRECLTY! add it to que in the action system to avoid any bugs
@@ -125,7 +130,7 @@ public class CardSystem : Singleton<CardSystem>
         }
     }
     private IEnumerator DrawCardPerformer(DrawCardGA drawCardGA)
-    { 
+    {
         int cardAmount = Mathf.Min(drawCardGA.Amount, drawPile.Count);  
         if(cardAmount < drawCardGA.Amount) {  
             RefillDeck();
@@ -145,7 +150,7 @@ public class CardSystem : Singleton<CardSystem>
         //Card card = new Card(cardSO);  
     } 
     private IEnumerator DrawEnemyCardPerformer(DrawEnemyCardGA drawEnemyCardGA)
-    {  
+    {
         int cardAmount = Mathf.Min(drawEnemyCardGA.Amount, EnemySystem.Instance.GetDrawAmount());  
         
         int notDrawnAmount = drawEnemyCardGA.Amount - cardAmount; 
@@ -201,7 +206,8 @@ public class CardSystem : Singleton<CardSystem>
     }
     //Helper Methods
     private IEnumerator DrawCard() 
-    { 
+    {
+        SoundEffectSystem.Instance.PlayCardDrawSound();
         Card card = drawPile.Draw(); 
         if (card == null) { 
             Debug.LogError("Card is null in DrawCard"); 
@@ -221,7 +227,8 @@ public class CardSystem : Singleton<CardSystem>
         }
     }
     private IEnumerator DrawEnemyCard() 
-    { 
+    {
+        SoundEffectSystem.Instance.PlayCardDrawSound();
         Card card = enemyDeck.Draw();
           
         enemyDeck.Add(card);
@@ -256,8 +263,9 @@ public class CardSystem : Singleton<CardSystem>
     }
 
     private IEnumerator DiscardCard(ApplyCard applyCard) 
-    {  
+    {
         if(applyCard == null || !applyCard.gameObject.activeInHierarchy) yield break;
+        SoundEffectSystem.Instance.PlayCardDiscardSound();
         applyCard.transform.DOScale(Vector3.zero, 0.15f);
         Tween tween = applyCard.transform.DOMove(discardPileTransform.position, 0.15f); 
         yield return tween.WaitForCompletion();

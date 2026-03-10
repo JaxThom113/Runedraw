@@ -39,10 +39,11 @@ public class EntityView : MonoBehaviour
 
     private void UpdateHealthDisplay()
     {
+        int displayHealth = Mathf.Max(0, currentHealth);
         if (healthText != null)
-            healthText.text = $"{currentHealth}";
+            healthText.text = $"{displayHealth}";
         if (healthSlider != null && maxHealth > 0)
-            healthSlider.value = (float)currentHealth / maxHealth;
+            healthSlider.value = (float)displayHealth / maxHealth;
     }
 
     private void UpdateShieldDisplay()
@@ -66,7 +67,7 @@ public class EntityView : MonoBehaviour
         {
             if (animator != null)
                 animator.SetTrigger("Hurt");
-            currentHealth -= toHealth;
+            currentHealth = Mathf.Max(0, currentHealth - toHealth);
             UpdateHealthDisplay();
         }
         UpdateShieldDisplay();
@@ -95,7 +96,7 @@ public class EntityView : MonoBehaviour
     {
         if (animator != null)
             animator.SetTrigger("Hurt");
-        currentHealth -= amount;
+        currentHealth = Mathf.Max(0, currentHealth - amount);
         UpdateHealthDisplay();
     }
 }

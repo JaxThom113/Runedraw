@@ -188,12 +188,14 @@ public class LevelSystem: Singleton<LevelSystem>
 
         // display card pickup UI, start card pickup coroutine 
         LootView.SetActive(true);
+        SoundEffectSystem.Instance.PlayVictoryTheme();
 
         yield return null;
     }
 
     public void OnSkipButtonClick()
     {
+        SoundEffectSystem.Instance.PlayButtonClickSound();
         // skip button clicked, disable UI and delete the interactable
         LootView.SetActive(false);
         

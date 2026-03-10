@@ -30,6 +30,7 @@ public class CardSO : ScriptableObject
     [SerializeField] public Sprite cardElementIcon;  
     [SerializeField] public CardType cardType; 
     [SerializeField] public Sprite cardTypeIcon;
+    [SerializeField] public AudioClip sound;
     [SerializeReference, SR(typeof(Effect))]
     [SerializeField] public List<Effect> effects = new List<Effect>();  
     

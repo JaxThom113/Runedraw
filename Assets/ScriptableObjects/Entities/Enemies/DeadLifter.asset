@@ -10,14 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: db3908947c34a464ebedf690cdd7b1a8, type: 3}
-  m_Name: Skeleton
+  m_Name: DeadLifter
   m_EditorClassIdentifier: 
-  entityName: Skeleton
+  entityName: Dead Lifter
   entityIcon: {fileID: 21300000, guid: ebbdbb520b201054998bba960f8067d5, type: 3}
   entityHealth: 4
   enemyDeck:
   - enemyHand:
-    - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
     - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
   - enemyHand:

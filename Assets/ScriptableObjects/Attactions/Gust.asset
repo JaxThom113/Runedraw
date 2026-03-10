@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Gust
   m_EditorClassIdentifier: 
   cardName: Gust
-  cardCost: 4
+  cardCost: 2
   cardBorder: {fileID: 21300000, guid: d48326ba42e455447b0ccce8fad6f2e4, type: 3}
   cardIcon: {fileID: 21300000, guid: f0a49c26f7586ce4e8158e13c32a0955, type: 3}
   cardDescription: 
@@ -21,6 +21,7 @@ MonoBehaviour:
   cardElementIcon: {fileID: 21300000, guid: 8c033ef14828495408918f27f16541e4, type: 3}
   cardType: 0
   cardTypeIcon: {fileID: 21300000, guid: e9991a45ec777704292b3ff19c127d84, type: 3}
+  sound: {fileID: 8300000, guid: fce694bef2bc52c4fbfaf25479a8bcea, type: 3}
   effects:
   - rid: 5118776516904747010
   references:
@@ -31,4 +32,4 @@ MonoBehaviour:
       data:
         isPlayer: 0
         playWhenDrawnByEnemy: 0
-        damageAmount: 10
+        damageAmount: 3

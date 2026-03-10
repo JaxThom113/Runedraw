@@ -32,9 +32,10 @@ public class DamageSystem : Singleton<DamageSystem>
             }
         } else { 
             playerView.TakeDamage(damageAmount); 
-            if(playerView.currentHealth <= 0) {  
-                GameOverGA gameOverGA = new();
-                ActionSystem.Instance.AddReaction(gameOverGA);
+            if(playerView.currentHealth <= 0) {   
+                UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+                // GameOverGA gameOverGA = new();
+                // ActionSystem.Instance.AddReaction(gameOverGA);
             }
         }
         yield return null;

@@ -35,7 +35,8 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
 
    
    
-    public void startGame(OverworldEnemy overworldEnemy) {    
+    public void startGame(OverworldEnemy overworldEnemy) {
+        SoundEffectSystem.Instance.PlayBattleTheme();
         OverworldHUD.SetActive(false);
          StartCoroutine(showGameView(overworldEnemy)); 
         GameObject EnemySprite = overworldEnemy.SpriteGameObject;
@@ -61,7 +62,8 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
        
         
     }
-    public IEnumerator endGamePerformer(PlayerWinGA playerWinGA) {    
+    public IEnumerator endGamePerformer(PlayerWinGA playerWinGA) {
+        SoundEffectSystem.Instance.PlayOverworldTheme();
         overworldViewCamera.Priority = 10;  
         gameViewCamera.Priority = 0;  
          

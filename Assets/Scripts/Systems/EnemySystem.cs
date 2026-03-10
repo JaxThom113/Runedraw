@@ -31,7 +31,11 @@ public class EnemySystem : Singleton<EnemySystem>
         foreach(var card in EnemyHandView.Instance.GetShownCards()) {  
               
             PlayEnemyCardGA playEnemyCardGA = new PlayEnemyCardGA(card); 
-            ActionSystem.Instance.AddReaction(playEnemyCardGA);  
+            ActionSystem.Instance.AddReaction(playEnemyCardGA);   
+            if (card.sound != null)
+            {
+                ActionSystem.Instance.AddReaction(new SoundEffectGA(card.sound));
+            }
             foreach(var effect in card.effects) { 
                 effect.isPlayer = false;
                 PerformEffectGA performEffectGA = new(effect);
