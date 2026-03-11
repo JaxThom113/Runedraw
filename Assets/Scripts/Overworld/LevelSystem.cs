@@ -21,37 +21,36 @@ public class LevelSystem: Singleton<LevelSystem>
     public GameObject LootView;
 
     [Header("Script References")]
-    public ProcGen procGen;
     public PlayerMovement playerMovement;
 
     // current level and area
-    private int currentLevel;
-    private int currentArea;
+    private int currentLevel = 1;
+    private int currentArea = 1;
     private bool skipPressed = false;
     private GameObject currentInteractable = null;
 
     void Start()
     {
-        currentLevel = 1;
-        currentArea = 1;
-
         UpdateUI();
     }
 
     /*
         Level/Area Transitions
     */
+
     void OnEnable()
     {
         ActionSystem.AttachPerformer<LootCardGA>(LootBoxPerformer);
     }
+
     void OnDisable()
     {
         ActionSystem.DetachPerformer<LootCardGA>();
     }
+
     public void NextLevel()
     {
-        if (currentLevel == 5)
+        if (currentLevel == 3)
         {
             NextArea();
 
@@ -89,9 +88,10 @@ public class LevelSystem: Singleton<LevelSystem>
             // names for different areas
             switch (currentArea)
             {
-                case 1: areaTitle.text = $"Dungeons"; break;
-                case 2: areaTitle.text = $"Forest"; break;
-                case 3: areaTitle.text = $"Tundra"; break;
+                case 1: areaTitle.text = $"Fire Dungeons"; break; // fire-themed area
+                case 2: areaTitle.text = $"Windblown Tombs"; break; // wind--themed area
+                case 3: areaTitle.text = $"Chilly Crypt"; break; // water-themed area
+                case 4: areaTitle.text = $"The Dirt Zone"; break; // earth-themed area
             }
         }
 
@@ -106,7 +106,6 @@ public class LevelSystem: Singleton<LevelSystem>
     {
         // take control from player, have player continue moving upward
         playerMovement.enabled = false;
-        playerMovement.ContinueUp();
         //SceneTransitionSystem.Instance.enemyData = OverworldSystem.Instance.GetCurrentEnemy();
 
         // transition swipe effect
@@ -115,7 +114,7 @@ public class LevelSystem: Singleton<LevelSystem>
         yield return new WaitForSeconds(1f);
 
         // generate new level
-        procGen.GenerateLevel();
+        ProcGen.GenerateLevel();
         playerMovement.ResetMovePoint();
 
         // transition swipe out and reset position
@@ -123,10 +122,6 @@ public class LevelSystem: Singleton<LevelSystem>
         yield return new WaitForSeconds(1f);
         transitionScreen.SetActive(false);
         transitionScreen.transform.position = new Vector3(0, -40, 0);
-
-        // tp player to bottom of the screen, have player move upward to starting cell
-        playerMovement.TeleportToBottom();
-        playerMovement.ContinueUp();
 
         // return control to the player  
         playerMovement.enabled = true;

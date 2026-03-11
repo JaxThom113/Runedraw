@@ -2,35 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using UnityEngine.Tilemaps;
+/*
 
-public class ProcGen : MonoBehaviour
+This script generates a 15x15 matrix to define a level.
+
+Example:
+
+
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+
+1 1 1 1 1 1 1 0 1 1 1 1 1 1 1
+
+
+
+*/
+
+public static class ProcGen
 {
-    [Header("Generation Settings")]
-    [Range(0, 1000)]
-    public int seed = 0;
-    [TextArea(15, 20)]
-    public string gridDebug;
-
-    [Header("Tilemap References")]
-    public Tilemap wallTilemap;
-    public Tilemap edgeTilemap;
-    public Tilemap floorTilemap;
-    public TileBase wallTile;
-    public TileBase edgeTile;
-    public TileBase floorTile;
-    public TileBase highlightFloorTile;
-
-    [Header("Entity References")]
-    public GameObject player;
-    public GameObject enemy;    
-    public GameObject interactable;
-    public EnemyBank enemyBank;
-
-    [Header("3D Elements")]
-    public GameObject wallCube; 
-    public GameObject edgeCube; 
-
     /*
         Grid matrix
             0 = floor
@@ -39,66 +43,40 @@ public class ProcGen : MonoBehaviour
             3 = enemy
             4 = interactable
     */
-    private List<List<int>> grid = new List<List<int>>();
-
-    // top/bottom edges
-    private List<int> bottomEdge;
-    private List<int> topEdge;
+    private static List<List<int>> grid = new List<List<int>>();
+    private static List<int> bottomEdge;
+    private static List<int> topEdge;
 
     // maze parameters
-    private const int gridSize = 15;
-    private Vector2Int start = new Vector2Int(0, 0);
-    private Vector2Int end = new Vector2Int(0, gridSize - 1);
-    private List<Vector2Int> correctPath = new List< Vector2Int>();
+    private const int GRID_SIZE = 15;
+    private static Vector2Int start = new Vector2Int(0, 0);
+    private static Vector2Int end = new Vector2Int(0, GRID_SIZE - 1);
+    private static List<Vector2Int> correctPath = new List<Vector2Int>();
 
-    // containers for wall/enemy/interactable prefabs
-    private GameObject wallsContainer; 
-    private GameObject enemyContainer;
-    private GameObject interactableContainer;
+    /*
+        Return functions
+    */
 
-    void Start()
+    public static List<List<int>> GetLevel()
     {
-        Random.InitState(seed);
-        GenerateLevel();
+        return grid;
     }
 
-    void Update()
+    public static List<int> GetTopEdge()
     {
-        if (Input.GetKeyDown(KeyCode.G))
-        {
-            GenerateLevel();
-        }
+        return topEdge;
     }
 
-    void UpdateGridDebug()
+    public static List<int> GetBottomEdge()
     {
-        // display the grid in a text box in the inspector panel
-        gridDebug = "";
-        for (int y = gridSize - 1; y >= 0; y--)
-        {
-            for (int x = 0; x < gridSize; x++)
-            {
-                // add squares to a textbox to make the grid visible in inspector
-                if (grid[x][y] == 4)
-                    gridDebug += "▤ ";
-                else if (grid[x][y] == 3)
-                    gridDebug += "▧ ";
-                else if (grid[x][y] == 2)
-                    gridDebug += "▣ ";
-                else if (grid[x][y] == 1)
-                    gridDebug += "□ ";
-                else
-                    gridDebug += "■ ";
-            }
-            gridDebug += "\n";
-        }
+        return bottomEdge;
     }
 
     /*
         Main generation function
     */
 
-    public void GenerateLevel()
+    public static void GenerateLevel()
     {
         // Step #1: Initialize grid full of walls (1's)
         CreateMaze();
@@ -112,53 +90,52 @@ public class ProcGen : MonoBehaviour
         // Step #4: Use A* pathfinding to find that most direct route start -> finish
         GeneratePath();
 
-        // Step #5: Draw the grid matrix to the tilemap
-        DrawGrid();
-
-        // Step #6: Place enemies along correct path
+        // Step #5: Place enemies along correct path
         SpawnEnemiesAlongPath();
 
-        // Step #7: Place loot at dead ends
+        // Step #6: Place loot at dead ends
         SpawnLootDeadEnds();
 
-        // Step #8: Place enemies in front of loot / in branching paths
+        // Step #7: Place enemies in front of loot / in branching paths
         SpawnEnemiesBranchingPaths();
 
-        UpdateGridDebug();
+        // print results to console for debugging
+        GridDebug();
     }
 
     /*
         Helper functions for GenerateLevel()
     */
 
-    void CreateMaze()
+    private static void CreateMaze()
     {
         // fill grid with walls
         grid = new List<List<int>>();
-        for (int y = 0; y < gridSize; y++)
+        for (int y = 0; y < GRID_SIZE; y++)
         {
             grid.Add(new List<int>());
-            for (int x = 0; x < gridSize; x++)
+            for (int x = 0; x < GRID_SIZE; x++)
             {
+                // 0 = floor, 1 = wall
                 grid[y].Add(1);
             }
         }
     }
 
-    void GenerateMaze()
+    private static void GenerateMaze()
     {
-        grid = Dfs.DfsMazeGenerate(grid, gridSize, 0, 0);
+        grid = Dfs.DfsMazeGenerate(grid, GRID_SIZE, 0, 0);
     }
 
-    void StartFinish()
+    private static void StartFinish()
     {
         // find open tiles for entrance/exit (after maze is generated)
         List<int> bottomOpenTiles = new List<int>();
         List<int> topOpenTiles = new List<int>();
 
-        for (int x = 0; x < gridSize; x++)
+        for (int x = 0; x < GRID_SIZE; x++)
         {
-            if (grid[x][gridSize - 1] == 0)
+            if (grid[x][GRID_SIZE - 1] == 0)
                 topOpenTiles.Add(x);
             if (grid[x][0] == 0)
                 bottomOpenTiles.Add(x);
@@ -170,22 +147,17 @@ public class ProcGen : MonoBehaviour
         else
             start.x = 0;
 
-        //Debug.Log("[" + string.Join(", ", bottomOpenTiles) + "]");
-
         // select random end
         if (topOpenTiles.Count > 0)
             end.x = topOpenTiles[Random.Range(0, topOpenTiles.Count)];
         else
             end.x = 0;
 
-        //Debug.Log("[" + string.Join(", ", topOpenTiles) + "]");
-
-
         // set up edges
         bottomEdge = new List<int>();
         topEdge = new List<int>();
 
-        for (int x = 0; x < gridSize; x++)
+        for (int x = 0; x < GRID_SIZE; x++)
         {
             bottomEdge.Add(1);
             topEdge.Add(1);
@@ -195,9 +167,9 @@ public class ProcGen : MonoBehaviour
         topEdge[end.x] = 0;
     }
 
-    void GeneratePath()
+    private static void GeneratePath()
     {
-        List<Vector2Int> path = AStar.AStarFindPath(grid, gridSize, start, end);
+        List<Vector2Int> path = AStar.AStarFindPath(grid, GRID_SIZE, start, end);
         correctPath = path;
 
         if (path != null && path.Count > 0)
@@ -205,6 +177,7 @@ public class ProcGen : MonoBehaviour
             // Highlight the path on the floor tilemap
             foreach (Vector2Int pos in path)
             {
+                // 2 = correct path
                 grid[pos.x][pos.y] = 2;
             }
         }
@@ -214,151 +187,29 @@ public class ProcGen : MonoBehaviour
         }
     }
 
-    void DrawGrid()
-    {
-        // Destroy old cubes before generating new level
-        if (wallsContainer != null)
-        {
-            Destroy(wallsContainer);
-        }
-        
-        // Create new container
-        wallsContainer = new GameObject("WallsContainer");
-        //wallsContainer.transform.parent = transform.parent;
-
-        Vector3Int playerPos = new Vector3Int(0, 0, 0);
-
-        // take the values from the grid array and draw them to the tilegrid
-        for (int x = 0; x < gridSize; x++)
-        {
-            // top edge tiles
-            Vector3Int topEdgePos = new Vector3Int(x + 1, gridSize + 1, 0);
-            if (topEdge[x] == 0)
-            {
-                // this for loop carves a line after the exit tile
-                for (int y = gridSize + 1; y <= 25; y++)
-                {
-                    topEdgePos.y = y;
-                    edgeTilemap.SetTile(topEdgePos, null);
-                }
-            }
-            else
-            {
-                for (int y = gridSize + 1; y <= 25; y++)
-                {
-                    topEdgePos.y = y;
-                    edgeTilemap.SetTile(topEdgePos, edgeTile);
-
-                    Vector3 cubePos = edgeTilemap.GetCellCenterWorld(topEdgePos);
-                    cubePos.z = -0.5f;
-                    Instantiate(edgeCube, cubePos, Quaternion.identity, wallsContainer.transform);
-                }
-            }
-
-            // bottom edge tiles
-            Vector3Int bottomEdgePos = new Vector3Int(x + 1, 0, 0);
-            if (bottomEdge[x] == 0)
-            {
-                // this for loop carves a line leading up to the entrance tile
-                for (int y = 0; y >= -9; y--)
-                {
-                    bottomEdgePos.y = y;
-                    edgeTilemap.SetTile(bottomEdgePos, null);
-                }
-
-                // put the player in the entrance tile
-                playerPos = new Vector3Int(x + 1, 0, 0);
-            }
-            else
-            {
-                for (int y = 0; y >= -9; y--)
-                {
-                    bottomEdgePos.y = y;
-                    edgeTilemap.SetTile(bottomEdgePos, edgeTile);
-
-                    Vector3 cubePos = edgeTilemap.GetCellCenterWorld(bottomEdgePos);
-                    cubePos.z = -0.5f;
-                    Instantiate(edgeCube, cubePos, Quaternion.identity, wallsContainer.transform);
-                }
-            }
-
-            // place the player at the entrance
-            player.transform.position = edgeTilemap.GetCellCenterWorld(playerPos);
-
-            // place walls
-            for (int y = 0; y < gridSize; y++)
-            {
-                Vector3Int pos = new Vector3Int(x, y, 0);
-
-                if (grid[x][y] == 0 || grid[x][y] == 2)
-                {
-                    wallTilemap.SetTile(pos, null);
-                }
-                else
-                {
-                    wallTilemap.SetTile(pos, wallTile);
-
-                    // add 3D cube on top of wall tiles
-                    Vector3 cubePos = wallTilemap.GetCellCenterWorld(pos);
-                    cubePos.z = -0.5f;
-                    Instantiate(wallCube, cubePos, Quaternion.identity, wallsContainer.transform);
-                }
-
-                if (grid[x][y] == 2)
-                {
-                    floorTilemap.SetTile(pos, highlightFloorTile);
-                }
-                else
-                {
-                    floorTilemap.SetTile(pos, floorTile);
-                }
-
-            }
-        }
-    }
-
-    void SpawnEnemiesAlongPath()
-    {
-        // destroy old enemies
-        if (enemyContainer != null)
-        {
-            Destroy(enemyContainer);
-        }
-        enemyContainer = new GameObject("EnemyContainer"); // recreate container
-       
-        // have one enemy spawn for each unit of distance along the intended path
+    private static void SpawnEnemiesAlongPath()
+    {     
+        // have one enemy spawn for each unit of distance along the correct path
         int step = Random.Range(8, 16);
 
         for (int i = step; i < correctPath.Count; i += step)
         {
             step = Random.Range(8, 16);
+
+            // 3 = enemy
             grid[correctPath[i].x][correctPath[i].y] = 3;
-
-            Vector3Int gridPos = new Vector3Int(correctPath[i].x, correctPath[i].y, 0);
-            Vector3 pos = floorTilemap.GetCellCenterWorld(gridPos);
-
-            // spawn a random enemy from the enemy bank for this level
-            //Instantiate(enemy, pos, Quaternion.identity, enemyContainer.transform);
-            GameObject enemyObject = Instantiate(enemy, pos, Quaternion.identity, enemyContainer.transform);
-            enemyObject.GetComponent<OverworldEnemy>().UpdateEnemy(enemyBank.GetRandomEnemy());
         }
     }
 
-    void SpawnLootDeadEnds()
+    private static void SpawnLootDeadEnds()
     {
-        if (interactableContainer != null)
-        {
-            Destroy(interactableContainer);
-        }
-        interactableContainer = new GameObject("InteractableContainer"); // recreate container
-
         int[] dy = { -1, 1, 0, 0 }; // up, down
         int[] dx = { 0, 0, -1, 1 }; // left, right
 
         // search through maze matrix and look for dead ends to place loot
-        for (int y = 0; y < gridSize; y++)
+        for (int y = 0; y < GRID_SIZE; y++)
         {
-            for (int x = 0; x < gridSize; x++)
+            for (int x = 0; x < GRID_SIZE; x++)
             {
                 // ignore cells with walls, the correct path, and enemies
                 if (grid[y][x] == 1 || grid[y][x] == 2 || grid[y][x] == 3)
@@ -374,7 +225,7 @@ public class ProcGen : MonoBehaviour
                     int nx = x + dx[i];
 
                     // bounds check to avoid errors
-                    if (ny >= 0 && ny < gridSize && nx >= 0 && nx < gridSize)
+                    if (ny >= 0 && ny < GRID_SIZE && nx >= 0 && nx < GRID_SIZE)
                     {
                         neighbors.Add(grid[ny][nx]);
                     }
@@ -396,25 +247,21 @@ public class ProcGen : MonoBehaviour
 
                 if (zeros == 1 && ones == 3)
                 {
+                    // 4 = interactable
                     grid[y][x] = 4; // add a 4 to represent this interactable instance
-
-                    Vector3Int gridPos = new Vector3Int(y, x, 0);
-                    Vector3 pos = floorTilemap.GetCellCenterWorld(gridPos);
-
-                    Instantiate(interactable, pos, Quaternion.identity, interactableContainer.transform);
                 }
             }
         }
     }
 
-    void SpawnEnemiesBranchingPaths()
+    private static void SpawnEnemiesBranchingPaths()
     {
         List<Vector2Int> openFloorTiles = new List<Vector2Int>();
 
         // create a list of all of the open floor tiles (0s) and place a random range of enemies in random positions from that list
-        for (int y = 0; y < gridSize; y++)
+        for (int y = 0; y < GRID_SIZE; y++)
         {
-            for (int x = 0; x < gridSize; x++)
+            for (int x = 0; x < GRID_SIZE; x++)
             {
                 if (grid[y][x] == 0)
                     openFloorTiles.Add(new Vector2Int(y, x));
@@ -439,13 +286,54 @@ public class ProcGen : MonoBehaviour
         for (int i = 0; i < numEnemies; i++)
         {
             int randPos = Random.Range(0, openFloorTiles.Count);
+
+            // 3 = enemy
             grid[openFloorTiles[randPos].x][openFloorTiles[randPos].y] = 3;
-
-            Vector3Int gridPos = new Vector3Int(openFloorTiles[randPos].x, openFloorTiles[randPos].y, 0);
-            Vector3 pos = floorTilemap.GetCellCenterWorld(gridPos);
-
-            GameObject enemyObject = Instantiate(enemy, pos, Quaternion.identity, enemyContainer.transform);
-            enemyObject.GetComponent<OverworldEnemy>().UpdateEnemy(enemyBank.GetRandomEnemy());
         }
+    }
+
+    private static void GridDebug()
+    {
+        string topEdgeDebug = "";
+        for (int x = 0; x < GRID_SIZE; x++)
+        {
+            if (topEdge[x] == 1)
+                topEdgeDebug += "1 ";
+            else
+                topEdgeDebug += "0 ";
+        }
+
+        string gridDebug = "";
+        for (int y = GRID_SIZE - 1; y >= 0; y--)
+        {
+            for (int x = 0; x < GRID_SIZE; x++)
+            {
+                if (grid[x][y] == 4)
+                    gridDebug += "4 ";
+                else if (grid[x][y] == 3)
+                    gridDebug += "3 ";
+                else if (grid[x][y] == 2)
+                    gridDebug += "2 ";
+                else if (grid[x][y] == 1)
+                    gridDebug += "1 ";
+                else
+                    gridDebug += "0 ";
+            }
+            gridDebug += "\n";
+        }
+
+        string bottomEdgeDebug = "";
+        for (int x = 0; x < GRID_SIZE; x++)
+        {
+            if (bottomEdge[x] == 1)
+                bottomEdgeDebug += "1 ";
+            else
+                bottomEdgeDebug += "0 ";
+        }
+
+
+        Debug.Log(topEdgeDebug);
+        Debug.Log(gridDebug);
+        Debug.Log(bottomEdgeDebug);
     }
 }
