@@ -27368,9 +27368,9 @@ MonoBehaviour:
   floorTile: {fileID: 11400000, guid: a53667fd0dabe0b45a35f2426e2372c1, type: 2}
   highlightFloorTile: {fileID: 11400000, guid: 7c5373c9fba04b14faa5ac60b4e033f2, type: 2}
   player: {fileID: 1544774759}
-  enemy: {fileID: 0}
-  interactable: {fileID: 0}
-  enemyBank: {fileID: 0}
+  enemy: {fileID: 7871526490275089156, guid: c2566b970f7a0ee41b494e1f7679117f, type: 3}
+  interactable: {fileID: 8345337547245488134, guid: 5c8759fc19e46054aa530f4c75ad3282, type: 3}
+  enemyBank: {fileID: 543595442}
   earthEdge: {fileID: 8401340354653773743, guid: 582c7ebd6cf610e45b0d1eeb803bf06b, type: 3}
   earthWallCube: {fileID: 1539623353450734875, guid: 54cbb5fe206dbd7439ee70b8eba31c6d, type: 3}
   fireEdge: {fileID: 8401340354653773743, guid: 09be86e12c292914a9ed399172005941, type: 3}
