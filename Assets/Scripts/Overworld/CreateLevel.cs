@@ -6,13 +6,17 @@ using UnityEngine.Tilemaps;
 
 public class CreateLevel : MonoBehaviour
 {
+    [Header("Debug")]
+    public bool enemies = true;
+    public bool interactables = true;
+
     [Header("Tilemap References")]
     public Tilemap wallTilemap;
     public Tilemap edgeTilemap;
     public Tilemap floorTilemap;
     public TileBase wallTile;
-    public TileBase edgeTile;
     public TileBase floorTile;
+    public TileBase edgeTile;
     public TileBase highlightFloorTile;
 
     [Header("Entity References")]
@@ -22,14 +26,8 @@ public class CreateLevel : MonoBehaviour
     public EnemyBank enemyBank;
 
     [Header("3D Elements")]
-    public GameObject earthEdge; 
-    public GameObject earthWallCube; 
-    public GameObject fireEdge; 
-    public GameObject fireWallCube; 
-    public GameObject waterEdge; 
-    public GameObject waterWallCube; 
-    public GameObject windEdge; 
-    public GameObject windWallCube; 
+    public GameObject edge; 
+    public GameObject wallCube; 
 
     // grid parameter
     private int gridSize;
@@ -42,15 +40,17 @@ public class CreateLevel : MonoBehaviour
     private GameObject enemyContainer;
     private GameObject interactableContainer;
 
-    // keep track of the current area
-    private List<int> currentArea = new List<int>(); // 0 = earth, 1 = fire, 2 = water, 3 = wind
-    private GameObject currentLevelWallCube;
-    private GameObject currentLevelEdge;
-
-    void Start()
+    void OnEnable()
     {
-        int seed = 0;
-        Random.InitState(seed);
+        DrawLevel();
+    }
+
+    void OnDisable()
+    {
+        // destroy old containers generating new level
+        Destroy(wallsContainer);
+        Destroy(enemyContainer);
+        Destroy(interactableContainer);
     }
 
     void Update()
@@ -61,7 +61,7 @@ public class CreateLevel : MonoBehaviour
         }
     }
 
-    void DrawLevel()
+    public void DrawLevel()
     {
         ProcGen.GenerateLevel();
         grid = ProcGen.GetLevel();
@@ -71,14 +71,16 @@ public class CreateLevel : MonoBehaviour
 
         DrawMaze();
 
-        AddInteractables();
+        if (interactables)
+            AddInteractables();
 
-        AddEnemies();
+        if (enemies)
+            AddEnemies();
 
         AddModels();
     }
 
-    void DrawMaze()
+    private void DrawMaze()
     {
         // destroy old cubes before generating new level
         if (wallsContainer != null)
@@ -90,8 +92,8 @@ public class CreateLevel : MonoBehaviour
         Vector3Int playerPos = new Vector3Int(0, 0, 0);
 
         // create thick walls on edges
-        Instantiate(fireEdge, new Vector3(13f, 0f, -0.5f), Quaternion.identity, wallsContainer.transform);
-        Instantiate(fireEdge, new Vector3(-13f, 0f, -0.5f), Quaternion.identity, wallsContainer.transform);
+        Instantiate(edge, new Vector3(13f, 0f, -0.5f), Quaternion.identity, wallsContainer.transform);
+        Instantiate(edge, new Vector3(-13f, 0f, -0.5f), Quaternion.identity, wallsContainer.transform);
 
         // take the values from the grid array and draw them to the tilegrid
         for (int x = 0; x < gridSize; x++)
@@ -116,7 +118,7 @@ public class CreateLevel : MonoBehaviour
 
                     Vector3 cubePos = edgeTilemap.GetCellCenterWorld(topEdgePos);
                     cubePos.z = -0.5f;
-                    Instantiate(fireWallCube, cubePos, Quaternion.identity, wallsContainer.transform);
+                    Instantiate(wallCube, cubePos, Quaternion.identity, wallsContainer.transform);
                 }
             }
 
@@ -143,7 +145,7 @@ public class CreateLevel : MonoBehaviour
 
                     Vector3 cubePos = edgeTilemap.GetCellCenterWorld(bottomEdgePos);
                     cubePos.z = -0.5f;
-                    Instantiate(fireWallCube, cubePos, Quaternion.identity, wallsContainer.transform);
+                    Instantiate(wallCube, cubePos, Quaternion.identity, wallsContainer.transform);
                 }
             }
 
@@ -162,7 +164,7 @@ public class CreateLevel : MonoBehaviour
                     // add 3D cube on top of wall tiles
                     Vector3 cubePos = wallTilemap.GetCellCenterWorld(pos);
                     cubePos.z = -0.5f;
-                    Instantiate(fireWallCube, cubePos, Quaternion.identity, wallsContainer.transform);
+                    Instantiate(wallCube, cubePos, Quaternion.identity, wallsContainer.transform);
 
                 }
                 else
@@ -182,7 +184,7 @@ public class CreateLevel : MonoBehaviour
         }
     }
 
-    void AddEnemies()
+    private void AddEnemies()
     {
         // destroy old enemies
         if (enemyContainer != null)
@@ -207,7 +209,7 @@ public class CreateLevel : MonoBehaviour
         }
     }
 
-    void AddInteractables()
+    private void AddInteractables()
     {
         if (interactableContainer != null)
         {
@@ -230,7 +232,7 @@ public class CreateLevel : MonoBehaviour
         }
     }
 
-    void AddModels()
+    private void AddModels()
     {
         // will be used to add torches, cobwebs, other decorations
     }

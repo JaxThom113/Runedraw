@@ -3,21 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using DG.Tweening;
-using System;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
 
 public class LevelSystem: Singleton<LevelSystem>
 {
-    [Header("Transition Screen")]
-    public GameObject transitionScreen;
+    [Header("Areas")]
+    public GameObject earthArea;
+    public GameObject fireArea;
+    public GameObject neutralArea;
+    public GameObject waterArea;
+    public GameObject windArea;
 
-    [Header("HUD UI References")]
+    [Header("UI References")]
     public TextMeshProUGUI areaTitle;
     public TextMeshProUGUI areaLevel;
-
-    [Header("Card Pickup UI References")]
+    public GameObject transitionScreen;
     public GameObject LootView;
 
     [Header("Script References")]
@@ -26,17 +27,23 @@ public class LevelSystem: Singleton<LevelSystem>
     // current level and area
     private int currentLevel = 1;
     private int currentArea = 1;
+    private int currentAreaType = 1; // 1 = neutral, 2 = fire, 3 = wind, 4 = water, 5 = earth
+
+    // loot view variables
     private bool skipPressed = false;
     private GameObject currentInteractable = null;
 
+    private CreateLevel createLevel;
+
     void Start()
     {
+        int seed = 0;
+        Random.InitState(seed);
+
+        createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
+
         UpdateUI();
     }
-
-    /*
-        Level/Area Transitions
-    */
 
     void OnEnable()
     {
@@ -48,50 +55,18 @@ public class LevelSystem: Singleton<LevelSystem>
         ActionSystem.DetachPerformer<LootCardGA>();
     }
 
-    public void NextLevel()
-    {
-        if (currentLevel == 3)
-        {
-            NextArea();
-
-            //placeholder area transition
-            StartCoroutine(LevelTransition());
-            UpdateUI();
-            
-            return;
-        }
-
-        currentLevel++;
-
-        StartCoroutine(LevelTransition());
-
-        UpdateUI();
-    }
-    
-    public void NextArea()
-    {
-        currentArea++;
-        currentLevel = 1;
-
-        // load next area scene
-        // SceneManager.LoadScene($"Level{currentLevel}");
-
-        StartCoroutine(AreaTransition());
-
-        UpdateUI();
-    }
-
     void UpdateUI()
     {
         if (areaTitle != null)
         {
             // names for different areas
-            switch (currentArea)
+            switch (currentAreaType)
             {
-                case 1: areaTitle.text = $"Fire Dungeons"; break; // fire-themed area
-                case 2: areaTitle.text = $"Windblown Tombs"; break; // wind--themed area
-                case 3: areaTitle.text = $"Chilly Crypt"; break; // water-themed area
-                case 4: areaTitle.text = $"The Dirt Zone"; break; // earth-themed area
+                case 1: areaTitle.text = $"Dungeons"; break; // neutral area
+                case 2: areaTitle.text = $"Fire Zone"; break; // fire area
+                case 3: areaTitle.text = $"Wind Zone"; break; // wind area
+                case 4: areaTitle.text = $"Water Zone"; break; // water area
+                case 5: areaTitle.text = $"Earth Zone"; break; // earth area
             }
         }
 
@@ -102,19 +77,90 @@ public class LevelSystem: Singleton<LevelSystem>
         }
     }
 
-    IEnumerator LevelTransition()
+    /*
+        Level transition/coroutine
+    */
+
+    public void NextLevel()
+    {
+        if (currentLevel == 3)
+        {
+            currentArea++;
+            currentLevel = 1;
+
+            // randomly select area type for next area
+            currentAreaType = Random.Range(1, 6); 
+
+            StartCoroutine(StartTransition(true));
+        }
+        else
+        {
+            currentLevel++;
+
+            StartCoroutine(StartTransition());
+        }
+
+        UpdateUI();
+    }
+
+    IEnumerator StartTransition(bool areaTransition = false)
     {
         // take control from player, have player continue moving upward
         playerMovement.enabled = false;
-        //SceneTransitionSystem.Instance.enemyData = OverworldSystem.Instance.GetCurrentEnemy();
 
         // transition swipe effect
         transitionScreen.SetActive(true);
         transitionScreen.transform.DOMoveY(0, 0.5f).SetEase(Ease.OutCubic);
         yield return new WaitForSeconds(1f);
 
-        // generate new level
+        if (areaTransition)
+        {
+            // transition to level 1 of the next area
+            switch (currentAreaType)
+            {
+                case 1: 
+                    neutralArea.SetActive(true); 
+                    fireArea.SetActive(false); 
+                    windArea.SetActive(false); 
+                    waterArea.SetActive(false);
+                    earthArea.SetActive(false);
+                    break;
+                case 2: 
+                    neutralArea.SetActive(false); 
+                    fireArea.SetActive(true); 
+                    windArea.SetActive(false); 
+                    waterArea.SetActive(false);
+                    earthArea.SetActive(false);
+                    break;
+                case 3: 
+                    neutralArea.SetActive(false); 
+                    fireArea.SetActive(false); 
+                    windArea.SetActive(true); 
+                    waterArea.SetActive(false);
+                    earthArea.SetActive(false);
+                    break;
+                case 4: 
+                    neutralArea.SetActive(false); 
+                    fireArea.SetActive(false); 
+                    windArea.SetActive(false); 
+                    waterArea.SetActive(true);
+                    earthArea.SetActive(false);
+                    break;
+                case 5: 
+                    neutralArea.SetActive(false); 
+                    fireArea.SetActive(false); 
+                    windArea.SetActive(false); 
+                    waterArea.SetActive(false);
+                    earthArea.SetActive(true);
+                    break;
+            }
+        
+            createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
+        }
+
+        // transition to next level in the current area
         ProcGen.GenerateLevel();
+        createLevel.DrawLevel();
         playerMovement.ResetMovePoint();
 
         // transition swipe out and reset position
@@ -125,12 +171,6 @@ public class LevelSystem: Singleton<LevelSystem>
 
         // return control to the player  
         playerMovement.enabled = true;
-
-        yield return null;
-    }
-
-    IEnumerator AreaTransition()
-    {
 
         yield return null;
     }
