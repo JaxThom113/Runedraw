@@ -180,7 +180,8 @@ public class CardSystem : Singleton<CardSystem>
     }
       
     // Reactions 
-    private void EnemyTurnPreReaction(EnemyTurnGA enemyTurnGA){ 
+    private void EnemyTurnPreReaction(EnemyTurnGA enemyTurnGA){  
+        Debug.Log("EnemyTurnPreReaction");
          DiscardCardGA discardCardGA = new(); 
          ActionSystem.Instance.AddReaction(discardCardGA);
 
@@ -219,7 +220,8 @@ public class CardSystem : Singleton<CardSystem>
     } 
     private void CreateLootCardsPostReaction(LootCardGA lootCardGA)  
     { 
-        List<CardSO> lootCards = lootCardBank.GetRandomCards(lootCardGA.amount);
+        CardSO ultimateCard = EnemySystem.Instance != null ? EnemySystem.Instance.enemy?.ultimateCard : null;
+        List<CardSO> lootCards = lootCardBank.GetRandomCardsEnemy(ultimateCard);
         foreach(var cardSO in lootCards) {
             Card card = new Card(cardSO);
             ApplyCard applyCard = LootCardCreator.Instance.CreateCard(card, Vector3.zero, Quaternion.identity, false);
@@ -229,7 +231,7 @@ public class CardSystem : Singleton<CardSystem>
     private IEnumerator DrawEnemyCard() 
     {
         SoundEffectSystem.Instance.PlayCardDrawSound();
-        Card card = enemyDeck.Draw();
+        Card card = enemyDeck.DrawFront();
           
         enemyDeck.Add(card);
         ApplyCard applyCard = CardCreator.Instance.CreateCard(card, enemyHandTransform.position, enemyHandTransform.rotation, true);    

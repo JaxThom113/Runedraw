@@ -15,6 +15,7 @@ public class Card
     public Sprite cardElementIcon => data.cardElementIcon;
     public List<Effect> effects => data.effects;
     public AudioClip sound => data.sound;
+    public bool IsUltimate => data != null && data.IsUltimate;
     //public Sprite cardTypeIcon => data.cardTypeIcon;
     //public Sprite cardElementIcon => data.cardElementIcon;
     public string cardDescription {get; private set; } 

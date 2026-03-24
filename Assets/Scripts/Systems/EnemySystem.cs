@@ -45,8 +45,12 @@ public class EnemySystem : Singleton<EnemySystem>
             yield return EnemyHandView.Instance.RemoveEnemyCard(card); 
             
         } 
+        EnemyTurnHandler();
           yield return new WaitForSeconds(1f); 
-          enemyTurnCount++; 
+          
+    } 
+    public void EnemyTurnHandler() {
+        enemyTurnCount++; 
           if(enemyTurnCount >= enemy.enemyDeck.Count) {
             enemyTurnCount = 0;
           }

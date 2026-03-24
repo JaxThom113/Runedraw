@@ -10,7 +10,7 @@ public class OverworldSystem : Singleton<OverworldSystem>
         SetupEnemy();
     }
     private void SetupEnemy() { 
-        enemyView.Setup(enemyData);
+        enemyView.Setup(enemyData, null);
     } 
     public EnemySO GetCurrentEnemy() { 
         //FIXME: HAVE MULTIPLE ENEMIES IN THE FUTURE

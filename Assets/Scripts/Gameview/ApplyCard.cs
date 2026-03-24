@@ -28,7 +28,25 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     private bool tweening = true;
     private Vector3 initialPosition;
-    private Quaternion initialRotation; 
+    private Quaternion initialRotation;
+    private bool ultimateWindupActive;
+
+    public const float UltimateWindupSeconds = 1.5f;
+    public const float UltimateScale = 0.5f;
+    public const float UltimateTweenDuration = 0.25f;
+
+    public IEnumerator UltimateWindupRoutine()
+    {
+        if (transform == null) yield break; 
+        transform.DOKill();
+        transform.DOScale(Vector3.one * UltimateScale, UltimateTweenDuration).SetEase(Ease.OutQuad); 
+       transform.DOMove(Vector3.zero + new Vector3(0, 1, 0), UltimateTweenDuration);
+        yield return new WaitForSeconds(UltimateTweenDuration); 
+        UISystem.Instance.TransformShake(this.transform);
+        yield return new WaitForSeconds(UltimateWindupSeconds); 
+        transform.DOMove(new Vector3(25, 1, 0), UltimateTweenDuration); 
+        yield return new WaitForSeconds(UltimateTweenDuration);
+    }
     public bool LootCard = false;
     public bool InventoryCard = false;
     //ALL TYPES MUST BE THE SAME
@@ -124,18 +142,37 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if (card == null ) 
         {
             Debug.LogError("Card is null");
+            Interactions.Instance.PlayerIsDragging = false;
             return;
         }
         if( transform.localPosition.y > 200f && ManaSystem.Instance.HasEnoughMana(card.cardCost)) 
-        {  
+        {   
+            Interactions.Instance.PlayerIsDragging = false;
+            if (card.IsUltimate)
+            {
+                if (!ultimateWindupActive)
+                    StartCoroutine(PlayCardAfterUltimateWindup());
+                return;
+            }
             PlayCardGA playCardGA = new(card); 
             ActionSystem.Instance.Perform(playCardGA);  //action
         } 
         else
         {
+            Interactions.Instance.PlayerIsDragging = false;
             transform.DOMove(initialPosition, 0.2f);
             transform.DORotateQuaternion(initialRotation, 0.2f);
         }
+    }
+
+    IEnumerator PlayCardAfterUltimateWindup()
+    {
+        ultimateWindupActive = true;
+        yield return UltimateWindupRoutine();
+        ultimateWindupActive = false;
+        if (card == null) yield break;
+        PlayCardGA playCardGA = new(card);
+        ActionSystem.Instance.Perform(playCardGA);
     }
     
     public void OnPointerExit(PointerEventData eventData)

@@ -8,6 +8,7 @@ public abstract class Entity : MonoBehaviour
     public string entityName => data.entityName; 
     public Sprite entityIcon => data.entityIcon; 
     public int entityHealth => data.entityHealth; 
+    public DialogueSO entityDialogue => data.entityDialogue;
     
 
     protected EntitySO data;

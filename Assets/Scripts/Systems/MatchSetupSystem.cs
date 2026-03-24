@@ -20,10 +20,11 @@ public class MatchSetupSystem : MonoBehaviour
         PlayerSystem.Instance.Setup(playerData, playerView);
         EnemySystem.Instance.Setup(overworldEnemy); 
         DamageSystem.Instance.Setup(playerView, enemyView);
-        ShieldSystem.Instance.Setup(playerView, enemyView);
+        ShieldSystem.Instance.Setup(playerView, enemyView); 
+        DialogueSystem.Instance.Setup(enemyData.entityDialogue);
         playerView.Setup(playerData); 
         
-        enemyView.Setup(enemyData); 
+        enemyView.Setup(enemyData, overworldEnemy); 
         
          StartCoroutine(SetupCards());
     }
@@ -31,7 +32,7 @@ public class MatchSetupSystem : MonoBehaviour
 
     private IEnumerator SetupCards(){  
         yield return new WaitForSeconds(1f); 
-        
+        DialogueSystem.Instance.IntroDialogue();
         List<CardSO> playerDeck = PlayerSystem.Instance.player.playerDeck;  
         List<CardSOList> enemyDeck = EnemySystem.Instance.enemy.enemyDeck; 
         CardSystem.Instance.Setup(playerDeck, enemyDeck); 

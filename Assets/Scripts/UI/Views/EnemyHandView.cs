@@ -32,6 +32,14 @@ public class EnemyHandView : Singleton<EnemyHandView>
             Debug.LogError("Card not found in enemy hand");
             yield break;
         }; 
+        if (applyCard.card.IsUltimate)
+        {
+            cards.Remove(applyCard);
+            yield return StartCoroutine(UpdateCardPositions(null));
+            yield return applyCard.StartCoroutine(applyCard.UltimateWindupRoutine());
+            Destroy(applyCard.gameObject);
+            yield break;
+        }
         applyCard.transform.DOMove(Vector3.zero, duration);
         cards.Remove(applyCard);
         yield return StartCoroutine(UpdateCardPositions(null));

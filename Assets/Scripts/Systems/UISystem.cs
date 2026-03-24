@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using DG.Tweening;
 using UnityEngine.SceneManagement;
 
 public class UISystem : Singleton<UISystem>
@@ -50,6 +50,19 @@ public class UISystem : Singleton<UISystem>
             Time.timeScale = 0;
         else
             Time.timeScale = 1;
+    } 
+
+   
+    public void TransformShake(Transform objectTransform)
+    {
+        if (objectTransform is RectTransform rt)
+        {
+            rt.DOShakeAnchorPos(0.5f, new Vector2(24f, 24f), 14, 90f, false, true);
+        }
+        else
+        {
+            objectTransform.DOShakePosition(0.5f, new Vector3(0.25f, 0f, 0.25f), 10, 90f, false, true);
+        }
     }
 
     /*

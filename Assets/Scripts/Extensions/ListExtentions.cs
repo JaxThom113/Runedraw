@@ -12,4 +12,11 @@ public static class ListExtentions
         list.Remove(t); 
         return t; 
     }
+    public static T DrawFront<T>(this List<T> list) 
+    { 
+        if (list.Count == 0) return default; 
+        T t = list[0]; 
+        list.Remove(t); 
+        return t; 
+    }
 }

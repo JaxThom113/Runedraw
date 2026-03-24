@@ -15,6 +15,7 @@ MonoBehaviour:
   entityName: I.R.S
   entityIcon: {fileID: 21300000, guid: d949f22ef90b17b46a07cb42dc8e5718, type: 3}
   entityHealth: 6
+  entityDialogue: {fileID: 11400000, guid: 6c853c200cf625149b1d56650e81db6a, type: 2}
   enemyDeck:
   - enemyHand:
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
@@ -32,3 +33,4 @@ MonoBehaviour:
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
+  ultimateCard: {fileID: 11400000, guid: 098ff1a47372b8e43989fca01f99249f, type: 2}

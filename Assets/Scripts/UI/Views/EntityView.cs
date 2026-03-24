@@ -16,7 +16,8 @@ public class EntityView : MonoBehaviour
     public int currentShield;
     public int maxHealth;
     public int currentHealth; 
-    public bool firstSetup = true;
+    public bool firstSetup = true; 
+    public OverworldEnemy overworldEnemy;
 
     protected void SetupBase(EntitySO entityData)
     { 
@@ -59,7 +60,12 @@ public class EntityView : MonoBehaviour
 
 
     public void TakeDamage(int amount)
-    {
+    {  
+        if (this is EnemyView){   
+            UISystem.Instance.TransformShake(overworldEnemy.transform);
+            DialogueSystem.Instance.TakeDamageDialogue();
+        }
+            
         int toShield = Mathf.Min(amount, currentShield);
         currentShield -= toShield;
         int toHealth = amount - toShield;
