@@ -52,25 +52,6 @@ public static class ProcGen
     private static List<Vector2Int> correctPath = new List<Vector2Int>();
 
     /*
-        Return functions
-    */
-
-    public static List<List<int>> GetLevel()
-    {
-        return grid;
-    }
-
-    public static List<int> GetTopEdge()
-    {
-        return topEdge;
-    }
-
-    public static List<int> GetBottomEdge()
-    {
-        return bottomEdge;
-    }
-
-    /*
         Main generation function
     */
 
@@ -99,6 +80,25 @@ public static class ProcGen
 
         // print results to console for debugging
         GridDebug();
+    }
+
+    /*
+        Return functions
+    */
+
+    public static List<List<int>> GetLevel()
+    {
+        return grid;
+    }
+
+    public static List<int> GetTopEdge()
+    {
+        return topEdge;
+    }
+
+    public static List<int> GetBottomEdge()
+    {
+        return bottomEdge;
     }
 
     /*

@@ -6,10 +6,6 @@ using UnityEngine.Tilemaps;
 
 public class CreateLevel : MonoBehaviour
 {
-    [Header("Debug")]
-    public bool enemies = true;
-    public bool interactables = true;
-
     [Header("Tilemap References")]
     public Tilemap wallTilemap;
     public Tilemap edgeTilemap;
@@ -29,11 +25,15 @@ public class CreateLevel : MonoBehaviour
     public GameObject edge; 
     public GameObject wallCube; 
 
-    // grid parameter
+    // grid parameters
     private int gridSize;
     private List<List<int>> grid;
     private List<int> topEdge;
     private List<int> bottomEdge;
+
+    // custom levels
+    private List<List<int>> tutorialGrid = new List<List<int>>();
+    private List<List<int>> finalBossGrid;
 
     // containers for wall/enemy/interactable prefabs
     private GameObject wallsContainer; 
@@ -55,27 +55,63 @@ public class CreateLevel : MonoBehaviour
 
     void Update()
     {
+        // generate new random level
         if (Input.GetKeyDown(KeyCode.G))
         {
             DrawLevel();
         }
+
+        // set current level to the format of Tutorial.csv
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            TextAsset lvlFile = Resources.Load<TextAsset>("Levels/Tutorial");
+            DrawLevel(lvlFile);
+        }
+
+        // set current level to the format of FinalBoss.csv
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            TextAsset lvlFile = Resources.Load<TextAsset>("Levels/FinalBoss");
+            DrawLevel(lvlFile);
+        }
+
+        if (LevelSystem.Instance.enemies)
+            enemyContainer.SetActive(true);
+        else
+            enemyContainer.SetActive(false);
+
+        if (LevelSystem.Instance.interactables)
+            interactableContainer.SetActive(true);
+        else
+            interactableContainer.SetActive(false);
     }
 
-    public void DrawLevel()
+    public void DrawLevel(TextAsset csv = null)
     {
-        ProcGen.GenerateLevel();
-        grid = ProcGen.GetLevel();
-        topEdge = ProcGen.GetTopEdge();
-        bottomEdge = ProcGen.GetBottomEdge();
+        if (csv != null)
+        {
+            LevelParser.GenerateLevelFromCsv(csv);
+
+            grid = LevelParser.GetLevel();
+            topEdge = LevelParser.GetTopEdge();
+            bottomEdge = LevelParser.GetBottomEdge();
+        }
+        else
+        {
+            ProcGen.GenerateLevel();
+
+            grid = ProcGen.GetLevel();
+            topEdge = ProcGen.GetTopEdge();
+            bottomEdge = ProcGen.GetBottomEdge();
+        }
+        
         gridSize = grid.Count;
 
         DrawMaze();
 
-        if (interactables)
-            AddInteractables();
+        AddInteractables();
 
-        if (enemies)
-            AddEnemies();
+        AddEnemies();
 
         AddModels();
     }

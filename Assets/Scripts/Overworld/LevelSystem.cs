@@ -8,12 +8,20 @@ using UnityEngine.SceneManagement;
 
 public class LevelSystem: Singleton<LevelSystem>
 {
+    [Header("Debug")]
+    public bool enemies = true;
+    public bool interactables = true;
+    
     [Header("Areas")]
     public GameObject earthArea;
     public GameObject fireArea;
     public GameObject neutralArea;
     public GameObject waterArea;
     public GameObject windArea;
+
+    [Header("Custom Levels")]
+    public GameObject tutorialLevel;    
+    public GameObject finalBossLevel;
 
     [Header("UI References")]
     public TextMeshProUGUI areaTitle;
@@ -27,7 +35,18 @@ public class LevelSystem: Singleton<LevelSystem>
     // current level and area
     private int currentLevel = 1;
     private int currentArea = 1;
-    private int currentAreaType = 1; // 1 = neutral, 2 = fire, 3 = wind, 4 = water, 5 = earth
+
+    /*
+        Current area type
+            0 = Tutorial level
+            1 = neutral
+            2 = fire
+            3 = wind
+            4 = water
+            5 = earth
+            6 = FinalBoss level
+    */
+    private int currentAreaType = 1;
 
     // loot view variables
     private bool skipPressed = false;
@@ -40,6 +59,7 @@ public class LevelSystem: Singleton<LevelSystem>
         int seed = 0;
         Random.InitState(seed);
 
+        // get reference to the CreateLevel script in the currently active area GameObject (in Board)
         createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
 
         UpdateUI();
@@ -62,11 +82,13 @@ public class LevelSystem: Singleton<LevelSystem>
             // names for different areas
             switch (currentAreaType)
             {
+                case 0: areaTitle.text = $"Tutorial"; break; // tutorial level
                 case 1: areaTitle.text = $"Dungeons"; break; // neutral area
                 case 2: areaTitle.text = $"Fire Zone"; break; // fire area
                 case 3: areaTitle.text = $"Wind Zone"; break; // wind area
                 case 4: areaTitle.text = $"Water Zone"; break; // water area
                 case 5: areaTitle.text = $"Earth Zone"; break; // earth area
+                case 6: areaTitle.text = $"Final Boss"; break; // final boss level
             }
         }
 
@@ -85,16 +107,29 @@ public class LevelSystem: Singleton<LevelSystem>
     {
         if (currentLevel == 3)
         {
-            currentArea++;
-            currentLevel = 1;
+            if (currentArea == 3)
+            {
+                // transition to the final boss level 
+                currentAreaType = 6;
 
-            // randomly select area type for next area
-            currentAreaType = Random.Range(1, 6); 
+                TextAsset lvlFile = Resources.Load<TextAsset>("Levels/FinalBoss");
+                StartCoroutine(StartTransition(true, lvlFile));
+            }
+            else
+            {
+                currentArea++;
+                currentLevel = 1;
 
-            StartCoroutine(StartTransition(true));
-        }
+                // randomly select area type for next area
+                currentAreaType = Random.Range(1, 6); 
+
+                StartCoroutine(StartTransition(true));
+            }
+
+        }      
         else
         {
+            // got to the next level of the current area
             currentLevel++;
 
             StartCoroutine(StartTransition());
@@ -103,7 +138,7 @@ public class LevelSystem: Singleton<LevelSystem>
         UpdateUI();
     }
 
-    IEnumerator StartTransition(bool areaTransition = false)
+    IEnumerator StartTransition(bool areaTransition = false, TextAsset file = null)
     {
         // take control from player, have player continue moving upward
         playerMovement.enabled = false;
@@ -115,59 +150,47 @@ public class LevelSystem: Singleton<LevelSystem>
 
         if (areaTransition)
         {
+            tutorialLevel.SetActive(false);
+            neutralArea.SetActive(false); 
+            fireArea.SetActive(false); 
+            windArea.SetActive(false); 
+            waterArea.SetActive(false);
+            earthArea.SetActive(false);
+            finalBossLevel.SetActive(false);
+
             // transition to level 1 of the next area
             switch (currentAreaType)
             {
-                case 1: 
-                    neutralArea.SetActive(true); 
-                    fireArea.SetActive(false); 
-                    windArea.SetActive(false); 
-                    waterArea.SetActive(false);
-                    earthArea.SetActive(false);
-                    break;
-                case 2: 
-                    neutralArea.SetActive(false); 
-                    fireArea.SetActive(true); 
-                    windArea.SetActive(false); 
-                    waterArea.SetActive(false);
-                    earthArea.SetActive(false);
-                    break;
-                case 3: 
-                    neutralArea.SetActive(false); 
-                    fireArea.SetActive(false); 
-                    windArea.SetActive(true); 
-                    waterArea.SetActive(false);
-                    earthArea.SetActive(false);
-                    break;
-                case 4: 
-                    neutralArea.SetActive(false); 
-                    fireArea.SetActive(false); 
-                    windArea.SetActive(false); 
-                    waterArea.SetActive(true);
-                    earthArea.SetActive(false);
-                    break;
-                case 5: 
-                    neutralArea.SetActive(false); 
-                    fireArea.SetActive(false); 
-                    windArea.SetActive(false); 
-                    waterArea.SetActive(false);
-                    earthArea.SetActive(true);
-                    break;
+                case 0: tutorialLevel.SetActive(true); break;
+                case 1: neutralArea.SetActive(true); break;
+                case 2: fireArea.SetActive(true); break;
+                case 3: windArea.SetActive(true); break;
+                case 4: waterArea.SetActive(true); break;
+                case 5: earthArea.SetActive(true); break;
+                case 6: finalBossLevel.SetActive(true); break;
             }
         
             createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
         }
 
-        // transition to next level in the current area
-        ProcGen.GenerateLevel();
-        createLevel.DrawLevel();
+        if (file != null)
+        {
+            // transition to next level in the current area
+            createLevel.DrawLevel(file);
+        }
+        else
+        {
+            // transition to next level in the current area
+            createLevel.DrawLevel();
+        }
+        
         playerMovement.ResetMovePoint();
 
         // transition swipe out and reset position
         transitionScreen.transform.DOMoveY(40, 0.5f).SetEase(Ease.OutCubic);
         yield return new WaitForSeconds(1f);
         transitionScreen.SetActive(false);
-        transitionScreen.transform.position = new Vector3(0, -40, 0);
+        transitionScreen.transform.position = new Vector3(0, -40, 0.5f);
 
         // return control to the player  
         playerMovement.enabled = true;
