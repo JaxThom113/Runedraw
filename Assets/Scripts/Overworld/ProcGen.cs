@@ -4,14 +4,16 @@ using UnityEngine;
 
 /*
 
-This script generates a 15x15 matrix to define a level.
-It also returns the top and obttom edges to define the start/end points of the level.
+This script generates a 15x15 grid to define a level, along with top and botttom edges 
+to define the start/end points of the level.
+
+Indexing is (y, x), and coordinates are done as if in 4th quadrant. 
 
 Example:
 
-0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 
+0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 (topEdge)
 
-2 0 3 0 0 0 0 0 0 0 0 0 0 0 3 
+2 0 3 0 0 0 0 0 0 0 0 0 0 0 3 (grid)
 2 1 1 1 1 1 1 1 1 1 1 1 1 1 0 
 2 2 2 2 2 1 2 2 2 1 4 3 0 0 0 
 3 1 1 1 2 1 2 1 2 1 1 1 1 1 1 
@@ -27,7 +29,7 @@ Example:
 2 1 1 1 0 1 0 1 2 1 1 1 2 1 0 
 2 2 0 1 0 1 0 0 2 2 2 2 2 1 0 
 
-1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 
+1 0 1 1 1 1 1 1 1 1 1 1 1 1 1 (bottomEdge)
 
 */
 
@@ -41,15 +43,15 @@ public static class ProcGen
             3 = enemy
             4 = interactable
     */
-    private static List<List<int>> grid = new List<List<int>>();
+    private static List<List<int>> grid;
     private static List<int> bottomEdge;
     private static List<int> topEdge;
 
     // maze parameters
     private const int GRID_SIZE = 15;
-    private static Vector2Int start = new Vector2Int(0, 0);
-    private static Vector2Int end = new Vector2Int(0, GRID_SIZE - 1);
-    private static List<Vector2Int> correctPath = new List<Vector2Int>();
+    private static int startX;
+    private static int endX;
+    private static List<Vector2Int> correctPath;
 
     /*
         Main generation function
@@ -118,62 +120,66 @@ public static class ProcGen
                 grid[y].Add(1);
             }
         }
-    }
 
-    private static void GenerateMaze()
-    {
-        grid = Dfs.DfsMazeGenerate(grid, GRID_SIZE, 0, 0);
-    }
-
-    private static void StartFinish()
-    {
-        // find open tiles for entrance/exit (after maze is generated)
-        List<int> bottomOpenTiles = new List<int>();
-        List<int> topOpenTiles = new List<int>();
-
-        for (int x = 0; x < GRID_SIZE; x++)
-        {
-            if (grid[x][GRID_SIZE - 1] == 0)
-                topOpenTiles.Add(x);
-            if (grid[x][0] == 0)
-                bottomOpenTiles.Add(x);
-        }
-
-        // select random start
-        if (bottomOpenTiles.Count > 0)
-            start.x = bottomOpenTiles[Random.Range(0, bottomOpenTiles.Count)];
-        else
-            start.x = 0;
-
-        // select random end
-        if (topOpenTiles.Count > 0)
-            end.x = topOpenTiles[Random.Range(0, topOpenTiles.Count)];
-        else
-            end.x = 0;
-
-        // set up edges
+        // fill edges with walls
         bottomEdge = new List<int>();
         topEdge = new List<int>();
-
         for (int x = 0; x < GRID_SIZE; x++)
         {
             bottomEdge.Add(1);
             topEdge.Add(1);
         }
 
-        bottomEdge[start.x] = 0;
-        topEdge[end.x] = 0;
+        // set up correct path list
+        correctPath = new List<Vector2Int>();
+    }
+
+    private static void GenerateMaze()
+    {
+        grid = Dfs.DfsMazeGenerate(grid, GRID_SIZE);
+    }
+
+    private static void StartFinish()
+    {
+        // find open tiles for entrance/exit (after maze is generated)
+        List<int> openBottomTiles = new List<int>();
+        List<int> openTopTiles = new List<int>();
+
+        for (int x = 0; x < GRID_SIZE; x++)
+        {
+            if (grid[GRID_SIZE - 1][x] == 0)
+                openBottomTiles.Add(x);
+            if (grid[0][x] == 0)
+                openTopTiles.Add(x);
+        }
+
+        // select random start
+        if (openBottomTiles.Count > 0)
+            startX = openBottomTiles[Random.Range(0, openBottomTiles.Count)];
+        else
+            Debug.LogError("Impossible maze: no tiles open on bottom row.");
+
+        // select random end
+        if (openTopTiles.Count > 0)
+            endX  = openTopTiles[Random.Range(0, openTopTiles.Count)];
+        else
+            Debug.LogError("Impossible maze: no tiles open on top row.");
+
+        bottomEdge[startX] = 0;
+        topEdge[endX] = 0;
     }
 
     private static void GeneratePath()
     {
-        List<Vector2Int> path = AStar.AStarFindPath(grid, GRID_SIZE, start, end);
-        correctPath = path;
+        Vector2Int startPos = new Vector2Int(GRID_SIZE - 1, startX);
+        Vector2Int endPos = new Vector2Int(0, endX);
 
-        if (path != null && path.Count > 0)
+        correctPath = AStar.AStarFindPath(grid, GRID_SIZE, startPos, endPos);
+
+        if (correctPath != null && correctPath.Count > 0)
         {
-            // Highlight the path on the floor tilemap
-            foreach (Vector2Int pos in path)
+            // highlight correct path on the floor tilemap
+            foreach (Vector2Int pos in correctPath)
             {
                 // 2 = correct path
                 grid[pos.x][pos.y] = 2;
@@ -181,7 +187,7 @@ public static class ProcGen
         }
         else
         {
-            Debug.LogWarning("No path found between start and end!");
+            Debug.LogError("No path found between start and end!");
         }
     }
 
@@ -201,8 +207,13 @@ public static class ProcGen
 
     private static void SpawnLootDeadEnds()
     {
-        int[] dy = { -1, 1, 0, 0 }; // up, down
-        int[] dx = { 0, 0, -1, 1 }; // left, right
+        List<Vector2Int> directions = new List<Vector2Int>()
+        {
+            new Vector2Int(0, 1),
+            new Vector2Int(0, -1),
+            new Vector2Int(1, 0),
+            new Vector2Int(-1, 0)
+        };
 
         // search through maze matrix and look for dead ends to place loot
         for (int y = 0; y < GRID_SIZE; y++)
@@ -217,15 +228,15 @@ public static class ProcGen
                 List<int> neighbors = new List<int>();
 
                 // check the adjacent cells
-                for (int i = 0; i < 4; i++)
+                foreach (Vector2Int dir in directions)
                 {
-                    int ny = y + dy[i];
-                    int nx = x + dx[i];
+                    int dy = y + dir.y;
+                    int dx = x + dir.x;
 
                     // bounds check to avoid errors
-                    if (ny >= 0 && ny < GRID_SIZE && nx >= 0 && nx < GRID_SIZE)
+                    if (dy >= 0 && dy < GRID_SIZE && dx >= 0 && dx < GRID_SIZE)
                     {
-                        neighbors.Add(grid[ny][nx]);
+                        neighbors.Add(grid[dy][dx]);
                     }
                 }
 
@@ -234,16 +245,16 @@ public static class ProcGen
                     continue;
 
                 // if there is one 0 and three 1s, this cell is a dead end, so add loot
-                int zeros = 0, ones = 0;
+                int numWalls = 0, numFloors = 0;
                 foreach (int n in neighbors)
                 {
                     if (n == 0) 
-                        zeros++;
+                        numFloors++;
                     else if (n == 1) 
-                        ones++;
+                        numWalls++;
                 }
 
-                if (zeros == 1 && ones == 3)
+                if (numFloors == 1 && numWalls == 3)
                 {
                     // 4 = interactable
                     grid[y][x] = 4; // add a 4 to represent this interactable instance
@@ -302,17 +313,17 @@ public static class ProcGen
         }
 
         string gridDebug = "";
-        for (int y = GRID_SIZE - 1; y >= 0; y--)
+        for (int y = 0; y < GRID_SIZE; y++)
         {
             for (int x = 0; x < GRID_SIZE; x++)
             {
-                if (grid[x][y] == 4)
+                if (grid[y][x] == 4)
                     gridDebug += "4 ";
-                else if (grid[x][y] == 3)
+                else if (grid[y][x] == 3)
                     gridDebug += "3 ";
-                else if (grid[x][y] == 2)
+                else if (grid[y][x] == 2)
                     gridDebug += "2 ";
-                else if (grid[x][y] == 1)
+                else if (grid[y][x] == 1)
                     gridDebug += "1 ";
                 else
                     gridDebug += "0 ";
@@ -328,7 +339,6 @@ public static class ProcGen
             else
                 bottomEdgeDebug += "0 ";
         }
-
 
         Debug.Log(topEdgeDebug);
         Debug.Log(gridDebug);

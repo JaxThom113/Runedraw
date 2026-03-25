@@ -11,7 +11,7 @@ public class LevelSystem: Singleton<LevelSystem>
     [Header("Debug")]
     public bool enemies = true;
     public bool interactables = true;
-    
+
     [Header("Areas")]
     public GameObject earthArea;
     public GameObject fireArea;
@@ -187,47 +187,10 @@ public class LevelSystem: Singleton<LevelSystem>
         playerMovement.ResetMovePoint();
 
         // transition swipe out and reset position
-        transitionScreen.transform.DOMoveY(40, 0.5f).SetEase(Ease.OutCubic);
+        transitionScreen.transform.DOMoveY(50, 0.5f).SetEase(Ease.OutCubic);
         yield return new WaitForSeconds(1f);
         transitionScreen.SetActive(false);
-        transitionScreen.transform.position = new Vector3(0, -40, 0.5f);
-
-        // return control to the player  
-        playerMovement.enabled = true;
-
-        yield return null;
-    }
-
-    /*
-        Enemies
-    */
-
-    public void GoToBattleScreen()
-    {
-        // transition to battle screen
-        StartCoroutine(BattleScreenTransition());
-    }
-
-    IEnumerator BattleScreenTransition()
-    {
-        // take control from player, have player continue moving upward
-        playerMovement.enabled = false;
-
-        // have a camera zoom in on the enemy/player collision
-
-        // transition swipe effect
-        transitionScreen.SetActive(true);
-        transitionScreen.transform.DOMoveY(0, 0.5f).SetEase(Ease.OutCubic);
-        yield return new WaitForSeconds(1f);
-
-        // generate new level
-        SceneManager.LoadScene("BattleScene");
-
-        // transition swipe out and reset position
-        transitionScreen.transform.DOMoveY(40, 0.5f).SetEase(Ease.OutCubic);
-        yield return new WaitForSeconds(1f);
-        transitionScreen.SetActive(false);
-        transitionScreen.transform.position = new Vector3(0, -40, 0);
+        transitionScreen.transform.position = new Vector3(0, -50, -5);
 
         // return control to the player  
         playerMovement.enabled = true;

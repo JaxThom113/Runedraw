@@ -131,69 +131,40 @@ public class CreateLevel : MonoBehaviour
         Instantiate(edge, new Vector3(13f, 0f, -0.5f), Quaternion.identity, wallsContainer.transform);
         Instantiate(edge, new Vector3(-13f, 0f, -0.5f), Quaternion.identity, wallsContainer.transform);
 
-        // take the values from the grid array and draw them to the tilegrid
+        // draw the top edge
         for (int x = 0; x < gridSize; x++)
         {
-            // top edge tiles
-            Vector3Int topEdgePos = new Vector3Int(x + 1, gridSize + 1, 0);
-            if (topEdge[x] == 0)
-            {
-                // this for loop carves a line after the exit tile
-                for (int y = gridSize + 1; y <= 25; y++)
-                {
-                    topEdgePos.y = y;
-                    edgeTilemap.SetTile(topEdgePos, null);
-                }
-            }
-            else
-            {
-                for (int y = gridSize + 1; y <= 25; y++)
-                {
-                    topEdgePos.y = y;
-                    edgeTilemap.SetTile(topEdgePos, edgeTile);
+            Vector3Int topEdgeWorldPos = new Vector3Int(x + 1, gridSize + 1, 0);
 
-                    Vector3 cubePos = edgeTilemap.GetCellCenterWorld(topEdgePos);
+            for (int y = gridSize + 1; y <= gridSize + 16; y++)
+            {
+                topEdgeWorldPos.y = y;
+                
+                if (topEdge[x] == 0)
+                {
+                    // this for loop carves a line after the exit tile
+                    edgeTilemap.SetTile(topEdgeWorldPos, null);
+                }
+                else
+                {
+                    edgeTilemap.SetTile(topEdgeWorldPos, edgeTile);
+
+                    Vector3 cubePos = edgeTilemap.GetCellCenterWorld(topEdgeWorldPos);
                     cubePos.z = -0.5f;
                     Instantiate(wallCube, cubePos, Quaternion.identity, wallsContainer.transform);
                 }
             }
+        }
 
-            // bottom edge tiles
-            Vector3Int bottomEdgePos = new Vector3Int(x + 1, 0, 0);
-            if (bottomEdge[x] == 0)
+        // draw the grid, making sure to account for 4th quadrant vs 1st quadrant coordinates
+        for (int y = 0; y < gridSize; y++)
+        {
+            for (int x = 0; x < gridSize; x++)
             {
-                // this for loop carves a line leading up to the entrance tile
-                for (int y = 0; y >= -9; y--)
-                {
-                    bottomEdgePos.y = y;
-                    edgeTilemap.SetTile(bottomEdgePos, null);
-                }
+                int flippedY = (gridSize - 1) - y; // convert from 4th quadrant -> 1st quadrant
+                Vector3Int pos = new Vector3Int(x, flippedY, 0);
 
-                // put the player in the entrance tile
-                playerPos = new Vector3Int(x + 1, 0, 0);
-            }
-            else
-            {
-                for (int y = 0; y >= -9; y--)
-                {
-                    bottomEdgePos.y = y;
-                    edgeTilemap.SetTile(bottomEdgePos, edgeTile);
-
-                    Vector3 cubePos = edgeTilemap.GetCellCenterWorld(bottomEdgePos);
-                    cubePos.z = -0.5f;
-                    Instantiate(wallCube, cubePos, Quaternion.identity, wallsContainer.transform);
-                }
-            }
-
-            // place the player at the entrance
-            player.transform.position = edgeTilemap.GetCellCenterWorld(playerPos);
-
-            // place walls
-            for (int y = 0; y < gridSize; y++)
-            {
-                Vector3Int pos = new Vector3Int(x, y, 0);
-
-                if (grid[x][y] == 1)
+                if (grid[y][x] == 1)
                 {
                     wallTilemap.SetTile(pos, wallTile);
 
@@ -208,7 +179,7 @@ public class CreateLevel : MonoBehaviour
                     wallTilemap.SetTile(pos, null);
                 }
 
-                if (grid[x][y] == 2)
+                if (grid[y][x] == 2)
                 {
                     floorTilemap.SetTile(pos, highlightFloorTile);
                 }
@@ -218,6 +189,38 @@ public class CreateLevel : MonoBehaviour
                 }
             }
         }
+
+        // draw the bottom edge
+        for (int x = 0; x < gridSize; x++)
+        {
+            // put the player in the entrance tile
+            if (bottomEdge[x] == 0)
+                playerPos = new Vector3Int(x + 1, 0, 0);
+
+            Vector3Int bottomEdgeWorldPos = new Vector3Int(x + 1, 0, 0);
+
+            for (int y = 0; y >= -9; y--)
+            {
+                bottomEdgeWorldPos.y = y;
+                
+                if (bottomEdge[x] == 0)
+                {
+                    // this for loop carves a line after the exit tile
+                    edgeTilemap.SetTile(bottomEdgeWorldPos, null);
+                }
+                else
+                {
+                    edgeTilemap.SetTile(bottomEdgeWorldPos, edgeTile);
+
+                    Vector3 cubePos = edgeTilemap.GetCellCenterWorld(bottomEdgeWorldPos);
+                    cubePos.z = -0.5f;
+                    Instantiate(wallCube, cubePos, Quaternion.identity, wallsContainer.transform);
+                }
+            }
+        }
+
+        // place the player at the entrance
+        player.transform.position = edgeTilemap.GetCellCenterWorld(playerPos);
     }
 
     private void AddEnemies()
@@ -229,13 +232,14 @@ public class CreateLevel : MonoBehaviour
         }
         enemyContainer = new GameObject("EnemyContainer"); // recreate container
 
-        for (int x = 0; x < gridSize; x++)
+        for (int y = 0; y < gridSize; y++)
         {
-            for (int y = 0; y < gridSize; y++)
+            for (int x = 0; x < gridSize; x++)
             {
-                if (grid[x][y] == 3)
+                if (grid[y][x] == 3)
                 {
-                    Vector3Int gridPos = new Vector3Int(x, y, 0);
+                    int flippedY = (gridSize - 1) - y; // convert from 4th quadrant -> 1st quadrant
+                    Vector3Int gridPos = new Vector3Int(x, flippedY, 0);
                     Vector3 pos = floorTilemap.GetCellCenterWorld(gridPos);
 
                     GameObject enemyObject = Instantiate(enemy, pos, Quaternion.identity, enemyContainer.transform);
@@ -253,13 +257,14 @@ public class CreateLevel : MonoBehaviour
         }
         interactableContainer = new GameObject("InteractableContainer"); // recreate container
 
-        for (int x = 0; x < gridSize; x++)
+        for (int y = 0; y < gridSize; y++)
         {
-            for (int y = 0; y < gridSize; y++)
+            for (int x = 0; x < gridSize; x++)
             {
-                if (grid[x][y] == 4)
+                if (grid[y][x] == 4)
                 {
-                    Vector3Int gridPos = new Vector3Int(x, y, 0);
+                    int flippedY = (gridSize - 1) - y; // convert from 4th quadrant -> 1st quadrant
+                    Vector3Int gridPos = new Vector3Int(x, flippedY, 0);
                     Vector3 pos = floorTilemap.GetCellCenterWorld(gridPos);
 
                     Instantiate(interactable, pos, Quaternion.identity, interactableContainer.transform);

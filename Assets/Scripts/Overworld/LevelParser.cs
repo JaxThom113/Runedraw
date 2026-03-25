@@ -6,6 +6,15 @@ using System;
 using System.IO;
 using System.Linq;
 
+/*
+
+This script parses a csv file to create grid, bottomEdge, and topEdge variables to be
+used in CreateLevel.cs to render a new level.
+
+Indexing is (y, x), and coordinates are done as if in 4th quadrant. (like ProcGen.cs)
+
+*/
+
 public static class LevelParser
 {
     private static List<List<int>> grid = new List<List<int>>();
@@ -13,7 +22,7 @@ public static class LevelParser
     private static List<int> topEdge = new List<int>();
 
     /*
-        Main persing function
+        Main parsing function
     */
     public static void GenerateLevelFromCsv(TextAsset csv)
     { 

@@ -34,10 +34,9 @@ public static class AStar
         {
             // find node with lowest fCost
             Node currentNode = openList[0];
-            for (int i = 1; i<openList.Count; i++)
+            for (int i = 1; i < openList.Count; i++)
             {
-                if (openList[i].fCost<currentNode.fCost || 
-                    (openList[i].fCost == currentNode.fCost && openList[i].hCost<currentNode.hCost))
+                if (openList[i].fCost < currentNode.fCost || (openList[i].fCost == currentNode.fCost && openList[i].hCost<currentNode.hCost))
                 {
                     currentNode = openList[i];
                 }
@@ -52,13 +51,12 @@ public static class AStar
                 return RetracePath(currentNode);
             }
 
-            // check all neighbors (4-directional movement)
             Vector2Int[] directions = new Vector2Int[]
             {
-                new Vector2Int(0, 1),  // up
-                new Vector2Int(0, -1), // down
-                new Vector2Int(1, 0),  // right
-                new Vector2Int(-1, 0)  // left
+                new Vector2Int(0, 1),
+                new Vector2Int(0, -1),
+                new Vector2Int(1, 0),
+                new Vector2Int(-1, 0)
             };
 
             foreach (Vector2Int dir in directions)
