@@ -6,9 +6,8 @@ public abstract class EntitySO : ScriptableObject
 { 
     public string entityName;  
     public Sprite entityIcon;  
-    public int entityHealth; 
+    public int entityHealth;  
+    public DialogueSO entityDialogue;
     
-
-   
 
 }

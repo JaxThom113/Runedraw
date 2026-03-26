@@ -31,6 +31,7 @@ public class CardSO : ScriptableObject
     [SerializeField] public CardType cardType; 
     [SerializeField] public Sprite cardTypeIcon;
     [SerializeField] public AudioClip sound;
+    [SerializeField] public bool IsUltimate;
     [SerializeReference, SR(typeof(Effect))]
     [SerializeField] public List<Effect> effects = new List<Effect>();  
     

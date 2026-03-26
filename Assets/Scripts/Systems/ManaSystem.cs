@@ -5,29 +5,34 @@ using UnityEngine;
 public class ManaSystem : Singleton<ManaSystem>
 {
     [SerializeField] public ManaUI manaUI; 
+  
 
     public int maxMana = 1; 
     private int currentMana;   
     private int startingMana = 1;
-    void Start()
-    {
-        
-    }
+    private Coroutine borderIncreaseCoroutine;
+    private const float BorderIncreaseSeconds = 3f;
+
+    void Start() { }
     public void InitializeMana()
     { 
         startingMana = maxMana;
-        currentMana = maxMana;
-        manaUI.UpdateMana(currentMana);
-        StartCoroutine(manaUI.StartRound());
+        currentMana = maxMana;  
+        manaUI.UpdateMana(currentMana);        
+        manaUI.SetManaBorderIncrease(false);
+        if (manaUI.gameObject.activeInHierarchy)
+            StartCoroutine(manaUI.StartRound());
     }
     private void OnEnable(){ 
         ActionSystem.AttachPerformer<SpendManaGA>(SpendManaPerformer);
         ActionSystem.AttachPerformer<RefillManaGA>(RefillManaPerformer); 
-        ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);  
+        ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
         ActionSystem.SubscribeReaction<KillEnemyGA>(KillEnemyPostReaction, ReactionTiming.POST);
-        //ActionSystem.Performer<ChildofGameAction>(FunctionName)
     }  
     private void OnDisable(){ 
+        if (borderIncreaseCoroutine != null) StopCoroutine(borderIncreaseCoroutine);
+        borderIncreaseCoroutine = null;
+
         ActionSystem.DetachPerformer<RefillManaGA>(); 
         ActionSystem.DetachPerformer<SpendManaGA>();
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
@@ -47,21 +52,32 @@ public class ManaSystem : Singleton<ManaSystem>
     {
         currentMana = refillManaGA.manaAmount;
         manaUI.UpdateMana(currentMana);
-        yield return StartCoroutine(manaUI.StartRound());
+        if (manaUI.gameObject.activeInHierarchy)
+            yield return StartCoroutine(manaUI.StartRound());
     } 
+
     private void EnemyTurnPostReaction(EnemyTurnGA enemyTurnGA) 
     {  
         maxMana++;
-        RefillManaGA refillManaGA = new(maxMana);  //add one extra mana for each turn
+        RefillManaGA refillManaGA = new(maxMana); // add one extra mana for each turn
         ActionSystem.Instance.AddReaction(refillManaGA); 
-         //Flow will find the performer for RefillManaGA in mana system and call it 
-        //since we attached the performer for RefillManaGA in mana system
+       
+
+       
     } 
+    
     private void KillEnemyPostReaction(KillEnemyGA killEnemyGA)
     {
         maxMana = startingMana; 
         manaUI.ResetMana(maxMana);
-        
-        
+
+        if (borderIncreaseCoroutine != null) StopCoroutine(borderIncreaseCoroutine);
+        borderIncreaseCoroutine = null;
+
+        manaUI.SetManaBorderIncrease(false);
     }
+
+   
+
+  
 }

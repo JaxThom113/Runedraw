@@ -9,8 +9,17 @@ public class DrawCardsEffect : Effect
 
     public override GameAction GetGameAction()
     { 
-        DrawCardGA drawCardGA = new(drawAmount);
-        return drawCardGA;
+        if(isPlayer)
+        {
+             DrawCardGA drawCardGA = new(drawAmount);
+            return drawCardGA;
+        } 
+        else{  
+            EnemySystem.Instance.EnemyTurnHandler();
+            DrawEnemyCardGA drawEnemyCardGA = new(drawAmount);
+            return drawEnemyCardGA;
+        }
+       
     } 
     public override string GetDescription()
     {

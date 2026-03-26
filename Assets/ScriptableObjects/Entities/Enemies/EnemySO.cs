@@ -13,6 +13,8 @@ public class CardSOList
 public class EnemySO : EntitySO
 {
     [Tooltip("Each element is a list of cards (e.g. one list per phase or tier).")]
-    public List<CardSOList> enemyDeck = new List<CardSOList>(); 
+    public List<CardSOList> enemyDeck = new List<CardSOList>();
+
+    public CardSO ultimateCard;
   
 }

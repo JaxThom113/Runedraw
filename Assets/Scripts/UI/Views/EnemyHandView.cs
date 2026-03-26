@@ -32,6 +32,14 @@ public class EnemyHandView : Singleton<EnemyHandView>
             Debug.LogError("Card not found in enemy hand");
             yield break;
         }; 
+        if (applyCard.card.IsUltimate)
+        {
+            cards.Remove(applyCard);
+            yield return StartCoroutine(UpdateCardPositions(null));
+            yield return applyCard.StartCoroutine(applyCard.UltimateWindupRoutine());
+            Destroy(applyCard.gameObject);
+            yield break;
+        }
         applyCard.transform.DOMove(Vector3.zero, duration);
         cards.Remove(applyCard);
         yield return StartCoroutine(UpdateCardPositions(null));
@@ -60,7 +68,7 @@ public class EnemyHandView : Singleton<EnemyHandView>
 
        
         if(cards.Count == 0) yield break; // Stop if no cards
-        float cardSpacing = 0.67f/10f; // spacing between cards along the spline
+        float cardSpacing = 1.5f/10f; // spacing between cards along the spline
         float firstCardPosition = 0.5f - (cards.Count-1)*cardSpacing/2f; //Finds the center to place the first card 
         //spline is percentage based, so 0.5 is the center, but takes into account number of cards so new card will always be in the center
         Spline spline = splineContainer.Spline; 

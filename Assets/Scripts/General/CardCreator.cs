@@ -18,7 +18,7 @@ public class CardCreator : Singleton<CardCreator>
         if(isEnemy){
           applyCard.wrapper.transform.Find("CardTypeIcon").gameObject.SetActive(false); 
         }
-        cardScale = isEnemy ? 0.15f : 0.25f;
+        cardScale = isEnemy ? 0.2f : 0.25f;
         applyCard.transform.DOScale(Vector3.one*cardScale, 0.15f ); 
         return applyCard; 
     }
