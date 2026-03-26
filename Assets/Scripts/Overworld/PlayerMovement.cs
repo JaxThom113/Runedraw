@@ -83,16 +83,4 @@ public class PlayerMovement : MonoBehaviour
         movePoint.parent = transform;
         movePoint.localPosition = Vector3.zero;
     }
-
-    public void ContinueUp()
-    {
-        // automatic upward movement used when transitioning between levels
-
-    }
-
-    public void TeleportToBottom()
-    {
-        // tp to bottom
-        
-    }
 }

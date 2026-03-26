@@ -4,33 +4,33 @@ using UnityEngine;
 
 public static class Dfs
 {
-    public static List<List<int>> DfsMazeGenerate(List<List<int>> grid, int gridSize, int x, int y)
+    public static List<List<int>> DfsMazeGenerate(List<List<int>> grid, int gridSize, int y = 0, int x = 0)
     {
         // randomize directions
         List<Vector2Int> directions = new List<Vector2Int>()
         {
-            new Vector2Int(0, 2),  // up
-            new Vector2Int(0, -2), // down
-            new Vector2Int(2, 0),  // right
-            new Vector2Int(-2, 0)  // left
+            new Vector2Int(0, 2),
+            new Vector2Int(0, -2),
+            new Vector2Int(2, 0),
+            new Vector2Int(-2, 0)
         };
         Shuffle(directions);
 
         foreach (Vector2Int dir in directions)
         {
-            int nx = x + dir.x;
-            int ny = y + dir.y;
+            int dy = y + dir.y;
+            int dx = x + dir.x;
 
             // check bounds
-            if (nx >= 0 && nx < gridSize && ny >= 0 && ny < gridSize)
+            if (dy >= 0 && dy < gridSize && dx >= 0 && dx < gridSize)
             {
-                if (grid[nx][ny] == 1) // unvisited
+                if (grid[dy][dx] == 1) // unvisited
                 {
                     // carve path between current and neighbor
-                    grid[x + dir.x / 2][y + dir.y / 2] = 0;
-                    grid[nx][ny] = 0;
+                    grid[y + dir.y / 2][x + dir.x / 2] = 0;
+                    grid[dy][dx] = 0;
 
-                    DfsMazeGenerate(grid, gridSize, nx, ny);
+                    DfsMazeGenerate(grid, gridSize, dy, dx);
                 }
             }
         }

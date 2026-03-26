@@ -3,83 +3,87 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using DG.Tweening;
-using System;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine.SceneManagement;
 
 public class LevelSystem: Singleton<LevelSystem>
 {
-    [Header("Transition Screen")]
-    public GameObject transitionScreen;
+    [Header("Debug")]
+    public bool enemies = true;
+    public bool interactables = true;
 
-    [Header("HUD UI References")]
+    [Header("Areas")]
+    public GameObject earthArea;
+    public GameObject fireArea;
+    public GameObject neutralArea;
+    public GameObject waterArea;
+    public GameObject windArea;
+
+    [Header("Custom Levels")]
+    public GameObject tutorialLevel;    
+    public GameObject finalBossLevel;
+
+    [Header("UI References")]
     public TextMeshProUGUI areaTitle;
     public TextMeshProUGUI areaLevel;
-
-    [Header("Card Pickup UI References")]
+    public GameObject transitionScreen;
     public GameObject LootView;
 
     [Header("Script References")]
-    public ProcGen procGen;
     public PlayerMovement playerMovement;
 
     // current level and area
-    private int currentLevel;
-    private int currentArea;
+    private int currentLevel = 1;
+    private int currentArea = 1;
+
+    /*
+        Current area type
+            0 = Tutorial level
+            1 = neutral
+            2 = fire
+            3 = wind
+            4 = water
+            5 = earth
+            6 = FinalBoss level
+    */
+    public int currentAreaType;
+
+    // loot view variables
     private bool skipPressed = false;
     private GameObject currentInteractable = null;
 
+    private CreateLevel createLevel;
+
     void Start()
     {
-        currentLevel = 1;
-        currentArea = 1;
+        int seed = 0;
+        Random.InitState(seed);
+
+        // set the active area GameObject in --- Overworld ---
+        currentAreaType = GameData.SelectedAreaType;
+        SetActiveArea(currentAreaType);
+
+        // get reference to the CreateLevel script in the currently active area GameObject (in Board)
+        createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
+
+        // go to tutorial if it was selected on main menu
+        if (currentAreaType == 0)
+        {
+            TextAsset lvlFile = Resources.Load<TextAsset>("Levels/Tutorial");
+            createLevel.DrawLevel(lvlFile);
+        }
 
         UpdateUI();
     }
 
-    /*
-        Level/Area Transitions
-    */
     void OnEnable()
     {
         ActionSystem.AttachPerformer<LootCardGA>(LootBoxPerformer);
     }
+
     void OnDisable()
     {
         ActionSystem.DetachPerformer<LootCardGA>();
-    }
-    public void NextLevel()
-    {
-        if (currentLevel == 5)
-        {
-            NextArea();
-
-            //placeholder area transition
-            StartCoroutine(LevelTransition());
-            UpdateUI();
-            
-            return;
-        }
-
-        currentLevel++;
-
-        StartCoroutine(LevelTransition());
-
-        UpdateUI();
-    }
-    
-    public void NextArea()
-    {
-        currentArea++;
-        currentLevel = 1;
-
-        // load next area scene
-        // SceneManager.LoadScene($"Level{currentLevel}");
-
-        StartCoroutine(AreaTransition());
-
-        UpdateUI();
     }
 
     void UpdateUI()
@@ -87,11 +91,15 @@ public class LevelSystem: Singleton<LevelSystem>
         if (areaTitle != null)
         {
             // names for different areas
-            switch (currentArea)
+            switch (currentAreaType)
             {
-                case 1: areaTitle.text = $"Dungeons"; break;
-                case 2: areaTitle.text = $"Forest"; break;
-                case 3: areaTitle.text = $"Tundra"; break;
+                case 0: areaTitle.text = $"Tutorial"; break; // tutorial level
+                case 1: areaTitle.text = $"Dungeons"; break; // neutral area
+                case 2: areaTitle.text = $"Fire Zone"; break; // fire area
+                case 3: areaTitle.text = $"Wind Zone"; break; // wind area
+                case 4: areaTitle.text = $"Water Zone"; break; // water area
+                case 5: areaTitle.text = $"Earth Zone"; break; // earth area
+                case 6: areaTitle.text = $"Final Boss"; break; // final boss level
             }
         }
 
@@ -102,74 +110,87 @@ public class LevelSystem: Singleton<LevelSystem>
         }
     }
 
-    IEnumerator LevelTransition()
+    /*
+        Level transition/coroutine
+    */
+
+    public void NextLevel()
+    {
+        if (currentAreaType == 0)
+        {
+            currentAreaType = 1;
+
+            // start the actual game once completing tutorial level
+            StartCoroutine(StartTransition(true));
+        }
+        else if (currentLevel == 3)
+        {
+            if (currentArea == 3)
+            {
+                // transition to the final boss level 
+                currentAreaType = 6;
+
+                TextAsset lvlFile = Resources.Load<TextAsset>("Levels/FinalBoss");
+                StartCoroutine(StartTransition(true, lvlFile));
+            }
+            else
+            {
+                currentArea++;
+                currentLevel = 1;
+
+                // randomly select area type for next area
+                currentAreaType = Random.Range(1, 6); 
+
+                StartCoroutine(StartTransition(true));
+            }
+
+        }      
+        else
+        {
+            // got to the next level of the current area
+            currentLevel++;
+
+            StartCoroutine(StartTransition());
+        }
+
+        UpdateUI();
+    }
+
+    IEnumerator StartTransition(bool areaTransition = false, TextAsset file = null)
     {
         // take control from player, have player continue moving upward
         playerMovement.enabled = false;
-        playerMovement.ContinueUp();
-        //SceneTransitionSystem.Instance.enemyData = OverworldSystem.Instance.GetCurrentEnemy();
 
         // transition swipe effect
         transitionScreen.SetActive(true);
         transitionScreen.transform.DOMoveY(0, 0.5f).SetEase(Ease.OutCubic);
         yield return new WaitForSeconds(1f);
 
-        // generate new level
-        procGen.GenerateLevel();
+        if (areaTransition)
+        {
+            SetActiveArea(currentAreaType);
+        
+            createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
+        }
+
+        if (file != null)
+        {
+            // transition to a custome level from a file
+            createLevel.DrawLevel(file);
+        }
+        else
+        {
+            // transition to next level in the current area
+            createLevel.DrawLevel();
+        }
+        
         playerMovement.ResetMovePoint();
 
         // transition swipe out and reset position
-        transitionScreen.transform.DOMoveY(40, 0.5f).SetEase(Ease.OutCubic);
+        transitionScreen.transform.DOMoveY(50, 0.5f).SetEase(Ease.OutCubic);
         yield return new WaitForSeconds(1f);
         transitionScreen.SetActive(false);
-        transitionScreen.transform.position = new Vector3(0, -40, 0);
-
-        // tp player to bottom of the screen, have player move upward to starting cell
-        playerMovement.TeleportToBottom();
-        playerMovement.ContinueUp();
-
-        // return control to the player  
-        playerMovement.enabled = true;
-
-        yield return null;
-    }
-
-    IEnumerator AreaTransition()
-    {
-
-        yield return null;
-    }
-
-    /*
-        Enemies
-    */
-
-    public void GoToBattleScreen()
-    {
-        // transition to battle screen
-        StartCoroutine(BattleScreenTransition());
-    }
-
-    IEnumerator BattleScreenTransition()
-    {
-        // take control from player, have player continue moving upward
-        playerMovement.enabled = false;
-
-        // have a camera zoom in on the enemy/player collision
-
-        // transition swipe effect
-        transitionScreen.SetActive(true);
-        transitionScreen.transform.DOMoveY(0, 0.5f).SetEase(Ease.OutCubic);
-        yield return new WaitForSeconds(1f);
-
-        // generate new level
-        SceneManager.LoadScene("BattleScene");
-
-        // transition swipe out and reset position
-        transitionScreen.transform.DOMoveY(40, 0.5f).SetEase(Ease.OutCubic);
-        yield return new WaitForSeconds(1f);
-        transitionScreen.SetActive(false);
-        transitionScreen.transform.position = new Vector3(0, -40, 0);
+        transitionScreen.transform.position = new Vector3(0, -50, -5);
 
         // return control to the player  
         playerMovement.enabled = true;
@@ -216,5 +237,39 @@ public class LevelSystem: Singleton<LevelSystem>
 
         yield return new WaitUntil(() => skipPressed);
         LootView.SetActive(false);
+    }
+
+    /*
+        Helper functions
+    */
+
+    private void SetActiveArea(int areaIndex)
+    {
+        tutorialLevel.SetActive(false);
+        neutralArea.SetActive(false); 
+        fireArea.SetActive(false); 
+        windArea.SetActive(false); 
+        waterArea.SetActive(false);
+        earthArea.SetActive(false);
+        finalBossLevel.SetActive(false);
+
+        // transition to level 1 of the next area
+        switch (areaIndex)
+        {
+            case 0: tutorialLevel.SetActive(true); break;
+            case 1: neutralArea.SetActive(true); break;
+            case 2: fireArea.SetActive(true); break;
+            case 3: windArea.SetActive(true); break;
+            case 4: waterArea.SetActive(true); break;
+            case 5: earthArea.SetActive(true); break;
+            case 6: finalBossLevel.SetActive(true); break;
+        }
+
+        
+    }
+
+    public void SetCurrentAreaType(int areaIndex)
+    {
+        currentAreaType = areaIndex;
     }
 }
