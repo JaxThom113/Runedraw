@@ -15,6 +15,7 @@ MonoBehaviour:
   entityName: Ratrick
   entityIcon: {fileID: 21300000, guid: fc2e51acacce66243aa7fc723fdbcbc4, type: 3}
   entityHealth: 4
+  entityDialogue: {fileID: 11400000, guid: e916a363ec892884898533dcd663f000, type: 2}
   enemyDeck:
   - enemyHand:
     - {fileID: 11400000, guid: e1e5e027eebb24142a795f29730252e8, type: 2}
@@ -35,3 +36,4 @@ MonoBehaviour:
     - {fileID: 11400000, guid: e1e5e027eebb24142a795f29730252e8, type: 2}
     - {fileID: 11400000, guid: e1e5e027eebb24142a795f29730252e8, type: 2}
     - {fileID: 11400000, guid: e1e5e027eebb24142a795f29730252e8, type: 2}
+  ultimateCard: {fileID: 11400000, guid: 098ff1a47372b8e43989fca01f99249f, type: 2}

@@ -31,7 +31,7 @@ MonoBehaviour:
     - rid: 5118776945593810945
       type: {class: PoisonStatusEffect, ns: , asm: Assembly-CSharp}
       data:
-        isPlayer: 1
+        isPlayer: 0
         playWhenDrawnByEnemy: 0
         duration: 2
         damage: 2
