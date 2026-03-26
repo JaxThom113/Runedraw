@@ -33,8 +33,8 @@ public class LevelSystem: Singleton<LevelSystem>
     public PlayerMovement playerMovement;
 
     // current level and area
-    private int currentLevel = 3;
-    private int currentArea = 3;
+    private int currentLevel = 1;
+    private int currentArea = 1;
 
     /*
         Current area type
