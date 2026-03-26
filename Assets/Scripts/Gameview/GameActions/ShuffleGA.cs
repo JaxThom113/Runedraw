@@ -1,0 +1,12 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class ShuffleGA : GameAction
+
+{ 
+    public int Amount {get; set;}  
+    public ShuffleGA(int amount){ 
+        Amount = amount;  
+    }
+}

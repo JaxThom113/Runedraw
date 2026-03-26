@@ -40,7 +40,7 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if (transform == null) yield break; 
         transform.DOKill();
         transform.DOScale(Vector3.one * UltimateScale, UltimateTweenDuration).SetEase(Ease.OutQuad); 
-       transform.DOMove(Vector3.zero + new Vector3(0, 1, 0), UltimateTweenDuration);
+        transform.DOMove(Vector3.zero + new Vector3(0, 1, 0), UltimateTweenDuration);
         yield return new WaitForSeconds(UltimateTweenDuration); 
         UISystem.Instance.TransformShake(this.transform);
         yield return new WaitForSeconds(UltimateWindupSeconds); 

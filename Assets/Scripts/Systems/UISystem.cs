@@ -63,6 +63,10 @@ public class UISystem : Singleton<UISystem>
         {
             objectTransform.DOShakePosition(0.5f, new Vector3(0.25f, 0f, 0.25f), 10, 90f, false, true);
         }
+    } 
+    public void UpdateStatusEffects(StatusEffect statusEffect, int stacks, bool afflictedUnitIsPlayer)
+    {
+        
     }
 
     /*

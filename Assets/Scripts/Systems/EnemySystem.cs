@@ -36,11 +36,19 @@ public class EnemySystem : Singleton<EnemySystem>
             {
                 ActionSystem.Instance.AddReaction(new SoundEffectGA(card.sound));
             }
-            foreach(var effect in card.effects) { 
-                effect.isPlayer = false;
-                PerformEffectGA performEffectGA = new(effect);
-                ActionSystem.Instance.AddReaction(performEffectGA); //add to subscriber list, since we cant call a perfomer in a performer  
-                //This is protected in the IsPerforming check at the start of the perform method
+            foreach(var effect in card.effects) {  
+                if(effect is StatusEffect statusEffect) {  
+                    effect.isPlayer = false;
+                    Debug.Log($"Adding status effect: {statusEffect.GetType().Name}");
+                    AddStatusEffect addStatusEffect = new(statusEffect, statusEffect.duration, false);
+                    ActionSystem.Instance.AddReaction(addStatusEffect);
+                } 
+                else{
+                    effect.isPlayer = false;
+                    PerformEffectGA performEffectGA = new(effect);
+                    ActionSystem.Instance.AddReaction(performEffectGA); //add to subscriber list, since we cant call a perfomer in a performer  
+                    //This is protected in the IsPerforming check at the start of the perform method
+                }
             } 
             yield return EnemyHandView.Instance.RemoveEnemyCard(card); 
             
