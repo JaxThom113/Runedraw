@@ -3781,7 +3781,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 1
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 626543518}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -43105,7 +43105,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 1282243003}
         m_TargetAssemblyTypeName: LevelSystem, Assembly-CSharp
         m_MethodName: OnSkipButtonClick
         m_Mode: 1
@@ -62742,7 +62742,7 @@ MonoBehaviour:
   transitionScreen: {fileID: 965387705}
   LootView: {fileID: 1787748743}
   playerMovement: {fileID: 1544774762}
-  currentAreaType: 1
+  currentAreaType: 2
 --- !u!1 &1285040819
 GameObject:
   m_ObjectHideFlags: 0
