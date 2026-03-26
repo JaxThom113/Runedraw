@@ -33,8 +33,8 @@ public class LevelSystem: Singleton<LevelSystem>
     public PlayerMovement playerMovement;
 
     // current level and area
-    private int currentLevel = 1;
-    private int currentArea = 1;
+    private int currentLevel = 3;
+    private int currentArea = 3;
 
     /*
         Current area type
@@ -46,7 +46,7 @@ public class LevelSystem: Singleton<LevelSystem>
             5 = earth
             6 = FinalBoss level
     */
-    private int currentAreaType = 1;
+    public int currentAreaType;
 
     // loot view variables
     private bool skipPressed = false;
@@ -59,8 +59,19 @@ public class LevelSystem: Singleton<LevelSystem>
         int seed = 0;
         Random.InitState(seed);
 
+        // set the active area GameObject in --- Overworld ---
+        currentAreaType = GameData.SelectedAreaType;
+        SetActiveArea(currentAreaType);
+
         // get reference to the CreateLevel script in the currently active area GameObject (in Board)
         createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
+
+        // go to tutorial if it was selected on main menu
+        if (currentAreaType == 0)
+        {
+            TextAsset lvlFile = Resources.Load<TextAsset>("Levels/Tutorial");
+            createLevel.DrawLevel(lvlFile);
+        }
 
         UpdateUI();
     }
@@ -105,7 +116,14 @@ public class LevelSystem: Singleton<LevelSystem>
 
     public void NextLevel()
     {
-        if (currentLevel == 3)
+        if (currentAreaType == 0)
+        {
+            currentAreaType = 1;
+
+            // start the actual game once completing tutorial level
+            StartCoroutine(StartTransition(true));
+        }
+        else if (currentLevel == 3)
         {
             if (currentArea == 3)
             {
@@ -150,32 +168,14 @@ public class LevelSystem: Singleton<LevelSystem>
 
         if (areaTransition)
         {
-            tutorialLevel.SetActive(false);
-            neutralArea.SetActive(false); 
-            fireArea.SetActive(false); 
-            windArea.SetActive(false); 
-            waterArea.SetActive(false);
-            earthArea.SetActive(false);
-            finalBossLevel.SetActive(false);
-
-            // transition to level 1 of the next area
-            switch (currentAreaType)
-            {
-                case 0: tutorialLevel.SetActive(true); break;
-                case 1: neutralArea.SetActive(true); break;
-                case 2: fireArea.SetActive(true); break;
-                case 3: windArea.SetActive(true); break;
-                case 4: waterArea.SetActive(true); break;
-                case 5: earthArea.SetActive(true); break;
-                case 6: finalBossLevel.SetActive(true); break;
-            }
+            SetActiveArea(currentAreaType);
         
             createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
         }
 
         if (file != null)
         {
-            // transition to next level in the current area
+            // transition to a custome level from a file
             createLevel.DrawLevel(file);
         }
         else
@@ -237,5 +237,39 @@ public class LevelSystem: Singleton<LevelSystem>
 
         yield return new WaitUntil(() => skipPressed);
         LootView.SetActive(false);
+    }
+
+    /*
+        Helper functions
+    */
+
+    private void SetActiveArea(int areaIndex)
+    {
+        tutorialLevel.SetActive(false);
+        neutralArea.SetActive(false); 
+        fireArea.SetActive(false); 
+        windArea.SetActive(false); 
+        waterArea.SetActive(false);
+        earthArea.SetActive(false);
+        finalBossLevel.SetActive(false);
+
+        // transition to level 1 of the next area
+        switch (areaIndex)
+        {
+            case 0: tutorialLevel.SetActive(true); break;
+            case 1: neutralArea.SetActive(true); break;
+            case 2: fireArea.SetActive(true); break;
+            case 3: windArea.SetActive(true); break;
+            case 4: waterArea.SetActive(true); break;
+            case 5: earthArea.SetActive(true); break;
+            case 6: finalBossLevel.SetActive(true); break;
+        }
+
+        
+    }
+
+    public void SetCurrentAreaType(int areaIndex)
+    {
+        currentAreaType = areaIndex;
     }
 }

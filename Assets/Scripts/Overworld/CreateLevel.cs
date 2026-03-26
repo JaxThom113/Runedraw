@@ -31,10 +31,6 @@ public class CreateLevel : MonoBehaviour
     private List<int> topEdge;
     private List<int> bottomEdge;
 
-    // custom levels
-    private List<List<int>> tutorialGrid = new List<List<int>>();
-    private List<List<int>> finalBossGrid;
-
     // containers for wall/enemy/interactable prefabs
     private GameObject wallsContainer; 
     private GameObject enemyContainer;
@@ -62,18 +58,18 @@ public class CreateLevel : MonoBehaviour
         }
 
         // set current level to the format of Tutorial.csv
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            TextAsset lvlFile = Resources.Load<TextAsset>("Levels/Tutorial");
-            DrawLevel(lvlFile);
-        }
+        // if (Input.GetKeyDown(KeyCode.T))
+        // {
+        //     TextAsset lvlFile = Resources.Load<TextAsset>("Levels/Tutorial");
+        //     DrawLevel(lvlFile);
+        // }
 
-        // set current level to the format of FinalBoss.csv
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            TextAsset lvlFile = Resources.Load<TextAsset>("Levels/FinalBoss");
-            DrawLevel(lvlFile);
-        }
+        // // set current level to the format of FinalBoss.csv
+        // if (Input.GetKeyDown(KeyCode.B))
+        // {
+        //     TextAsset lvlFile = Resources.Load<TextAsset>("Levels/FinalBoss");
+        //     DrawLevel(lvlFile);
+        // }
 
         if (LevelSystem.Instance.enemies)
             enemyContainer.SetActive(true);

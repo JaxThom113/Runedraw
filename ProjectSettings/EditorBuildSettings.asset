@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ProcGenWithBattleScene.unity
     guid: a507b8b62025c2e48a310f301f837501
+  - enabled: 1
+    path: Assets/Scenes/JaxOverworld.unity
+    guid: ea3a25fe4e4afd945a05ff6cea391157
   m_configObjects: {}

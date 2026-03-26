@@ -61485,6 +61485,7 @@ MonoBehaviour:
   transitionScreen: {fileID: 965387705}
   LootView: {fileID: 1787748743}
   playerMovement: {fileID: 1544774762}
+  currentAreaType: 1
 --- !u!1 &1285040819
 GameObject:
   m_ObjectHideFlags: 0
