@@ -5,23 +5,25 @@ using UnityEngine.UI;
 using TMPro;
 public class OverworldHealth : MonoBehaviour
 {
-   [SerializeField] private PlayerSO defaultPlayerData;
    [SerializeField] private Slider healthSlider;  
    [SerializeField] private TextMeshProUGUI healthText; 
 
-   void OnEnable()
-   { 
-      healthSlider.maxValue = defaultPlayerData.entityHealth;
+   private int previousHealth;
 
-      if (PlayerSystem.Instance == null)
-      {
-         healthSlider.value = defaultPlayerData.entityHealth; 
-         healthText.text = $"{defaultPlayerData.entityHealth} / {healthSlider.maxValue}";
-      }
-      else
+   void Start()
+   { 
+      healthSlider.maxValue = PlayerSystem.Instance.currentPlayerData.entityHealth;
+   }
+
+   void Update()
+   {
+      // update once whenever health has changed
+      if (previousHealth != PlayerSystem.Instance.storedHealth)
       {
          healthSlider.value = PlayerSystem.Instance.storedHealth;
          healthText.text = $"{PlayerSystem.Instance.storedHealth} / {healthSlider.maxValue}";
+
+         previousHealth = PlayerSystem.Instance.storedHealth;
       }
    }
 }

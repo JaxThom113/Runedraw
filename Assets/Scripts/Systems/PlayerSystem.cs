@@ -4,24 +4,41 @@ using UnityEngine;
 
 public class PlayerSystem : Singleton<PlayerSystem>
 { 
-    [SerializeField] public PlayerSO starterPlayerData;
+    [Header("Player SO References")]
+    [SerializeField] public PlayerSO drawthurPlayerData;
+    [SerializeField] public PlayerSO decklanPlayerData;
+    [SerializeField] public PlayerSO shufflynnPlayerData;
+    public PlayerSO currentPlayerData;
+
+    [Header("Other References")]
+    public GameObject playerSprite;
+
     public Player player; 
     public PlayerView playerView; 
     public GameObject DeathView; 
     public GameObject GameView;
     public int storedHealth; 
-    void Start(){   
 
-        playerView.Setup(starterPlayerData);
-        Setup(starterPlayerData, playerView); 
+    void Start()
+    {   
+        // assign the correct player so depending on what character was picked in the menu
+        switch (GameData.SelectedPlayer)
+        {
+            case 0: currentPlayerData = drawthurPlayerData; break;
+            case 1: currentPlayerData = decklanPlayerData; break;
+            case 2: currentPlayerData = shufflynnPlayerData; break;
+        }
+        playerSprite.GetComponent<SpriteRenderer>().sprite = currentPlayerData.entityIcon;
+
+        playerView.Setup(currentPlayerData);
+        Setup(playerView); 
         Inventory.Instance.Setup(player.playerDeck);
     }
 
-    public void Setup(PlayerSO playerData, PlayerView playerView)
+    public void Setup(PlayerView playerView)
     {
-        starterPlayerData = playerData;
         player = new Player();
-        player.Setup(starterPlayerData);
+        player.Setup(currentPlayerData);
 
         // First time setup inventory cards are not available, so we use the PlayerSO deck as a fallback
         List<CardSO> inventoryCards = Inventory.Instance != null ? Inventory.Instance.GetCards() : null;

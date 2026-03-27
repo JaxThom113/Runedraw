@@ -36037,7 +36037,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19623bfb6522909448791e396c55d35d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  starterPlayerData: {fileID: 11400000, guid: ce09ab59bf0844f4fbbc8f9b5d02a8ec, type: 2}
+  drawthurPlayerData: {fileID: 11400000, guid: ce09ab59bf0844f4fbbc8f9b5d02a8ec, type: 2}
+  decklanPlayerData: {fileID: 11400000, guid: 202fce0edee5bb54593b5a121ff6c02a, type: 2}
+  shufflynnPlayerData: {fileID: 11400000, guid: 9d9484a0c02cd4e47a85c965b80315bb, type: 2}
+  playerSprite: {fileID: 6167331231691592791}
   player: {fileID: 0}
   playerView: {fileID: 438367852}
   DeathView: {fileID: 0}
@@ -108165,6 +108168,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 57e653efbc6031c4b97541d1a23a9b1d, type: 3}
+--- !u!1 &6167331231691592791 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1274997950500392820, guid: 57e653efbc6031c4b97541d1a23a9b1d, type: 3}
+  m_PrefabInstance: {fileID: 6167331231691592790}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6448160344560825044
 Transform:
   m_ObjectHideFlags: 0
