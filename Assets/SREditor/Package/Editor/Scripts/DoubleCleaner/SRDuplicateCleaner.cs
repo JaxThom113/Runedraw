@@ -48,7 +48,6 @@ namespace SerializeReferenceEditor.Editor.DoubleCleaner
 				}
 				catch (Exception ex)
 				{
-					Debug.LogError(ex);
 				}
 			}
 		}
@@ -163,7 +162,6 @@ namespace SerializeReferenceEditor.Editor.DoubleCleaner
 								}
 								catch (Exception e)
 								{
-									Debug.LogError($"Failed to create instance of type {sourceType.Name}: {e.Message}");
 									property.managedReferenceValue = null;
 									refChanged = true;
 								}
@@ -226,7 +224,6 @@ namespace SerializeReferenceEditor.Editor.DoubleCleaner
 			}
 			catch (Exception e)
 			{
-				Debug.LogError($"Failed to get default value for field {field.Name}: {e.Message}");
 				return null;
 			}
 		}

@@ -22,14 +22,24 @@ MonoBehaviour:
   cardType: 1
   cardTypeIcon: {fileID: 21300000, guid: 2b2c7ca0be02a0c458126decde0e8f41, type: 3}
   sound: {fileID: 8300000, guid: 56d704f63870c944fb2c5fbf8d24a3e8, type: 3}
+  IsUltimate: 0
   effects:
-  - rid: 5118776472692064256
+  - rid: 5118777032282996752
   references:
     version: 2
     RefIds:
-    - rid: 5118776472692064256
-      type: {class: ApplyShieldEffect, ns: , asm: Assembly-CSharp}
+    - rid: 5118777032282996752
+      type: {class: RuneStatusEffect, ns: , asm: Assembly-CSharp}
       data:
-        isPlayer: 1
-        playWhenDrawnByEnemy: 1
-        shieldAmount: 2
+        playWhenDrawnByEnemy: 0
+        duration: 3
+        turnPhase: 1
+        effect:
+          rid: 5118777032282996753
+        ApplyToEnemy: 0
+    - rid: 5118777032282996753
+      type: {class: StunStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        playWhenDrawnByEnemy: 0
+        duration: 3
+        turnPhase: 1

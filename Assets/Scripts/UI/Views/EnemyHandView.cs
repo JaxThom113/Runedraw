@@ -8,7 +8,8 @@ using UnityEngine.Splines;
 public class EnemyHandView : Singleton<EnemyHandView>
 { 
     //Same as HandView, but no card rotation
-     [SerializeField] private SplineContainer splineContainer; 
+    [SerializeField] private SplineContainer splineContainer;
+    public Transform discardPileTransform;
     public float duration = 0.5f;  
     private List<ApplyCard> cards = new();  
     public bool IsTweening {get; set;} = false;
@@ -25,13 +26,10 @@ public class EnemyHandView : Singleton<EnemyHandView>
         }
         cards.Clear();
     }
-    public IEnumerator RemoveEnemyCard(Card card)
+    public IEnumerator RemoveEnemyCard(Card card, bool useDiscardPileTarget = false)
     {  
         ApplyCard applyCard = GetApplyCard(card); 
-        if (applyCard == null) { 
-            Debug.LogError("Card not found in enemy hand");
-            yield break;
-        }; 
+        if (applyCard == null) yield break; 
         if (applyCard.card.IsUltimate)
         {
             cards.Remove(applyCard);
@@ -40,7 +38,12 @@ public class EnemyHandView : Singleton<EnemyHandView>
             Destroy(applyCard.gameObject);
             yield break;
         }
-        applyCard.transform.DOMove(Vector3.zero, duration);
+        Vector3 discardTarget = Vector3.zero;
+        if (useDiscardPileTarget && discardPileTransform != null)
+        {
+            discardTarget = discardPileTransform.position;
+        }
+        applyCard.transform.DOMove(discardTarget, duration);
         cards.Remove(applyCard);
         yield return StartCoroutine(UpdateCardPositions(null));
         Destroy(applyCard.gameObject, 0.5f);

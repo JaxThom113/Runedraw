@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
     public float jumpPower = 0.4f;
     public float jumpDuration = 0.2f;
 
-   
+     
 
    
     [SerializeField] KeyCode cameraRotateLeft = KeyCode.Q;
@@ -35,7 +35,8 @@ public class PlayerMovement : MonoBehaviour
     }
 
     void Update()
-    {
+    { 
+        if(CameraTransitionSystem.Instance.inBattleScene) return;
         if (Input.GetKeyDown(KeyCode.G))
             ResetMovePoint();
 

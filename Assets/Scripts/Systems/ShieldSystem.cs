@@ -10,11 +10,13 @@ public class ShieldSystem : Singleton<ShieldSystem>
     private void OnEnable()
     {
         ActionSystem.AttachPerformer<ApplyShieldGA>(ApplyShieldPerformer);
+        ActionSystem.AttachPerformer<ClearAllShieldsGA>(ClearAllShieldsPerformer);
     }
 
     private void OnDisable()
     {
         ActionSystem.DetachPerformer<ApplyShieldGA>();
+        ActionSystem.DetachPerformer<ClearAllShieldsGA>();
     }
 
     public void Setup(PlayerView playerView, EnemyView enemyView)
@@ -28,6 +30,12 @@ public class ShieldSystem : Singleton<ShieldSystem>
     {
         if (playerView != null) playerView.ClearShield();
         if (enemyView != null) enemyView.ClearShield();
+    }
+
+    private IEnumerator ClearAllShieldsPerformer(ClearAllShieldsGA clearAllShieldsGA)
+    {
+        ClearAllShields();
+        yield return null;
     }
 
     private IEnumerator ApplyShieldPerformer(ApplyShieldGA applyShieldGA)

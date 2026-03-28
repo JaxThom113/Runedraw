@@ -28,7 +28,6 @@ public static class LevelParser
     { 
         if (csv == null)
         {
-            Debug.LogError($"Level csv not found.");
             return;
         }
  
@@ -62,7 +61,6 @@ public static class LevelParser
  
         if (sections.Count < 3)
         {
-            Debug.LogError("Expected 3 sections separated by blank lines.");
             return;
         }
  

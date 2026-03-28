@@ -18,8 +18,14 @@ public class HandView : Singleton<HandView>
     //    //OnHandUpdated.AddListener(AddCardHelper); 
         
     // }  
+    void OnEnable()
+    {
+        ActionSystem.AttachPerformer<UpdateApplyCardGA>(UpdateApplyCardPerformer);
+    }
+
     void OnDisable()
     {
+        ActionSystem.DetachPerformer<UpdateApplyCardGA>();
         foreach(var card in cards)
         {
             Destroy(card.gameObject);
@@ -45,6 +51,41 @@ public class HandView : Singleton<HandView>
         return applyCard;
         
     } 
+
+    public void RefreshVisibleCardCosts()
+    {
+        cards.RemoveAll(c => c == null || c.gameObject == null);
+        foreach (ApplyCard applyCard in cards)
+        { 
+            
+            applyCard.RefreshManaCostText();
+        }
+        CardViewHoverSystem.Instance?.RefreshHoverManaIfVisible();
+    } 
+    public void RefreshVisibleCardDescriptions()
+    {
+        int playerVunerableBonus = VunerableSystem.Instance != null ? VunerableSystem.Instance.GetTotalAdditionalDamage(true) : 0;
+        int enemyVunerableBonus = VunerableSystem.Instance != null ? VunerableSystem.Instance.GetTotalAdditionalDamage(false) : 0;
+        RefreshVisibleCardDescriptions(playerVunerableBonus, enemyVunerableBonus);
+    }
+
+    public void RefreshVisibleCardDescriptions(int playerVunerableBonus, int enemyVunerableBonus)
+    {
+        foreach (ApplyCard applyCard in cards)
+        {
+            applyCard.RefreshDescriptionText(playerVunerableBonus, enemyVunerableBonus);
+        }
+    }
+
+    private IEnumerator UpdateApplyCardPerformer(UpdateApplyCardGA updateApplyCardGA)
+    {
+        int playerVunerableBonus = VunerableSystem.Instance != null ? VunerableSystem.Instance.GetTotalAdditionalDamage(true) : 0;
+        int enemyVunerableBonus = VunerableSystem.Instance != null ? VunerableSystem.Instance.GetTotalAdditionalDamage(false) : 0;
+        RefreshVisibleCardCosts();
+        RefreshVisibleCardDescriptions(playerVunerableBonus, enemyVunerableBonus);
+        yield return null;
+    }
+
     private ApplyCard GetApplyCard(Card card){ 
         return cards.Where(applyCard => applyCard.card == card).FirstOrDefault();
     }
