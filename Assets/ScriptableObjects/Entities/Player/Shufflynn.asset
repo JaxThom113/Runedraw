@@ -15,10 +15,11 @@ MonoBehaviour:
   entityName: Shufflynn
   entityIcon: {fileID: 21300000, guid: a2ab14db5ff6b8c4bae07e67592a2a7c, type: 3}
   entityHealth: 18
+  entityDialogue: {fileID: 0}
   playerDeck:
   - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
   - {fileID: 11400000, guid: 1c84116bc6771824f9a66347efc42561, type: 2}
-  - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
+  - {fileID: 11400000, guid: 49ced29c338d02c4480d7a93ff94cdd3, type: 2}
   - {fileID: 11400000, guid: 266fd6d7184f613428643540193b1ef5, type: 2}
   - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
   - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}

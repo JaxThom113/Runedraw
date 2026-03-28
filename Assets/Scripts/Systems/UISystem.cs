@@ -1,16 +1,46 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 using DG.Tweening;
+using TMPro;
 using UnityEngine.SceneManagement;
 
 public class UISystem : Singleton<UISystem>
 {
+    [Header("HUD References")]
     [SerializeField] private GameObject pauseMenuCanvas;
     [SerializeField] private GameObject runInfoCanvas;
+    [SerializeField] private TextMeshProUGUI time;
+
+    [Header("Run Info Panel References")]
+    [SerializeField] private TextMeshProUGUI runInfoTime;
+    [SerializeField] private TextMeshProUGUI startedFromTutorial;
+    [SerializeField] private TextMeshProUGUI area1;
+    [SerializeField] private TextMeshProUGUI area2;
+    [SerializeField] private TextMeshProUGUI area3;
+    [SerializeField] private TextMeshProUGUI winRun;
+    [SerializeField] private TextMeshProUGUI enemiesFought;
+    [SerializeField] private TextMeshProUGUI chestsLooted;
+    [SerializeField] private TextMeshProUGUI timesRested;
+    [SerializeField] private TextMeshProUGUI cardsBurned;
+    [SerializeField] private TextMeshProUGUI runesPlayed;
+    [SerializeField] private TextMeshProUGUI mostPlayedCard;
+
+    void Update()
+    {
+        // start tracking time
+        GameData.PlayTime += Time.deltaTime;
+
+        int hours = (int)(GameData.PlayTime / 3600);
+        int minutes = (int)(GameData.PlayTime % 3600) / 60;
+        int seconds = (int)(GameData.PlayTime % 60);
+
+        time.text = $"{hours:00}:{minutes:00}:{seconds:00}";
+    }
 
     /*
-        Pause Menu buttons
+        Pause Menu
     */
 
     public void OnPauseClicked()
@@ -38,7 +68,7 @@ public class UISystem : Singleton<UISystem>
     }
 
     /*
-        Run Info buttons
+        Run Info
     */
 
     public void OnRunInfoClicked()
@@ -50,8 +80,18 @@ public class UISystem : Singleton<UISystem>
             Time.timeScale = 0;
         else
             Time.timeScale = 1;
-    } 
 
+        int hours = (int)(GameData.PlayTime / 3600);
+        int minutes = (int)(GameData.PlayTime % 3600) / 60;
+        int seconds = (int)(GameData.PlayTime % 60);
+        runInfoTime.text = $"Play time: {hours:00}:{minutes:00}:{seconds:00}";
+
+        startedFromTutorial.text = GameData.StartedFromTutorial ? "Yes" : "No";
+        area1.text = GameData.Area1.ToString();
+        area2.text = GameData.Area2.ToString();
+        area3.text = GameData.Area3.ToString();
+        winRun.text = GameData.WinRun ? "Yes" : "No";
+    } 
    
     public void TransformShake(Transform objectTransform)
     {

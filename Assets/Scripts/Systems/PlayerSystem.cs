@@ -4,24 +4,56 @@ using UnityEngine;
 
 public class PlayerSystem : Singleton<PlayerSystem>
 { 
-    [SerializeField] public PlayerSO starterPlayerData;
+    [Header("Player SO References")]
+    [SerializeField] public PlayerSO drawthurPlayerData;
+    [SerializeField] public PlayerSO decklanPlayerData;
+    [SerializeField] public PlayerSO shufflynnPlayerData;
+    public PlayerSO currentPlayerData;
+
+    [Header("Player Art References")]
+    public GameObject playerSprite;
+    public GameObject playerPortraits;
+
+    [Header("Other References")]
     public Player player; 
     public PlayerView playerView; 
     public GameObject DeathView; 
     public GameObject GameView;
     public int storedHealth; 
-    void Start(){   
 
-        playerView.Setup(starterPlayerData);
-        Setup(starterPlayerData, playerView); 
+    void Start()
+    {   
+        playerPortraits.transform.GetChild(0).gameObject.SetActive(false);
+        playerPortraits.transform.GetChild(1).gameObject.SetActive(false);
+        playerPortraits.transform.GetChild(2).gameObject.SetActive(false);
+
+        // assign the correct player so depending on what character was picked in the menu
+        switch (GameData.SelectedPlayer)
+        {
+            case 0: 
+                currentPlayerData = drawthurPlayerData; 
+                playerPortraits.transform.GetChild(0).gameObject.SetActive(true);
+                break;
+            case 1: 
+                currentPlayerData = decklanPlayerData; 
+                playerPortraits.transform.GetChild(1).gameObject.SetActive(true);
+                break;
+            case 2: 
+                currentPlayerData = shufflynnPlayerData; 
+                playerPortraits.transform.GetChild(2).gameObject.SetActive(true);
+                break;
+        }
+        playerSprite.GetComponent<SpriteRenderer>().sprite = currentPlayerData.entityIcon;
+
+        playerView.Setup(currentPlayerData);
+        Setup(playerView); 
         Inventory.Instance.Setup(player.playerDeck);
     }
 
-    public void Setup(PlayerSO playerData, PlayerView playerView)
+    public void Setup(PlayerView playerView)
     {
-        starterPlayerData = playerData;
         player = new Player();
-        player.Setup(starterPlayerData);
+        player.Setup(currentPlayerData);
 
         // First time setup inventory cards are not available, so we use the PlayerSO deck as a fallback
         List<CardSO> inventoryCards = Inventory.Instance != null ? Inventory.Instance.GetCards() : null;
