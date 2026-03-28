@@ -132,7 +132,7 @@ public class CreateLevel : MonoBehaviour
         {
             Vector3Int topEdgeWorldPos = new Vector3Int(x + 1, gridSize + 1, 0);
 
-            for (int y = gridSize + 1; y <= gridSize + 16; y++)
+            for (int y = gridSize + 1; y <= gridSize + 10; y++)
             {
                 topEdgeWorldPos.y = y;
                 

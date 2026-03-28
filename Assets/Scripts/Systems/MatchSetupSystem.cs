@@ -5,9 +5,6 @@ using Cinemachine;
 
 public class MatchSetupSystem : MonoBehaviour
 { 
-
-    [SerializeField] public PlayerSO playerData; //FIXME: add different characters later 
-
     [SerializeField] public PlayerView playerView;
     [SerializeField] public EnemyView enemyView; 
     [SerializeField] public CinemachineVirtualCamera playerCamera;
@@ -17,13 +14,13 @@ public class MatchSetupSystem : MonoBehaviour
       
         playerCamera.Follow = overworldEnemy.SpriteGameObject.transform;
         EnemySO enemyData = overworldEnemy.enemyData; 
-        PlayerSystem.Instance.Setup(playerData, playerView);
+        PlayerSystem.Instance.Setup(playerView);
         EnemySystem.Instance.Setup(overworldEnemy); 
         DamageSystem.Instance.Setup(playerView, enemyView);
         ShieldSystem.Instance.Setup(playerView, enemyView); 
         if (enemyData.entityDialogue != null)
             DialogueSystem.Instance.Setup(enemyData.entityDialogue);
-        playerView.Setup(playerData); 
+        playerView.Setup(PlayerSystem.Instance.currentPlayerData); 
         
         enemyView.Setup(enemyData, overworldEnemy); 
         

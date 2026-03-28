@@ -11,22 +11,7 @@ public class MainMenuManager : MonoBehaviour
     public void OnStartGameClicked()
     {
         clickSound.Play();
-
-        // load splash, the coroutine will handle loading the overworld after
-        LoadingSplash.targetScene = "JaxOverworld";
-        SceneManager.LoadScene("Splash");
-    }
-
-    public void OnTutorialClicked()  
-    {
-        clickSound.Play();
-
-        // start starting area type to 0 for the tutorial level
-        GameData.SelectedAreaType = 0;
-
-        // load into overworld same as if StartGame were clicked
-        LoadingSplash.targetScene = "JaxOverworld";
-        SceneManager.LoadScene("Splash");
+        SceneManager.LoadScene("CharacterMenu");
     }
 
     public void OnOptionsClicked()  
@@ -48,6 +33,4 @@ public class MainMenuManager : MonoBehaviour
         // quit the game
         Application.Quit();
     }
-
-    // something
 }

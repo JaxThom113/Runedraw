@@ -1,10 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 using DG.Tweening;
 using TMPro;
-using UnityEngine.SceneManagement;
 
 public class LevelSystem: Singleton<LevelSystem>
 {
@@ -56,12 +56,22 @@ public class LevelSystem: Singleton<LevelSystem>
 
     void Start()
     {
-        int seed = 0;
-        Random.InitState(seed);
+        if (GameData.IsSeededRun)
+        {
+            // get the seed that was selected on the menu
+            UnityEngine.Random.InitState(GameData.SelectedSeed);
+        }
+        else
+        {
+            // generate a random seed from current TickCount and save it
+            GameData.SelectedSeed = Environment.TickCount;
+            UnityEngine.Random.InitState(GameData.SelectedSeed);
+        }
 
         // set the active area GameObject in --- Overworld ---
         currentAreaType = GameData.SelectedAreaType;
         SetActiveArea(currentAreaType);
+        GameData.Area1 = 1;
 
         // get reference to the CreateLevel script in the currently active area GameObject (in Board)
         createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
@@ -139,15 +149,19 @@ public class LevelSystem: Singleton<LevelSystem>
                 currentLevel = 1;
 
                 // randomly select area type for next area
-                currentAreaType = Random.Range(1, 6); 
+                currentAreaType = UnityEngine.Random.Range(1, 6); 
+
+                if (currentArea == 2)
+                    GameData.Area2 = currentAreaType;
+                else if (currentArea == 3)
+                    GameData.Area3 = currentAreaType;
 
                 StartCoroutine(StartTransition(true));
             }
-
         }      
         else
         {
-            // got to the next level of the current area
+            // go to the next level of the current area
             currentLevel++;
 
             StartCoroutine(StartTransition());
@@ -264,8 +278,6 @@ public class LevelSystem: Singleton<LevelSystem>
             case 5: earthArea.SetActive(true); break;
             case 6: finalBossLevel.SetActive(true); break;
         }
-
-        
     }
 
     public void SetCurrentAreaType(int areaIndex)

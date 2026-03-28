@@ -42,12 +42,14 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
         GameObject EnemySprite = overworldEnemy.SpriteGameObject;
          
         
-       
+        // transform enemy to look correct in Gameview
         EnemySprite.transform.DOLocalRotate(new Vector3(-90f, 0f, 0f), rotationTweenDuration); 
-        EnemySprite.transform.DOLocalMove(new Vector3(0.0f, 2.3f, -3f), rotationTweenDuration); 
-        EnemySprite.transform.DOScale(new Vector3(0.15f, 0.15f, 0.15f), rotationTweenDuration); 
-        playerContainer.transform.DOLocalMove(new Vector3(0f, -1f, 0f), rotationTweenDuration);
-        playerSprite.transform.DOLocalRotate(new Vector3(90f, 0f, 0f), rotationTweenDuration);
+        EnemySprite.transform.DOLocalMove(new Vector3(0.0f, 0.5f, -0.5f), rotationTweenDuration); 
+        EnemySprite.transform.DOScale(new Vector3(0.025f, 0.025f, 0.025f), rotationTweenDuration); 
+
+        // transform player so they are not in the way of the camera
+        playerContainer.transform.DOLocalMove(new Vector3(0f, -0.5f, 0f), rotationTweenDuration);
+        playerSprite.transform.DOLocalRotate(new Vector3(-90f, 0f, 0f), rotationTweenDuration);
     }  
     private IEnumerator showGameView(OverworldEnemy overworldEnemy) {  
         GameViewContainer.SetActive(true); 
