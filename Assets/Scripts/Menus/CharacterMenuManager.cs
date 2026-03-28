@@ -63,6 +63,8 @@ public class CharacterMenuManager : MonoBehaviour
     {
         clickSound.Play();
 
+        GameData.SelectedPlayer = playerIndex;
+
         // start starting area type to 0 for the tutorial level
         GameData.SelectedAreaType = 0;
 

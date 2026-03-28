@@ -10,9 +10,11 @@ public class PlayerSystem : Singleton<PlayerSystem>
     [SerializeField] public PlayerSO shufflynnPlayerData;
     public PlayerSO currentPlayerData;
 
-    [Header("Other References")]
+    [Header("Player Art References")]
     public GameObject playerSprite;
+    public GameObject playerPortraits;
 
+    [Header("Other References")]
     public Player player; 
     public PlayerView playerView; 
     public GameObject DeathView; 
@@ -21,12 +23,25 @@ public class PlayerSystem : Singleton<PlayerSystem>
 
     void Start()
     {   
+        playerPortraits.transform.GetChild(0).gameObject.SetActive(false);
+        playerPortraits.transform.GetChild(1).gameObject.SetActive(false);
+        playerPortraits.transform.GetChild(2).gameObject.SetActive(false);
+
         // assign the correct player so depending on what character was picked in the menu
         switch (GameData.SelectedPlayer)
         {
-            case 0: currentPlayerData = drawthurPlayerData; break;
-            case 1: currentPlayerData = decklanPlayerData; break;
-            case 2: currentPlayerData = shufflynnPlayerData; break;
+            case 0: 
+                currentPlayerData = drawthurPlayerData; 
+                playerPortraits.transform.GetChild(0).gameObject.SetActive(true);
+                break;
+            case 1: 
+                currentPlayerData = decklanPlayerData; 
+                playerPortraits.transform.GetChild(1).gameObject.SetActive(true);
+                break;
+            case 2: 
+                currentPlayerData = shufflynnPlayerData; 
+                playerPortraits.transform.GetChild(2).gameObject.SetActive(true);
+                break;
         }
         playerSprite.GetComponent<SpriteRenderer>().sprite = currentPlayerData.entityIcon;
 
