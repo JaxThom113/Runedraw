@@ -5,7 +5,8 @@ using DG.Tweening;
 using System.Collections;
 public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
 { 
-    [SerializeField] GameObject GameViewContainer; 
+    [SerializeField] GameObject GameViewContainer;  
+    [SerializeField] GameObject WorldSpaceCanvas;
     [SerializeField] MatchSetupSystem matchSetupSystem;
     [SerializeField] GameObject playerContainer; 
     [SerializeField] GameObject OverworldHUD;
@@ -16,7 +17,7 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
 
     private Transform playerSprite;
 
-
+    public bool inBattleScene = false;
     void Start()
     { 
         playerSprite = playerContainer.transform.Find("Sprite");
@@ -36,6 +37,7 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
    
    
     public void startGame(OverworldEnemy overworldEnemy) {
+        inBattleScene = true;
         SoundEffectSystem.Instance.PlayBattleTheme();
         OverworldHUD.SetActive(false);
          StartCoroutine(showGameView(overworldEnemy)); 
@@ -63,6 +65,7 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
         
     }
     public IEnumerator endGamePerformer(PlayerWinGA playerWinGA) {
+        inBattleScene = false;
         SoundEffectSystem.Instance.PlayOverworldTheme();
         overworldViewCamera.Priority = 10;  
         gameViewCamera.Priority = 0;  

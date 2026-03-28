@@ -13,8 +13,9 @@ public class CardCreator : Singleton<CardCreator>
         ApplyCard applyCard = Instantiate(applyCardPrefab, canvas.transform); 
         applyCard.transform.position = position; 
         applyCard.transform.rotation = rotation;  
-        applyCard.Setup(card); 
+        applyCard.IsEnemyCard = isEnemy;
         applyCard.InventoryCard = isEnemy;  
+        applyCard.Setup(card); 
         if(isEnemy){
           applyCard.wrapper.transform.Find("CardTypeIcon").gameObject.SetActive(false); 
         }

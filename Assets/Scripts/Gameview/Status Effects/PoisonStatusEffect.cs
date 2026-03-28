@@ -6,8 +6,9 @@ public class PoisonStatusEffect : StatusEffect
 {
    [SerializeField] int damage;
    public int Damage => damage;
+   public override StatusTurnPhase TurnPhase => StatusTurnPhase.Damage;
 
-   public override void PerformStatusEffects(StatusSystem statusSystem, int stacks, bool afflictedUnitIsPlayer)
+   public override void PerformStatusEffects(StatusSystem statusSystem, int stacks, bool afflictedUnitIsPlayer, bool consumeDuration = true)
    { 
       
       if (stacks <= 0) return;
@@ -23,6 +24,6 @@ public class PoisonStatusEffect : StatusEffect
 
    public override string GetDescription()
    {
-    return $"Deal {damage} damage after {duration} turns";
+    return $"Applys {damage} Poison for {duration} turns";
    }
 }

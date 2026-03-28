@@ -14,6 +14,6 @@ public class DealDamageEffect : Effect
     } 
     public override string GetDescription()
     {
-        return $"Deal {damageAmount} damage";
+        return $"Deal {GetDisplayDamageAmount(damageAmount)} damage";
     }
 }

@@ -6,7 +6,10 @@ using DG.Tweening;
 public class DamageSystem : Singleton<DamageSystem>
 {   
     [SerializeField] public PlayerView playerView;  
-    [SerializeField] public EnemyView enemyView;  
+    [SerializeField] public EnemyView enemyView;    
+    public int additionalDamage;
+    public bool additionalDamageAfflictsPlayer = true;
+    private bool killQueued;
     // Start is called before the first frame update
     private void OnEnable() 
     { 
@@ -19,14 +22,25 @@ public class DamageSystem : Singleton<DamageSystem>
     public void Setup(PlayerView playerView, EnemyView enemyView) {
         this.playerView = playerView;
         this.enemyView = enemyView;
+        killQueued = false;
+        additionalDamage = 0;
+        additionalDamageAfflictsPlayer = true;
     }
     private IEnumerator DealDamagePerformer(DealDamageGA dealDamageGA) { 
-        int damageAmount = dealDamageGA.Amount;   
-        Debug.Log("Dealing damage: " + damageAmount);
+        bool damageHitsPlayer = !dealDamageGA.isPlayer;
+        bool applyAdditionalDamage =
+            (damageHitsPlayer && additionalDamageAfflictsPlayer) ||
+            (!damageHitsPlayer && !additionalDamageAfflictsPlayer);
+        int damageAmount = dealDamageGA.Amount + (applyAdditionalDamage ? additionalDamage : 0);   
         if(dealDamageGA.isPlayer) { 
+            if (enemyView == null || killQueued || enemyView.currentHealth <= 0)
+            {
+                yield break;
+            }
             enemyView.TakeDamage(damageAmount); 
-            if(enemyView.currentHealth <= 0) {  
-                Debug.Log("Enemy killed");
+            if(enemyView.currentHealth <= 0) {   
+               
+                killQueued = true;
                 KillEnemyGA killEnemyGA = new(enemyView); 
                 ActionSystem.Instance.AddReaction(killEnemyGA);
             }
@@ -39,7 +53,8 @@ public class DamageSystem : Singleton<DamageSystem>
             }
         }
         yield return null;
-    }
+    } 
+    
 
    
 }

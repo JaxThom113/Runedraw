@@ -1,0 +1,47 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f12edb9ed77eadb45a86c21c6f438cad, type: 3}
+  m_Name: Sludge
+  m_EditorClassIdentifier: 
+  cardName: Sludge
+  cardCost: 3
+  cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
+  cardIcon: {fileID: 21300000, guid: 1c66918f1c2a5b045b168511ed39d464, type: 3}
+  cardDescription: 
+  cardElement: 0
+  cardElementIcon: {fileID: 21300000, guid: 7b6c5390240409445a46abfb97e084ec, type: 3}
+  cardType: 2
+  cardTypeIcon: {fileID: 21300000, guid: 418c3225accc6384aaa387623ca7ff53, type: 3}
+  sound: {fileID: 8300000, guid: 6f48c24495cc4dc41bc3728706620384, type: 3}
+  IsUltimate: 1
+  effects:
+  - rid: 5118777032282996754
+  duration: 3
+  references:
+    version: 2
+    RefIds:
+    - rid: 5118777032282996754
+      type: {class: RuneStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        playWhenDrawnByEnemy: 1
+        duration: 3
+        turnPhase: 0
+        effect:
+          rid: 5118777032282996767
+        ApplyToEnemy: 1
+    - rid: 5118777032282996767
+      type: {class: PoisonStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        playWhenDrawnByEnemy: 0
+        duration: 3
+        turnPhase: 0
+        damage: 1

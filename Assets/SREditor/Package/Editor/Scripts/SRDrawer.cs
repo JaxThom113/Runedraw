@@ -126,7 +126,6 @@ namespace SerializeReferenceEditor.Editor
 		{
 			if (typeInfos == null)
 			{
-				Debug.LogError("Type infos array cannot be null");
 				return;
 			}
 

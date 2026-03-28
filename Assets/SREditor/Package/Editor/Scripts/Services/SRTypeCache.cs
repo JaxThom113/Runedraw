@@ -68,12 +68,10 @@ namespace SerializeReferenceEditor.Editor.Services
 		{
 			if(string.IsNullOrEmpty(typeName))
 			{
-				Debug.LogError("[SR] Incorrect type name.");
 			}
 			var type = GetTypeByName(typeName);
 			if(type == null)
 			{
-				Debug.LogError("[SR] Incorrect type.");
 			}
 
 			return GetTypeInfos(type);

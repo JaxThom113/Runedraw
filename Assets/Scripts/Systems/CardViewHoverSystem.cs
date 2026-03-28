@@ -14,6 +14,9 @@ public class CardViewHoverSystem : Singleton<CardViewHoverSystem>
         // Move to top of hierarchy so it renders on top of other UI elements
        
         
+        ApplyCardHover.IsEnemyCard = false;
+        ApplyCardHover.InventoryCard = false;
+        ApplyCardHover.LootCard = false;
         ApplyCardHover.Setup(card); 
         ApplyCardHover.transform.position = position; 
         
@@ -24,5 +27,16 @@ public class CardViewHoverSystem : Singleton<CardViewHoverSystem>
         ApplyCardHover.gameObject.SetActive(false); 
         ApplyCardHover.transform.DOScale(0.2f, 0.3f).SetEase(Ease.InBack);
         ApplyCardHover.transform.DOLocalMoveY(0f, 0.3f).SetEase(Ease.InBack);
+    }
+
+    /// <summary>Call when stun (or other) changes modified mana so an open hover shows the new cost.</summary>
+    public void RefreshHoverManaIfVisible()
+    {
+        if (ApplyCardHover == null || !ApplyCardHover.gameObject.activeInHierarchy || ApplyCardHover.card == null)
+            return;
+        int playerVunerableBonus = VunerableSystem.Instance != null ? VunerableSystem.Instance.GetTotalAdditionalDamage(true) : 0;
+        int enemyVunerableBonus = VunerableSystem.Instance != null ? VunerableSystem.Instance.GetTotalAdditionalDamage(false) : 0;
+        ApplyCardHover.RefreshManaCostText();
+        ApplyCardHover.RefreshDescriptionText(playerVunerableBonus, enemyVunerableBonus);
     }
 }

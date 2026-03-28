@@ -157,13 +157,13 @@ public static class ProcGen
         if (openBottomTiles.Count > 0)
             startX = openBottomTiles[Random.Range(0, openBottomTiles.Count)];
         else
-            Debug.LogError("Impossible maze: no tiles open on bottom row.");
+            return;
 
         // select random end
         if (openTopTiles.Count > 0)
             endX  = openTopTiles[Random.Range(0, openTopTiles.Count)];
         else
-            Debug.LogError("Impossible maze: no tiles open on top row.");
+            return;
 
         bottomEdge[startX] = 0;
         topEdge[endX] = 0;
@@ -187,7 +187,7 @@ public static class ProcGen
         }
         else
         {
-            Debug.LogError("No path found between start and end!");
+            return;
         }
     }
 
@@ -303,45 +303,6 @@ public static class ProcGen
 
     private static void GridDebug()
     {
-        string topEdgeDebug = "";
-        for (int x = 0; x < GRID_SIZE; x++)
-        {
-            if (topEdge[x] == 1)
-                topEdgeDebug += "1 ";
-            else
-                topEdgeDebug += "0 ";
-        }
-
-        string gridDebug = "";
-        for (int y = 0; y < GRID_SIZE; y++)
-        {
-            for (int x = 0; x < GRID_SIZE; x++)
-            {
-                if (grid[y][x] == 4)
-                    gridDebug += "4 ";
-                else if (grid[y][x] == 3)
-                    gridDebug += "3 ";
-                else if (grid[y][x] == 2)
-                    gridDebug += "2 ";
-                else if (grid[y][x] == 1)
-                    gridDebug += "1 ";
-                else
-                    gridDebug += "0 ";
-            }
-            gridDebug += "\n";
-        }
-
-        string bottomEdgeDebug = "";
-        for (int x = 0; x < GRID_SIZE; x++)
-        {
-            if (bottomEdge[x] == 1)
-                bottomEdgeDebug += "1 ";
-            else
-                bottomEdgeDebug += "0 ";
-        }
-
-        Debug.Log(topEdgeDebug);
-        Debug.Log(gridDebug);
-        Debug.Log(bottomEdgeDebug);
+        
     }
 }

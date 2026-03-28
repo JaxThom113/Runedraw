@@ -30,6 +30,7 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     private Vector3 initialPosition;
     private Quaternion initialRotation;
     private bool ultimateWindupActive;
+    private TextMeshProUGUI costTextComponent;
 
     public const float UltimateWindupSeconds = 1.5f;
     public const float UltimateScale = 0.5f;
@@ -49,6 +50,7 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     }
     public bool LootCard = false;
     public bool InventoryCard = false;
+    public bool IsEnemyCard = false;
     //ALL TYPES MUST BE THE SAME
     // Start is called before the first frame update
     public void Setup(Card card)
@@ -58,8 +60,9 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         this.card = card; 
         cardBorder.GetComponent<Image>().sprite = card.cardBorder; 
         cardIcon.GetComponent<Image>().sprite = card.cardIcon; 
-        cardCostText.GetComponent<TextMeshProUGUI>().text = card.cardCost.ToString(); 
-        cardDescriptionText.GetComponent<TextMeshProUGUI>().text = card.cardDescription; 
+        costTextComponent = cardCostText != null ? cardCostText.GetComponent<TextMeshProUGUI>() : null;
+        RefreshManaCostText();
+        RefreshDescriptionText();
         //cardElement.GetComponent<Image>().sprite = card.cardElement;  
         cardTypeIcon.GetComponent<Image>().sprite = card.cardTypeIcon;
         cardElementIcon.GetComponent<Image>().sprite = card.cardElementIcon;
@@ -67,6 +70,37 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         cardNameText.GetComponent<TextMeshProUGUI>().text = card.cardName;   
         //cardType = card.cardType; 
         cardTypeName.GetComponent<TextMeshProUGUI>().text = card.cardType.ToString();
+    }
+
+    public void RefreshManaCostText()
+    {
+        if (card == null || costTextComponent == null) return;
+        int displayedCost = card.cardCost;
+        if (!InventoryCard && !LootCard && ManaSystem.Instance != null)
+            displayedCost = ManaSystem.Instance.GetModifiedManaCost(card.cardCost);
+        costTextComponent.text = displayedCost.ToString();
+    }
+    public void RefreshDescriptionText()
+    {
+        int playerVunerableBonus = VunerableSystem.Instance != null ? VunerableSystem.Instance.GetTotalAdditionalDamage(true) : 0;
+        int enemyVunerableBonus = VunerableSystem.Instance != null ? VunerableSystem.Instance.GetTotalAdditionalDamage(false) : 0;
+        RefreshDescriptionText(playerVunerableBonus, enemyVunerableBonus);
+    }
+
+    public void RefreshDescriptionText(int playerVunerableBonus, int enemyVunerableBonus)
+    {
+        if (card == null || cardDescriptionText == null) return;
+        string description = card.data != null ? card.data.cardDescription : "";
+        int displayAdditionalDamage = IsEnemyCard ? playerVunerableBonus : enemyVunerableBonus;
+        foreach (Effect effect in card.effects)
+        {
+            effect.isPlayer = !IsEnemyCard;
+            effect.displayAdditionalDamage = displayAdditionalDamage;
+            if (!string.IsNullOrWhiteSpace(description))
+                description += "\n";
+            description += effect.GetDescription();
+        }
+        cardDescriptionText.GetComponent<TextMeshProUGUI>().text = description;
     }
     void OnEnable()
     {
@@ -141,7 +175,6 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         
         if (card == null ) 
         {
-            Debug.LogError("Card is null");
             Interactions.Instance.PlayerIsDragging = false;
             return;
         }

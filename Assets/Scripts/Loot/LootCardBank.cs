@@ -22,7 +22,7 @@ public class LootCardBank : MonoBehaviour
     }
 
     public List<CardSO> GetRandomCardsEnemy(CardSO ultimateCard)
-    {
+    { 
         const int lootCount = 3;
         List<CardSO> chosenCards = new List<CardSO>();
         List<CardSO> takenFromBank = new List<CardSO>();

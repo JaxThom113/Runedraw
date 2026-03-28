@@ -41,10 +41,13 @@ public class CardSystem : Singleton<CardSystem>
         ActionSystem.AttachPerformer<DrawEnemyCardGA>(DrawEnemyCardPerformer);
         ActionSystem.AttachPerformer<DiscardCardGA>(DiscardCardPerformer);  
         ActionSystem.AttachPerformer<PlayCardGA>(PlayCardPerformer);
+        ActionSystem.AttachPerformer<StartRoundGA>(StartRoundPerformer);
         ActionSystem.AttachPerformer<ShuffleGA>(ShuffleDeckPerformer); 
         ActionSystem.SubscribeReaction<LootCardGA>(CreateLootCardsPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<PlayCardGA>(PlayCardUpdateApplyCardPostReaction, ReactionTiming.POST);
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE); //same thing as above, but if prereaction or postreaction we call subscribe reaction instead of attach perfomer
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST); 
+        ActionSystem.SubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<KillEnemyGA>(DiscardEnemyCardPostReaction, ReactionTiming.POST);
         ActionSystem.SubscribeReaction<KillEnemyGA>(RefillDeckPostReaction, ReactionTiming.POST);
      } 
@@ -56,7 +59,6 @@ public class CardSystem : Singleton<CardSystem>
     }
     private void OnDestroy()
     { 
-        Debug.LogError("CardSystem OnDestroy");
         if (!actionHooksBound) return;
         actionHooksBound = false;
         UnsubscribeAll(); // static subscriber list outlives this instance; remove so destroyed instance is never invoked
@@ -67,10 +69,13 @@ public class CardSystem : Singleton<CardSystem>
         ActionSystem.DetachPerformer<DrawEnemyCardGA>();
         ActionSystem.DetachPerformer<DiscardCardGA>(); 
         ActionSystem.DetachPerformer<PlayCardGA>();
+        ActionSystem.DetachPerformer<StartRoundGA>();
         ActionSystem.DetachPerformer<ShuffleGA>();
         ActionSystem.UnsubscribeReaction<LootCardGA>(CreateLootCardsPostReaction, ReactionTiming.POST);
+        ActionSystem.UnsubscribeReaction<PlayCardGA>(PlayCardUpdateApplyCardPostReaction, ReactionTiming.POST);
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE); 
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST); 
+        ActionSystem.UnsubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<KillEnemyGA>(DiscardEnemyCardPostReaction, ReactionTiming.POST);
         ActionSystem.UnsubscribeReaction<KillEnemyGA>(RefillDeckPostReaction, ReactionTiming.POST);
         //Remove from dictionary so we wont get an error when unsubscribing reaction
@@ -79,16 +84,13 @@ public class CardSystem : Singleton<CardSystem>
     public void Setup(List<CardSO> cardSOs, List<CardSOList> enemyCardSOs)  
     {  
         drawPile.Clear();
+        discardPile.Clear();
+        hand.Clear();
+        enemyDeck.Clear();
         foreach(var cardSO in cardSOs) {
-            if (cardSO == null) { 
-                Debug.LogError("CardSO is null in CardSystem Setup"); 
-                continue;
-            }; // skip null refs (e.g. empty slots in SO list)
+            if (cardSO == null) continue; // skip null refs (e.g. empty slots in SO list)
             Card card = new Card(cardSO); 
-            if (card == null) { 
-                Debug.LogError("Card is null in CardSystem Setup"); 
-                continue;
-            };
+            if (card == null) continue;
             drawPile.Add(card);
         } 
         List<CardSO> enemyHand = EnemySystem.Instance.GetCurrentEnemyHand();
@@ -108,39 +110,43 @@ public class CardSystem : Singleton<CardSystem>
 
     //Performers 
     private IEnumerator PlayCardPerformer(PlayCardGA playCardGA)
-    { 
-        
-        hand.Remove(playCardGA.card); 
+    {
+        // Status effects first and before discard tween so stacks/performers are not delayed by animation
+        // or by other effects listed later on the card (e.g. draw before stun on the same CardSO).
+        foreach (var effect in playCardGA.card.effects)
+        {
+            if (effect is StatusEffect statusEffect)
+            {
+                ActionSystem.Instance.AddReaction(new AddStatusEffect(statusEffect, statusEffect.duration, instigatorIsPlayer: true));
+            }
+        }
+
+        hand.Remove(playCardGA.card);
         discardPile.Add(playCardGA.card);
         ApplyCard applyCard = HandView.Instance.RemoveCard(playCardGA.card);
         yield return DiscardCard(applyCard);
-        
+
         if (playCardGA.card.sound != null)
         {
             ActionSystem.Instance.AddReaction(new SoundEffectGA(playCardGA.card.sound));
-        }  
+        }
 
-        //ManaSystem.Instance.SpendMana(playCardGA.card.cardCost);  
-        //DONT SPEND MANA DIRECLTY! add it to que in the action system to avoid any bugs
-        SpendManaGA spendManaGA = new(manaAmount: playCardGA.card.cardCost); 
-        ActionSystem.Instance.AddReaction(spendManaGA); 
-        foreach(var effect in playCardGA.card.effects) {  
-            if(effect is StatusEffect statusEffect) { 
-                effect.isPlayer = true;
-                AddStatusEffect addStatusEffect = new(statusEffect, statusEffect.duration, true);
-                ActionSystem.Instance.AddReaction(addStatusEffect);
-            } 
-            else{ 
-                   Debug.LogError("Adding effect: " + effect.GetType().Name);
-                    effect.isPlayer = true;
-                    PerformEffectGA performEffectGA = new(effect);
-                    ActionSystem.Instance.AddReaction(performEffectGA); //add to subscriber list, since we cant call a perfomer in a performer  
-                    //This is protected in the IsPerforming check at the start of the perform method
-                }
+        ActionSystem.Instance.AddReaction(new SpendManaGA(manaAmount: playCardGA.card.cardCost));
+
+        foreach (var effect in playCardGA.card.effects)
+        {
+            if (effect is StatusEffect)
+                continue;
+            ActionSystem.Instance.AddReaction(new PerformEffectGA(effect, instigatorIsPlayer: true));
         }
     }
     private IEnumerator DrawCardPerformer(DrawCardGA drawCardGA)
     {
+        if (LevelSystem.Instance != null && LevelSystem.Instance.LootView != null && LevelSystem.Instance.LootView.activeInHierarchy)
+        {
+            yield break;
+        }
+
         int cardAmount = Mathf.Min(drawCardGA.Amount, drawPile.Count);  
         if(cardAmount < drawCardGA.Amount) {  
             RefillDeck();
@@ -161,6 +167,11 @@ public class CardSystem : Singleton<CardSystem>
     } 
     private IEnumerator DrawEnemyCardPerformer(DrawEnemyCardGA drawEnemyCardGA)
     {
+        if (LevelSystem.Instance != null && LevelSystem.Instance.LootView != null && LevelSystem.Instance.LootView.activeInHierarchy)
+        {
+            yield break;
+        }
+
         int cardAmount = Mathf.Min(drawEnemyCardGA.Amount, EnemySystem.Instance.GetDrawAmount());  
         
         int notDrawnAmount = drawEnemyCardGA.Amount - cardAmount; 
@@ -178,6 +189,21 @@ public class CardSystem : Singleton<CardSystem>
         }
         hand.Clear();
     } 
+    private IEnumerator StartRoundPerformer(StartRoundGA startRoundGA)
+    {
+        ActionSystem.Instance.AddReaction(new ApplyStatusDamageGA());
+        ApplyStatusGA applyStatusGA = new();
+        ApplyStatusEffectGA applyStatusEffectGA = new();
+        ActionSystem.Instance.AddReaction(new ClearAllShieldsGA());
+        ActionSystem.Instance.AddReaction(applyStatusGA);
+        SetupEnemyDeck(EnemySystem.Instance.enemy.enemyDeck);
+        DrawCardGA drawCardGA = new(startRoundGA.playerDrawAmount);
+        ActionSystem.Instance.AddReaction(drawCardGA);
+        DrawEnemyCardGA drawEnemyCardGA = new(startRoundGA.enemyDrawAmount);
+        ActionSystem.Instance.AddReaction(drawEnemyCardGA);
+        ActionSystem.Instance.AddReaction(applyStatusEffectGA);
+        yield return null;
+    }
     private void DiscardEnemyCardPostReaction(KillEnemyGA killEnemyGA)
     { 
         ShieldSystem.Instance.ClearAllShields();
@@ -197,6 +223,17 @@ public class CardSystem : Singleton<CardSystem>
          ActionSystem.Instance.AddReaction(discardCardGA);
 
     } 
+    private void PlayCardUpdateApplyCardPostReaction(PlayCardGA playCardGA)
+    {
+        ActionSystem.Instance.AddReaction(new UpdateApplyCardGA());
+    }
+    private void StartRoundPreReaction(StartRoundGA startRoundGA)
+    {
+        PoisonSystem.Instance?.RefreshBothSides();
+        BleedSystem.Instance?.RefreshBothSides();
+        VunerableSystem.Instance?.RefreshBothSides();
+        StunSystem.Instance?.RefreshBothSides();
+    }
     private void EnemyTurnPostReaction(EnemyTurnGA enemyTurnGA) 
     {   
         // Defense against infinite loop
@@ -206,14 +243,13 @@ public class CardSystem : Singleton<CardSystem>
         }
         lastProcessedEnemyTurnGA = enemyTurnGA;
 
-        ShieldSystem.Instance.ClearAllShields(); 
-        ApplyStatusGA applyStatusGA = new();
-        ActionSystem.Instance.AddReaction(applyStatusGA);
-        SetupEnemyDeck(EnemySystem.Instance.enemy.enemyDeck);
-        DrawCardGA drawCardGA = new(5); 
-        ActionSystem.Instance.AddReaction(drawCardGA);  
-        DrawEnemyCardGA drawEnemyCardGA = new(EnemySystem.Instance.GetDrawAmount()); 
-        ActionSystem.Instance.AddReaction(drawEnemyCardGA);  
+        if (DamageSystem.Instance != null && DamageSystem.Instance.enemyView != null && DamageSystem.Instance.enemyView.currentHealth <= 0)
+        {
+            return;
+        }
+
+        StartRoundGA startRoundGA = new(5, EnemySystem.Instance.GetDrawAmount());
+        ActionSystem.Instance.AddReaction(startRoundGA);
        
         // RefillManaGA refillManaGA = new(ManaSystem.Instance.maxMana);  
         // ActionSystem.Instance.AddReaction(refillManaGA); 
@@ -224,18 +260,24 @@ public class CardSystem : Singleton<CardSystem>
     {
         SoundEffectSystem.Instance.PlayCardDrawSound();
         Card card = drawPile.Draw(); 
-        if (card == null) { 
-            Debug.LogError("Card is null in DrawCard"); 
-            yield break;
-        };
+        if (card == null) yield break;
         hand.Add(card);
         ApplyCard applyCard = CardCreator.Instance.CreateCard(card, drawPileTransform.position, drawPileTransform.rotation, false);    
         yield return  StartCoroutine(HandView.Instance.AddCard(applyCard));
     } 
     private void CreateLootCardsPostReaction(LootCardGA lootCardGA)  
     { 
-        CardSO ultimateCard = EnemySystem.Instance != null ? EnemySystem.Instance.enemy?.ultimateCard : null;
-        List<CardSO> lootCards = lootCardBank.GetRandomCardsEnemy(ultimateCard);
+        List<CardSO> lootCards;
+        if (lootCardGA.fromEnemy)
+        {
+            CardSO ultimateCard = EnemySystem.Instance != null ? EnemySystem.Instance.enemy?.ultimateCard : null;
+            lootCards = lootCardBank.GetRandomCardsEnemy(ultimateCard);
+        }
+        else
+        {
+            lootCards = lootCardBank.GetRandomCards(lootCardGA.amount);
+        }
+
         foreach(var cardSO in lootCards) {
             Card card = new Card(cardSO);
             ApplyCard applyCard = LootCardCreator.Instance.CreateCard(card, Vector3.zero, Quaternion.identity, false);
@@ -277,6 +319,10 @@ public class CardSystem : Singleton<CardSystem>
     {
         SoundEffectSystem.Instance.PlayCardDrawSound();
         Card card = enemyDeck.DrawFront();
+        if (card == null)
+        {
+            yield break;
+        }
           
         enemyDeck.Add(card);
         ApplyCard applyCard = CardCreator.Instance.CreateCard(card, enemyHandTransform.position, enemyHandTransform.rotation, true);    
@@ -286,13 +332,12 @@ public class CardSystem : Singleton<CardSystem>
         {
             foreach (var effect in card.effects)
             {
-                effect.isPlayer = false; 
-                PerformEffectGA performEffectGA = new(effect);
-                ActionSystem.Instance.AddReaction(performEffectGA); 
+                if (!effect.playWhenDrawnByEnemy)
+                    continue;
+                ActionSystem.Instance.AddReaction(new PerformEffectGA(effect, instigatorIsPlayer: false));
             }
-            yield return EnemyHandView.Instance.RemoveEnemyCard(card); 
-            
-        }                  
+            yield return EnemyHandView.Instance.RemoveEnemyCard(card);
+        }
         
     }
 
@@ -305,7 +350,7 @@ public class CardSystem : Singleton<CardSystem>
     private void RefillDeckPostReaction(KillEnemyGA killEnemyGA)
     {
         RefillDeck();
-        LootCardGA lootCardGA = new LootCardGA(3);
+        LootCardGA lootCardGA = new LootCardGA(3, true);
         ActionSystem.Instance.AddReaction(lootCardGA);
     }
 

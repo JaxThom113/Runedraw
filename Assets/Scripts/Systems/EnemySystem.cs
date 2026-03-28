@@ -18,40 +18,41 @@ public class EnemySystem : Singleton<EnemySystem>
     {
         ActionSystem.AttachPerformer<EnemyTurnGA>(EnemyTurnPerformer); 
         ActionSystem.AttachPerformer<KillEnemyGA>(KillEnemyPerformer);
+        ActionSystem.SubscribeReaction<PlayEnemyCardGA>(PlayEnemyCardUpdateApplyCardPostReaction, ReactionTiming.POST);
     }
     void OnDisable()
     {
         ActionSystem.DetachPerformer<EnemyTurnGA>();
         ActionSystem.DetachPerformer<KillEnemyGA>();
+        ActionSystem.UnsubscribeReaction<PlayEnemyCardGA>(PlayEnemyCardUpdateApplyCardPostReaction, ReactionTiming.POST);
     } 
 
     private IEnumerator EnemyTurnPerformer(EnemyTurnGA enemyTurnGA) 
     {  
    
-        foreach(var card in EnemyHandView.Instance.GetShownCards()) {  
-              
-            PlayEnemyCardGA playEnemyCardGA = new PlayEnemyCardGA(card); 
-            ActionSystem.Instance.AddReaction(playEnemyCardGA);   
+        foreach (var card in EnemyHandView.Instance.GetShownCards())
+        {
+            foreach (var effect in card.effects)
+            {
+                if (effect is StatusEffect statusEffect)
+                {
+                    ActionSystem.Instance.AddReaction(new AddStatusEffect(statusEffect, statusEffect.duration, instigatorIsPlayer: false));
+                }
+            }
+
+            PlayEnemyCardGA playEnemyCardGA = new PlayEnemyCardGA(card);
+            ActionSystem.Instance.AddReaction(playEnemyCardGA);
             if (card.sound != null)
             {
                 ActionSystem.Instance.AddReaction(new SoundEffectGA(card.sound));
             }
-            foreach(var effect in card.effects) {  
-                if(effect is StatusEffect statusEffect) {  
-                    effect.isPlayer = false;
-                    Debug.Log($"Adding status effect: {statusEffect.GetType().Name}");
-                    AddStatusEffect addStatusEffect = new(statusEffect, statusEffect.duration, false);
-                    ActionSystem.Instance.AddReaction(addStatusEffect);
-                } 
-                else{
-                    effect.isPlayer = false;
-                    PerformEffectGA performEffectGA = new(effect);
-                    ActionSystem.Instance.AddReaction(performEffectGA); //add to subscriber list, since we cant call a perfomer in a performer  
-                    //This is protected in the IsPerforming check at the start of the perform method
-                }
-            } 
-            yield return EnemyHandView.Instance.RemoveEnemyCard(card); 
-            
+            foreach (var effect in card.effects)
+            {
+                if (effect is StatusEffect)
+                    continue;
+                ActionSystem.Instance.AddReaction(new PerformEffectGA(effect, instigatorIsPlayer: false));
+            }
+            yield return EnemyHandView.Instance.RemoveEnemyCard(card);
         } 
         EnemyTurnHandler();
           yield return new WaitForSeconds(1f); 
@@ -63,6 +64,10 @@ public class EnemySystem : Singleton<EnemySystem>
             enemyTurnCount = 0;
           }
     }   
+    private void PlayEnemyCardUpdateApplyCardPostReaction(PlayEnemyCardGA playEnemyCardGA)
+    {
+        ActionSystem.Instance.AddReaction(new UpdateApplyCardGA());
+    }
     private IEnumerator KillEnemyPerformer(KillEnemyGA killEnemyGA)
     {  
          DiscardCardGA discardCardGA = new(); 

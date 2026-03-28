@@ -9,6 +9,7 @@ public class ManaSystem : Singleton<ManaSystem>
 
     public int maxMana = 1; 
     private int currentMana;   
+    public int additionalMana;
     private int startingMana = 1;
     private Coroutine borderIncreaseCoroutine;
     private const float BorderIncreaseSeconds = 3f;
@@ -18,6 +19,7 @@ public class ManaSystem : Singleton<ManaSystem>
     { 
         startingMana = maxMana;
         currentMana = maxMana;  
+        //additionalMana = 0;
         manaUI.UpdateMana(currentMana);        
         manaUI.SetManaBorderIncrease(false);
         if (manaUI.gameObject.activeInHierarchy)
@@ -26,7 +28,7 @@ public class ManaSystem : Singleton<ManaSystem>
     private void OnEnable(){ 
         ActionSystem.AttachPerformer<SpendManaGA>(SpendManaPerformer);
         ActionSystem.AttachPerformer<RefillManaGA>(RefillManaPerformer); 
-        ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<ApplyStatusGA>(ApplyStatusPostReaction, ReactionTiming.POST);
         ActionSystem.SubscribeReaction<KillEnemyGA>(KillEnemyPostReaction, ReactionTiming.POST);
     }  
     private void OnDisable(){ 
@@ -35,18 +37,29 @@ public class ManaSystem : Singleton<ManaSystem>
 
         ActionSystem.DetachPerformer<RefillManaGA>(); 
         ActionSystem.DetachPerformer<SpendManaGA>();
-        ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST);
+        ActionSystem.UnsubscribeReaction<ApplyStatusGA>(ApplyStatusPostReaction, ReactionTiming.POST);
         ActionSystem.UnsubscribeReaction<KillEnemyGA>(KillEnemyPostReaction, ReactionTiming.POST);
     }
     public bool HasEnoughMana(int manaAmount) {  
-       
-        return currentMana >= manaAmount;
+        return currentMana >= GetModifiedManaCost(manaAmount);
     } 
 
-    private IEnumerator SpendManaPerformer(SpendManaGA spendManaGA)
+    public int GetModifiedManaCost(int manaAmount)
     {
-        currentMana -= spendManaGA.manaAmount;
-        yield return StartCoroutine(manaUI.SpendManaCoroutine(spendManaGA.manaAmount));
+        return manaAmount + additionalMana;
+    }
+
+    public void SetAdditionalMana(int amount)
+    { 
+        additionalMana = Mathf.Max(0, amount);
+    }
+ 
+    private IEnumerator SpendManaPerformer(SpendManaGA spendManaGA)
+    { 
+        int totalSpend = spendManaGA.manaAmount + additionalMana;
+        currentMana -= totalSpend; 
+        yield return StartCoroutine(manaUI.SpendManaCoroutine(totalSpend));
+        manaUI.UpdateMana(currentMana);
     } 
     private IEnumerator RefillManaPerformer(RefillManaGA refillManaGA)
     {
@@ -56,7 +69,7 @@ public class ManaSystem : Singleton<ManaSystem>
             yield return StartCoroutine(manaUI.StartRound());
     } 
 
-    private void EnemyTurnPostReaction(EnemyTurnGA enemyTurnGA) 
+    private void ApplyStatusPostReaction(ApplyStatusGA applyStatusGA) 
     {  
         maxMana++;
         RefillManaGA refillManaGA = new(maxMana); // add one extra mana for each turn
@@ -69,6 +82,7 @@ public class ManaSystem : Singleton<ManaSystem>
     private void KillEnemyPostReaction(KillEnemyGA killEnemyGA)
     {
         maxMana = startingMana; 
+        additionalMana = 0;
         manaUI.ResetMana(maxMana);
 
         if (borderIncreaseCoroutine != null) StopCoroutine(borderIncreaseCoroutine);

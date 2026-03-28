@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
@@ -42,11 +42,9 @@ namespace SerializeReferenceEditor.Editor.MissingTypesValidator.ReportFormats
         {
             if (_stringBuilder.Length > 0)
             {
-                Debug.Log(_stringBuilder.ToString());
             }
             else
             {
-                Debug.Log("Not found missing types");
             }
         }
     }
