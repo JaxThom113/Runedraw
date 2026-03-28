@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Mathematics;
 using UnityEngine;
 
+using TMPro;
 using UnityEngine.SceneManagement;
 
 public class CharacterMenuManager : MonoBehaviour
@@ -12,6 +12,9 @@ public class CharacterMenuManager : MonoBehaviour
     [SerializeField] private GameObject decklanDisplay;
     [SerializeField] private GameObject shufflynnDisplay;
 
+    [Header("Seed View")]
+    [SerializeField] private GameObject seedInput;
+
     [SerializeField] private AudioSource clickSound;
 
     /*
@@ -20,6 +23,8 @@ public class CharacterMenuManager : MonoBehaviour
         2 = Shufflynn
     */
     private int playerIndex = 0;
+
+    private bool validSeed = false;
 
     public void OnBackClicked()
     {
@@ -54,6 +59,12 @@ public class CharacterMenuManager : MonoBehaviour
 
         GameData.SelectedPlayer = playerIndex;
 
+        if (!validSeed)
+        {
+            GameData.IsSeededRun = false;
+            Debug.LogWarning("Invalid seed inputted, no longer seeded run & now generating new seed...");
+        }
+
         // load splash, the coroutine will handle loading the overworld after
         LoadingSplash.targetScene = "NewJaxOverworld";
         SceneManager.LoadScene("Splash");
@@ -63,7 +74,14 @@ public class CharacterMenuManager : MonoBehaviour
     {
         clickSound.Play();
 
+        GameData.StartedFromTutorial = true;
         GameData.SelectedPlayer = playerIndex;
+
+        if (!validSeed)
+        {
+            GameData.IsSeededRun = false;
+            Debug.LogWarning("Invalid seed inputted, no longer seeded run & now generating new seed...");
+        }
 
         // start starting area type to 0 for the tutorial level
         GameData.SelectedAreaType = 0;
@@ -71,6 +89,25 @@ public class CharacterMenuManager : MonoBehaviour
         // load into overworld same as if StartGame were clicked
         LoadingSplash.targetScene = "NewJaxOverworld";
         SceneManager.LoadScene("Splash");
+    }
+
+    public void OnSeededRunValueChanged()
+    {
+        seedInput.SetActive(!seedInput.activeSelf);
+        GameData.IsSeededRun = !GameData.IsSeededRun;
+    }
+
+    public void OnSeedInputValueChanged()
+    {
+        if (int.TryParse(seedInput.GetComponent<TMP_InputField>().text, out int result))
+        {
+            validSeed = true;
+            GameData.SelectedSeed = result;
+        }
+        else
+        {
+            validSeed = false;
+        }
     }
 
     /*
