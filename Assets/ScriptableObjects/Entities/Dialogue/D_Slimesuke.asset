@@ -10,29 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b1451131da94bbf4db8fb5aa74d1f7ce, type: 3}
-  m_Name: D_TimCheese
+  m_Name: D_Slimesuke
   m_EditorClassIdentifier: 
   Intro:
-  - "It\u2019s time to D-D-D-D-Duel!!!!"
+  - Imma goop you (points at you)
   TurnStart:
-  - "It\u2019s My turn to draw!!!"
+  - My turn
   LowHealthTurnStart:
-  - "I still\u2026 I still believe in the heart of the cheese - I DRAW!"
+  - This looks like a sticky situation...
   Attack:
-  - Take This!
-  - HIYAH!!!
+  - ORA
   UltimateAttack:
-  - You will see why I am the best Runedrawer!!!!
+  - You're not ready for my special goop!
   TakeDamage:
-  - Ouch!!!
-  - Grrr!!!
-  - Oow!
+  - Ow
   EndTurn:
-  - I End my Turn
+  - Aw, no more goops
   LowHealthEndTurn:
-  - "I\u2026 I\u2026 I end my turn!"
+  - I'm gooped out
   Lose:
-  - "I-I Lose\u2026. "
   - I guess this ending is a bit... cheesy
   Win:
-  - You are no match for my cheese!
+  - Loser! (points at you)

@@ -14,15 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityName: Goblin Shark
   entityIcon: {fileID: 21300000, guid: 003e9548674b6044780c5969e7968d44, type: 3}
-  entityHealth: 7
-  entityDialogue: {fileID: 11400000, guid: 6c853c200cf625149b1d56650e81db6a, type: 2}
+  entityHealth: 8
+  entityDialogue: {fileID: 11400000, guid: 72906ec9d4d97e04d9358838b8e12bdd, type: 2}
   enemyDeck:
   - enemyHand:
-    - {fileID: 11400000, guid: 49ced29c338d02c4480d7a93ff94cdd3, type: 2}
-    - {fileID: 11400000, guid: 6d59212212b3f5a408ce9e704e8620bd, type: 2}
+    - {fileID: 11400000, guid: e1e5e027eebb24142a795f29730252e8, type: 2}
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
   - enemyHand:
-    - {fileID: 11400000, guid: 49ced29c338d02c4480d7a93ff94cdd3, type: 2}
     - {fileID: 11400000, guid: 49ced29c338d02c4480d7a93ff94cdd3, type: 2}
     - {fileID: 11400000, guid: 49ced29c338d02c4480d7a93ff94cdd3, type: 2}
     - {fileID: 11400000, guid: 49ced29c338d02c4480d7a93ff94cdd3, type: 2}
@@ -30,4 +28,4 @@ MonoBehaviour:
   - enemyHand:
     - {fileID: 11400000, guid: e1e5e027eebb24142a795f29730252e8, type: 2}
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
-  ultimateCard: {fileID: 11400000, guid: 098ff1a47372b8e43989fca01f99249f, type: 2}
+  ultimateCard: {fileID: 11400000, guid: 044066312ba2371409603c3d1f569dd6, type: 2}
