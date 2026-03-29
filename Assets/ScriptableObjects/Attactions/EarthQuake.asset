@@ -25,12 +25,19 @@ MonoBehaviour:
   IsUltimate: 0
   effects:
   - rid: 5118776516904747011
+  - rid: 5118777040889970689
   references:
     version: 2
     RefIds:
     - rid: 5118776516904747011
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
-        isPlayer: 1
         playWhenDrawnByEnemy: 0
-        damageAmount: 10
+        damageAmount: 5
+    - rid: 5118777040889970689
+      type: {class: VunerableStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        playWhenDrawnByEnemy: 0
+        duration: 3
+        turnPhase: 0
+        damage: 2

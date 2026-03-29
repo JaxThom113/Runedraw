@@ -9,6 +9,7 @@ public class EnemySystem : Singleton<EnemySystem>
     [SerializeField] public OverworldEnemy overworldEnemy;
     public void Setup(OverworldEnemy overworldEnemy)
     {
+        enemyTurnCount = 0;
         enemy = new Enemy();
         enemy.Setup(overworldEnemy.enemyData); 
         this.overworldEnemy = overworldEnemy;
@@ -59,10 +60,8 @@ public class EnemySystem : Singleton<EnemySystem>
           
     } 
     public void EnemyTurnHandler() {
-        enemyTurnCount++; 
-          if(enemyTurnCount >= enemy.enemyDeck.Count) {
-            enemyTurnCount = 0;
-          }
+        enemyTurnCount++;
+        NormalizeEnemyTurnCount();
     }   
     private void PlayEnemyCardUpdateApplyCardPostReaction(PlayEnemyCardGA playEnemyCardGA)
     {
@@ -82,13 +81,36 @@ public class EnemySystem : Singleton<EnemySystem>
     }
     public List<CardSO> GetCurrentEnemyHand()
     {
+        if (!NormalizeEnemyTurnCount())
+        {
+            return new List<CardSO>();
+        }
+
         return enemy.enemyDeck[enemyTurnCount].enemyHand;
     } 
     public int GetDrawAmount() { 
-        if(enemyTurnCount >= enemy.enemyDeck.Count ) {
-            enemyTurnCount = 0;
+        if (!NormalizeEnemyTurnCount())
+        {
+            return 0;
         } 
+
         return enemy.enemyDeck[enemyTurnCount].enemyHand.Count;
+    }
+
+    private bool NormalizeEnemyTurnCount()
+    {
+        if (enemy == null || enemy.enemyDeck == null || enemy.enemyDeck.Count == 0)
+        {
+            enemyTurnCount = 0;
+            return false;
+        }
+
+        if (enemyTurnCount < 0 || enemyTurnCount >= enemy.enemyDeck.Count)
+        {
+            enemyTurnCount = 0;
+        }
+
+        return true;
     }
 
 }

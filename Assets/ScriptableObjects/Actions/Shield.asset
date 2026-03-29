@@ -16,7 +16,7 @@ MonoBehaviour:
   cardCost: 1
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
   cardIcon: {fileID: 21300000, guid: 3eba5dfd6c3fd284ab27501387a1a861, type: 3}
-  cardDescription: Apply 2 Shield
+  cardDescription: 
   cardElement: 0
   cardElementIcon: {fileID: 21300000, guid: 7b6c5390240409445a46abfb97e084ec, type: 3}
   cardType: 1
@@ -24,22 +24,12 @@ MonoBehaviour:
   sound: {fileID: 8300000, guid: 56d704f63870c944fb2c5fbf8d24a3e8, type: 3}
   IsUltimate: 0
   effects:
-  - rid: 5118777032282996752
+  - rid: 5118777040889970688
   references:
     version: 2
     RefIds:
-    - rid: 5118777032282996752
-      type: {class: RuneStatusEffect, ns: , asm: Assembly-CSharp}
+    - rid: 5118777040889970688
+      type: {class: ApplyShieldEffect, ns: , asm: Assembly-CSharp}
       data:
         playWhenDrawnByEnemy: 0
-        duration: 3
-        turnPhase: 1
-        effect:
-          rid: 5118777032282996753
-        ApplyToEnemy: 0
-    - rid: 5118777032282996753
-      type: {class: StunStatusEffect, ns: , asm: Assembly-CSharp}
-      data:
-        playWhenDrawnByEnemy: 0
-        duration: 3
-        turnPhase: 1
+        shieldAmount: 2
