@@ -33,4 +33,4 @@ MonoBehaviour:
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
-  ultimateCard: {fileID: 0}
+  ultimateCard: {fileID: 11400000, guid: 01f8cb83a57da0846bbcd434cc506764, type: 2}

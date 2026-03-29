@@ -22,6 +22,7 @@ MonoBehaviour:
   cardType: 0
   cardTypeIcon: {fileID: 21300000, guid: e9991a45ec777704292b3ff19c127d84, type: 3}
   sound: {fileID: 8300000, guid: f571f980df210904aa7977aa3e139d51, type: 3}
+  IsUltimate: 0
   effects:
   - rid: 5118776516904747008
   references:
@@ -30,6 +31,5 @@ MonoBehaviour:
     - rid: 5118776516904747008
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
-        isPlayer: 1
         playWhenDrawnByEnemy: 0
-        damageAmount: 10
+        damageAmount: 5
