@@ -15,7 +15,7 @@ MonoBehaviour:
   entityName: Goblin Shark
   entityIcon: {fileID: 21300000, guid: 003e9548674b6044780c5969e7968d44, type: 3}
   entityHealth: 8
-  entityDialogue: {fileID: 11400000, guid: 6c853c200cf625149b1d56650e81db6a, type: 2}
+  entityDialogue: {fileID: 11400000, guid: 72906ec9d4d97e04d9358838b8e12bdd, type: 2}
   enemyDeck:
   - enemyHand:
     - {fileID: 11400000, guid: e1e5e027eebb24142a795f29730252e8, type: 2}

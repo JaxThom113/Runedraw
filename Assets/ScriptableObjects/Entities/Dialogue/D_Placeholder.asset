@@ -13,22 +13,22 @@ MonoBehaviour:
   m_Name: D_Placeholder
   m_EditorClassIdentifier: 
   Intro:
-  - Imma goop you (points at you)
+  - I challenge you!
   TurnStart:
-  - My turn
+  - It's my turn
   LowHealthTurnStart:
-  - This looks like a sticky situation...
+  - This is not looking good for me!
   Attack:
-  - ORA
+  - Take this attack!
   UltimateAttack:
-  - You're not ready for my special goop!
+  - Here comes my ultimate attack!
   TakeDamage:
-  - Ow
+  - Ouch!
   EndTurn:
-  - Aw, no more goops
+  - That's it for my turn
   LowHealthEndTurn:
-  - I'm gooped out
+  - I need to think of something - quick!
   Lose:
-  - I guess this ending is a bit... cheesy
+  - Aw well, good game!
   Win:
-  - Loser! (points at you)
+  - Haha I win!
