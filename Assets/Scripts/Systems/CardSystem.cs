@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.UI;
 public class CardSystem : Singleton<CardSystem>
 { 
      //Hold the LOGIC, takes GA's as input for data
@@ -14,6 +15,11 @@ public class CardSystem : Singleton<CardSystem>
     EnemyTurnGA -> EnemyTurnPreReaction -> DiscardCardGA -> AddReaction()
     EnemyTurnGA -> EnemyTurnPostReaction -> DrawCardGA -> AddReaction()
     */     
+
+    public Canvas cardCanvas; 
+    bool enableRayCast = false;
+    private GraphicRaycaster cardCanvasRaycaster;
+    [SerializeField] private float cardCanvasReEnableDelay = 5f;
 
     [SerializeField] public LootCardBank lootCardBank;
     // Start is called before the first frame update 
@@ -36,6 +42,8 @@ public class CardSystem : Singleton<CardSystem>
     {  
         if (actionHooksBound) return;
         actionHooksBound = true;
+        cardCanvasRaycaster = cardCanvas != null ? cardCanvas.GetComponent<GraphicRaycaster>() : null;
+       
         //Attach Performer to add to dictionary so we wont get an error when performperformer/performsubscriber
         ActionSystem.AttachPerformer<DrawCardGA>(DrawCardPerformer);
         ActionSystem.AttachPerformer<DrawEnemyCardGA>(DrawEnemyCardPerformer);
@@ -77,7 +85,7 @@ public class CardSystem : Singleton<CardSystem>
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST); 
         ActionSystem.UnsubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<KillEnemyGA>(DiscardEnemyCardPostReaction, ReactionTiming.POST);
-        ActionSystem.UnsubscribeReaction<KillEnemyGA>(RefillDeckPostReaction, ReactionTiming.POST);
+        ActionSystem.UnsubscribeReaction<KillEnemyGA>(RefillDeckPostReaction, ReactionTiming.POST); 
         //Remove from dictionary so we wont get an error when unsubscribing reaction
     }  
     //Public Methods 
@@ -229,11 +237,14 @@ public class CardSystem : Singleton<CardSystem>
     }
     private void StartRoundPreReaction(StartRoundGA startRoundGA)
     {
+        Debug.Log("StartRoundPreReaction");
+        StartCoroutine(DisableCardCanvasForDraws()); 
         PoisonSystem.Instance?.RefreshBothSides();
         BleedSystem.Instance?.RefreshBothSides();
         VunerableSystem.Instance?.RefreshBothSides();
         StunSystem.Instance?.RefreshBothSides();
     }
+    
     private void EnemyTurnPostReaction(EnemyTurnGA enemyTurnGA) 
     {   
         // Defense against infinite loop
@@ -363,6 +374,28 @@ public class CardSystem : Singleton<CardSystem>
         yield return tween.WaitForCompletion();
         Destroy(applyCard.gameObject);
         
+    }
+
+   
+   
+    private IEnumerator DisableCardCanvasForDraws()
+    { 
+        Debug.Log("DisableCardCanvasForDraws");
+        if (cardCanvasRaycaster == null)
+        { 
+            Debug.LogError("CardCanvas is null");
+            cardCanvasRaycaster = cardCanvas != null ? cardCanvas.GetComponent<GraphicRaycaster>() : null;
+        }
+
+        if (cardCanvasRaycaster == null)
+        { 
+            Debug.LogError("CardCanvasRaycaster is null");
+            yield break;
+        }
+
+        cardCanvasRaycaster.enabled = false; 
+        yield return new WaitForSeconds(7f);
+        cardCanvasRaycaster.enabled = true;
     }
     
 }

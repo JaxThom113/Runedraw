@@ -35,12 +35,8 @@ public class MatchSetupSystem : MonoBehaviour
         List<CardSOList> enemyDeck = EnemySystem.Instance.enemy.enemyDeck; 
         CardSystem.Instance.Setup(playerDeck, enemyDeck); 
 
-        DrawEnemyCardGA drawEnemyCardGA = new(EnemySystem.Instance.GetDrawAmount()); 
-        
-        DrawCardGA drawCardGA = new(5);   
-        ActionSystem.Instance.Perform(drawCardGA, ()=> {
-            ActionSystem.Instance.Perform(drawEnemyCardGA, () => ManaSystem.Instance.InitializeMana());
-        });
+        StartRoundGA startRoundGA = new(5, EnemySystem.Instance.GetDrawAmount());
+        ActionSystem.Instance.Perform(startRoundGA, () => ManaSystem.Instance.InitializeMana());
     } 
 
 }
