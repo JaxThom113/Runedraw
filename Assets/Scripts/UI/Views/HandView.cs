@@ -52,6 +52,12 @@ public class HandView : Singleton<HandView>
         
     } 
 
+    public void RefreshHandLayout()
+    {
+        if(!gameObject.activeInHierarchy) return;
+        StartCoroutine(UpdateCardPositions(null));
+    }
+
     public void RefreshVisibleCardCosts()
     {
         cards.RemoveAll(c => c == null || c.gameObject == null);

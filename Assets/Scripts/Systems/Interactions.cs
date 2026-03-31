@@ -5,6 +5,7 @@ using UnityEngine;
 public class Interactions : Singleton<Interactions>
 {
     public bool PlayerIsDragging { get; set; } = false; 
+    public bool PlayerHoverLocked { get; set; } = false;
 
     public bool PlayerCanInteract() 
     { 
@@ -12,7 +13,7 @@ public class Interactions : Singleton<Interactions>
         return false;
     } 
     public bool PlayerCanHover(){ 
-        if(PlayerIsDragging) return false;
+        if(PlayerIsDragging || PlayerHoverLocked) return false;
         return true;
     }
 }

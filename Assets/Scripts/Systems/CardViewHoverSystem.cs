@@ -10,7 +10,7 @@ public class CardViewHoverSystem : Singleton<CardViewHoverSystem>
     {
         ApplyCardHover.gameObject.SetActive(true);  
         ApplyCardHover.transform.DOScale(0.4f, 0.3f).SetEase(Ease.OutBack); 
-        ApplyCardHover.transform.DOLocalMoveY(100f, 0.3f).SetEase(Ease.OutBack);
+        ApplyCardHover.transform.DOLocalMoveY(25f, 0.3f).SetEase(Ease.OutBack);
         // Move to top of hierarchy so it renders on top of other UI elements
        
         
