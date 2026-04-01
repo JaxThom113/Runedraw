@@ -22,7 +22,7 @@ MonoBehaviour:
   cardType: 2
   cardTypeIcon: {fileID: 21300000, guid: 418c3225accc6384aaa387623ca7ff53, type: 3}
   sound: {fileID: 8300000, guid: 6f48c24495cc4dc41bc3728706620384, type: 3}
-  IsUltimate: 0
+  IsUltimate: 1
   effects:
   - rid: 5118777032282996754
   duration: 3
@@ -37,7 +37,7 @@ MonoBehaviour:
         turnPhase: 0
         effect:
           rid: 5118777032282996756
-        ApplyToEnemy: 0
+        ApplyToEnemy: 1
     - rid: 5118777032282996756
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:

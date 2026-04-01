@@ -12,7 +12,7 @@ public class MatchSetupSystem : MonoBehaviour
    
     public void SetupMatch(OverworldEnemy overworldEnemy){  
       
-        playerCamera.Follow = overworldEnemy.SpriteGameObject.transform;
+        //playerCamera.Follow = overworldEnemy.SpriteGameObject.transform;
         EnemySO enemyData = overworldEnemy.enemyData; 
         PlayerSystem.Instance.Setup(playerView);
         EnemySystem.Instance.Setup(overworldEnemy); 

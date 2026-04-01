@@ -22,7 +22,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] KeyCode cameraRotateRight = KeyCode.E;
 
     private bool isMoving = false;
-
+    private bool canRotate = true;
 
     void Awake()
     {
@@ -40,14 +40,19 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.G))
             ResetMovePoint();
 
-        transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+   
 
         if (Vector3.Distance(transform.position, movePoint.position) <= 0.05f && !isMoving)
         {
            
             Vector3 dir = Vector3.zero;
-            if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 1f)
-                dir = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f);
+            if (Mathf.Abs(Input.GetAxisRaw("Horizontal")) == 1f && canRotate) 
+            {  
+                canRotate = false;
+                movePoint.localRotation *=  (Mathf.Sign(Input.GetAxisRaw("Horizontal")) == 1) ? Quaternion.Euler(0f, 0f, -90f) : Quaternion.Euler(0f, 0f, 90f);
+                Invoke("ResetCanRotate", 0.2f);
+            }
+
             else if (Mathf.Abs(Input.GetAxisRaw("Vertical")) == 1f)
                 dir = new Vector3(0f, Input.GetAxisRaw("Vertical"), 0f);
 
@@ -55,7 +60,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 
                 movePoint.parent = null;
-
+                dir = new Vector3(Mathf.Round(movePoint.transform.up.x), Mathf.Round(movePoint.transform.up.y), 0f) * Mathf.Sign(Input.GetAxisRaw("Vertical"));
                 // if nothing in the position the player is trying to move to, then allow movement
                 if (!Physics2D.OverlapCircle(movePoint.position + dir, 0.2f, whatStopsMovement))
                 { 
@@ -83,5 +88,10 @@ public class PlayerMovement : MonoBehaviour
         // set the movepoint as child of the player when resetting
         movePoint.parent = transform;
         movePoint.localPosition = Vector3.zero;
+    }
+
+    void ResetCanRotate()
+    {
+        canRotate = true;
     }
 }
