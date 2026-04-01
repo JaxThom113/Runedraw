@@ -10,7 +10,7 @@ public class EndTurnButton : MonoBehaviour
         if (LevelSystem.Instance != null && LevelSystem.Instance.LootView != null && LevelSystem.Instance.LootView.activeInHierarchy) return;
         if (DamageSystem.Instance != null && DamageSystem.Instance.enemyView != null && DamageSystem.Instance.enemyView.currentHealth <= 0) return;
 
-        SoundEffectSystem.Instance.PlayButtonClickSound();
+        AudioSystem.Instance.PlaySFX("click");
         EnemyTurnGA enemyTurnGA = new(); 
         ActionSystem.Instance.Perform(enemyTurnGA, () =>
         {

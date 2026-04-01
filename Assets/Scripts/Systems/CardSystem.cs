@@ -258,7 +258,7 @@ public class CardSystem : Singleton<CardSystem>
     //Helper Methods
     private IEnumerator DrawCard() 
     {
-        SoundEffectSystem.Instance.PlayCardDrawSound();
+        AudioSystem.Instance.PlaySFX("cardDraw");
         Card card = drawPile.Draw(); 
         if (card == null) yield break;
         hand.Add(card);
@@ -317,7 +317,7 @@ public class CardSystem : Singleton<CardSystem>
     }
     private IEnumerator DrawEnemyCard() 
     {
-        SoundEffectSystem.Instance.PlayCardDrawSound();
+        AudioSystem.Instance.PlaySFX("cardDraw");
         Card card = enemyDeck.DrawFront();
         if (card == null)
         {
@@ -357,7 +357,7 @@ public class CardSystem : Singleton<CardSystem>
     private IEnumerator DiscardCard(ApplyCard applyCard) 
     {
         if(applyCard == null || !applyCard.gameObject.activeInHierarchy) yield break;
-        SoundEffectSystem.Instance.PlayCardDiscardSound();
+        AudioSystem.Instance.PlaySFX("cardDiscard");
         applyCard.transform.DOScale(Vector3.zero, 0.15f);
         Tween tween = applyCard.transform.DOMove(discardPileTransform.position, 0.15f); 
         yield return tween.WaitForCompletion();

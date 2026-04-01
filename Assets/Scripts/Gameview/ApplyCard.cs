@@ -135,7 +135,7 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public void OnPointerDown(PointerEventData eventData)
     { 
         if(LootCard){
-            SoundEffectSystem.Instance.PlayButtonClickSound();
+            AudioSystem.Instance.PlaySFX("click");
             PlayerSystem.Instance.player.AddCardToDeck(card.data); 
             LevelSystem.Instance.LootView.SetActive(false);
             PlayerWinGA playerWinGA = new();

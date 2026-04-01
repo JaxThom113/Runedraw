@@ -4,13 +4,13 @@ using UnityEngine;
 
 public static class GameData 
 { 
-    // data for transitioning from Menu scene -> Overwold scene
+    // data for transitioning from CharacterMenu scene -> Overworld scene
     public static int SelectedAreaType = 1; 
     public static int SelectedPlayer = 0;
     public static bool IsSeededRun = false;
     public static int SelectedSeed = 0;
 
-    // data for the Run Info panel
+    // data for the Run Info panel in Overworld
     public static float PlayTime = 0;
 
     public static bool StartedFromTutorial = false;

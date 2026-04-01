@@ -21,6 +21,6 @@ EditorBuildSettings:
     path: Assets/Scenes/Menus/Splash.unity
     guid: 5848e8c69606ff545a935a5154ece667
   - enabled: 1
-    path: Assets/Scenes/Overworld.unity
-    guid: 84d07fc19d95fbd42a24e5bd86720005
+    path: Assets/Scenes/JaxOverworld5.unity
+    guid: b3cb24e9bf7277b45bc40707c221feb4
   m_configObjects: {}

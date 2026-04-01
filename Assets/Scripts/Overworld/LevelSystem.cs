@@ -105,10 +105,10 @@ public class LevelSystem: Singleton<LevelSystem>
             {
                 case 0: areaTitle.text = $"Tutorial"; break; // tutorial level
                 case 1: areaTitle.text = $"Dungeons"; break; // neutral area
-                case 2: areaTitle.text = $"Fire Zone"; break; // fire area
-                case 3: areaTitle.text = $"Wind Zone"; break; // wind area
-                case 4: areaTitle.text = $"Water Zone"; break; // water area
-                case 5: areaTitle.text = $"Earth Zone"; break; // earth area
+                case 2: areaTitle.text = $"The Hot Spot"; break; // fire area
+                case 3: areaTitle.text = $"The Breezeway"; break; // wind area
+                case 4: areaTitle.text = $"The Splash Zone"; break; // water area
+                case 5: areaTitle.text = $"The Sandbox"; break; // earth area
                 case 6: areaTitle.text = $"Final Boss"; break; // final boss level
             }
         }
@@ -223,14 +223,14 @@ public class LevelSystem: Singleton<LevelSystem>
 
         // display card pickup UI, start card pickup coroutine 
         LootView.SetActive(true);
-        SoundEffectSystem.Instance.PlayVictoryTheme();
+        AudioSystem.Instance.PlayMusic("victory");
 
         yield return null;
     }
 
     public void OnSkipButtonClick()
     {
-        SoundEffectSystem.Instance.PlayButtonClickSound();
+        AudioSystem.Instance.PlaySFX("click");
         // skip button clicked, disable UI and delete the interactable
         LootView.SetActive(false);
         

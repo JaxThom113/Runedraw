@@ -4,22 +4,25 @@ using UnityEngine;
 
 public class SoundEffectSystem : Singleton<SoundEffectSystem>
 {
-    [SerializeField] private AudioSource effectAudioSource;  
     [SerializeField] private AudioSource themeAudioSource; 
+    [SerializeField] private AudioClip overworldTheme;   
+    [SerializeField] private AudioClip battleTheme;   
+    [SerializeField] private AudioClip victoryTheme;   
+    [SerializeField] private AudioClip defeatTheme;  
 
+    [SerializeField] private AudioSource effectAudioSource;  
     [SerializeField] private AudioClip cardDrawSound; 
     [SerializeField] private AudioClip cardDiscardSound;  
     [SerializeField] private AudioClip ButtonClickSound; 
     [SerializeField] private AudioClip WalkSound; 
-    [SerializeField] private AudioClip overworldTheme;   
-    [SerializeField] private AudioClip battleTheme;   
-    [SerializeField] private AudioClip victoryTheme;   
-    [SerializeField] private AudioClip defeatTheme;   
 
     private bool actionHooksBound = false;
 
     private void OnEnable()
     {
+        themeAudioSource.volume = PlayerPrefs.GetFloat("MusicVolume", 50.0f);
+        effectAudioSource.volume = PlayerPrefs.GetFloat("SfxVolume", 50.0f);
+
         if (actionHooksBound) return;
         actionHooksBound = true;
         ActionSystem.AttachPerformer<SoundEffectGA>(SoundEffectPerformer);
