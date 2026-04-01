@@ -85329,7 +85329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36d1163fa822e8b418a0a603ec078d5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Damping: 0
+  m_Damping: 0.5
 --- !u!114 &1748314794
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -85342,7 +85342,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4c41ac9245b87c4192012080077d830, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Damping: 0
+  m_Damping: 1
 --- !u!1 &1748633571
 GameObject:
   m_ObjectHideFlags: 0
