@@ -25,6 +25,10 @@ public class AudioSystem : PersistentSingleton<AudioSystem>
     private Dictionary<string, AudioClip> music;
     private Dictionary<string, AudioClip> sfx;
 
+    // keep track of the time played on each music track, so Pause/Resume work
+    private Dictionary<string, float> musicPlaybackTimes = new Dictionary<string, float>();
+    private string currentTrack = null;
+
     private bool actionHooksBound = false;
 
     private void OnEnable()
@@ -38,6 +42,9 @@ public class AudioSystem : PersistentSingleton<AudioSystem>
         music.Add("battle", battleTheme);
         music.Add("victory", victoryTheme);
         music.Add("defeat", defeatTheme);
+
+        foreach (var item in music)
+            musicPlaybackTimes.Add(item.Key, 0f);
 
         sfx.Add("click", clickSound);
         sfx.Add("walk", walkSound);
@@ -57,20 +64,30 @@ public class AudioSystem : PersistentSingleton<AudioSystem>
         ActionSystem.DetachPerformer<SoundEffectGA>();
     }
 
-    public void PlayMusic(string clipName)
+    /*
+        Music control
+    */
+
+    public void PlayMusic(string clipName, bool resume = false)
     {
-        if (!music.ContainsKey(clipName))
+        if (!music.ContainsKey(clipName) || musicSource == null)
             return;
-        
-        AudioClip clip = music[clipName];
 
         // if the song is already playing, don't restart it
-        if (musicSource.clip == clip) 
+        if (currentTrack == clipName) 
             return;
+        
+        // save current track time before switching
+        if (currentTrack != null && musicSource.isPlaying)
+            musicPlaybackTimes[currentTrack] = musicSource.time;
 
+        AudioClip clip = music[clipName];
         musicSource.clip = clip;
         musicSource.loop = true;
+        if (resume) musicSource.time = musicPlaybackTimes[clipName];
         musicSource.Play();
+
+        currentTrack = clipName;
     }
 
     public void StopMusic()
@@ -82,10 +99,14 @@ public class AudioSystem : PersistentSingleton<AudioSystem>
     {
         musicSource.volume = volume;
     }
+
+    /*
+        SFX control
+    */
     
     public void PlaySFX(string clipName)
     {
-        if (!sfx.ContainsKey(clipName))
+        if (!sfx.ContainsKey(clipName) || sfxSource == null)
             return;
 
         AudioClip clip = sfx[clipName];

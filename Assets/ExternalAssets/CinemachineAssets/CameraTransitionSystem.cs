@@ -20,8 +20,8 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
     public bool inBattleScene = false;
     void Start()
     { 
+        AudioSystem.Instance.PlayMusic("overworld", true);
         playerSprite = playerContainer.transform.Find("Sprite");
-       
     } 
     void OnEnable()
     {
@@ -68,7 +68,7 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
     }
     public IEnumerator endGamePerformer(PlayerWinGA playerWinGA) {
         inBattleScene = false;
-        AudioSystem.Instance.PlayMusic("overworld");
+        AudioSystem.Instance.PlayMusic("overworld", true);
         overworldViewCamera.Priority = 10;  
         gameViewCamera.Priority = 0;  
          

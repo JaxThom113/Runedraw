@@ -519,15 +519,13 @@ MonoBehaviour:
 
 
     Pummels
-    his enemies with strong melee attacks and lots of defense
+    his enemies with strong melee attacks and lots of defense.
 
 
     - 44 starting
     HP
 
-    - Synergy with FIRE cards
-
-    - Heals 4 HP after every battle'
+    - [other skills TBD]'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1054,7 +1052,7 @@ MonoBehaviour:
       m_Calls: []
   m_text: "A lone cutthroat from the streets, here to settle a score with the Card
     Devil. \n\nWears down his foes with quick attacks and poison.\n\n- 28 starting
-    HP\n- Synergy with WIND cards\n- Poison applies faster"
+    HP\n- [other skills TBD]"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1577,10 +1575,8 @@ MonoBehaviour:
 
     - 18 starting HP
 
-    - Synergy
-    with WATER cards
-
-    - Rune cards deal x2 damage'
+    - [other
+    skills TBD]'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

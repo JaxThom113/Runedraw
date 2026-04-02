@@ -9,6 +9,10 @@ public class MainMenuManager : MonoBehaviour
     void Start()
     {
         AudioSystem.Instance.PlayMusic("menu");
+
+        // reset data when main menu is loaded
+        // Pause > Back to Menu and the Death both take you back here
+        GameData.InitializeData();
     }
 
     public void OnStartGameClicked()

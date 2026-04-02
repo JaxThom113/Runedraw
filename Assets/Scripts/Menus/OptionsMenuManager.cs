@@ -99,7 +99,12 @@ public class OptionsMenuManager : MonoBehaviour
     {
         AudioSystem.Instance.PlaySFX("click");
         isWindowedOn = !isWindowedOn;
-        Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, false);
+
+        if (isWindowedOn)
+            Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, false);
+        else
+            Screen.SetResolution(Screen.currentResolution.width, Screen.currentResolution.height, Screen.fullScreen);
+
         windowedText.text = $"{(isWindowedOn ? "On" : "Off")}";
     }
 

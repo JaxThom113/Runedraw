@@ -58,7 +58,7 @@ public class CharacterMenuManager : MonoBehaviour
 
         GameData.SelectedPlayer = playerIndex;
 
-        if (!validSeed)
+        if (GameData.IsSeededRun && !validSeed)
         {
             GameData.IsSeededRun = false;
             Debug.LogWarning("Invalid seed inputted, no longer seeded run & now generating new seed...");
@@ -77,14 +77,11 @@ public class CharacterMenuManager : MonoBehaviour
         GameData.StartedFromTutorial = true;
         GameData.SelectedPlayer = playerIndex;
 
-        if (!validSeed)
+        if (GameData.IsSeededRun && !validSeed)
         {
             GameData.IsSeededRun = false;
             Debug.LogWarning("Invalid seed inputted, no longer seeded run & now generating new seed...");
         }
-
-        // start starting area type to 0 for the tutorial level
-        GameData.SelectedAreaType = 0;
 
         // load into overworld same as if StartGame were clicked
         LoadingSplash.targetScene = "JaxOverworld5";
@@ -93,6 +90,7 @@ public class CharacterMenuManager : MonoBehaviour
 
     public void OnSeededRunValueChanged()
     {
+        AudioSystem.Instance.PlaySFX("click");
         seedInput.SetActive(!seedInput.activeSelf);
         GameData.IsSeededRun = !GameData.IsSeededRun;
     }
@@ -103,6 +101,11 @@ public class CharacterMenuManager : MonoBehaviour
         {
             validSeed = true;
             GameData.SelectedSeed = result;
+        }
+        else if (seedInput.GetComponent<TMP_InputField>().text == "Test")
+        {
+            // TODO: Make specific seed name load a game with custom level csvs
+            validSeed = false;
         }
         else
         {

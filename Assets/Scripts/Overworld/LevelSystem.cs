@@ -29,6 +29,22 @@ public class LevelSystem: Singleton<LevelSystem>
     public GameObject transitionScreen;
     public GameObject LootView;
 
+    [Header("Area Intros")]
+    public GameObject areaIntros;
+    public CanvasGroup areaIntrosCanvasGroup;
+    public GameObject tutorialAreaIntro;
+    public GameObject finalBossAreaIntro;
+    public GameObject earthAreaIntro;
+    public GameObject fireAreaIntro;
+    public GameObject neutralAreaIntro;
+    public GameObject waterAreaIntro;
+    public GameObject windAreaIntro;
+    public TextMeshProUGUI earthAreaNumber;
+    public TextMeshProUGUI fireAreaNumber;
+    public TextMeshProUGUI neutralAreaNumber;
+    public TextMeshProUGUI waterAreaNumber;
+    public TextMeshProUGUI windAreaNumber;
+
     [Header("Script References")]
     public PlayerMovement playerMovement;
 
@@ -46,7 +62,7 @@ public class LevelSystem: Singleton<LevelSystem>
             5 = earth
             6 = FinalBoss level
     */
-    public int currentAreaType;
+    private int currentAreaType;
 
     // loot view variables
     private bool skipPressed = false;
@@ -68,10 +84,15 @@ public class LevelSystem: Singleton<LevelSystem>
             UnityEngine.Random.InitState(GameData.SelectedSeed);
         }
 
-        // set the active area GameObject in --- Overworld ---
+        // set the active area GameObject in ---- Overworld ----
+        // this could be tutorial or a random level, depending on what button was clicked in CharacterMenu
+        if (!GameData.StartedFromTutorial)
+        {
+            GameData.SelectedAreaType = UnityEngine.Random.Range(1, 6);
+            GameData.Area1 = GameData.SelectedAreaType; 
+        }
         currentAreaType = GameData.SelectedAreaType;
         SetActiveArea(currentAreaType);
-        GameData.Area1 = 1;
 
         // get reference to the CreateLevel script in the currently active area GameObject (in Board)
         createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
@@ -82,6 +103,8 @@ public class LevelSystem: Singleton<LevelSystem>
             TextAsset lvlFile = Resources.Load<TextAsset>("Levels/Tutorial");
             createLevel.DrawLevel(lvlFile);
         }
+
+        StartCoroutine(ShowAreaIntro(currentAreaType));
 
         UpdateUI();
     }
@@ -172,7 +195,7 @@ public class LevelSystem: Singleton<LevelSystem>
 
     IEnumerator StartTransition(bool areaTransition = false, TextAsset file = null)
     {
-        // take control from player, have player continue moving upward
+        // take control from player
         playerMovement.enabled = false;
 
         // transition swipe effect
@@ -200,6 +223,10 @@ public class LevelSystem: Singleton<LevelSystem>
         
         playerMovement.ResetMovePoint();
 
+        // show the intro for the next area if the player made it to a new area
+        if (areaTransition)
+            StartCoroutine(ShowAreaIntro(currentAreaType));
+
         // transition swipe out and reset position
         transitionScreen.transform.DOMoveY(50, 0.5f).SetEase(Ease.OutCubic);
         yield return new WaitForSeconds(1f);
@@ -210,6 +237,81 @@ public class LevelSystem: Singleton<LevelSystem>
         playerMovement.enabled = true;
 
         yield return null;
+    }
+
+    IEnumerator ShowAreaIntro(int areaType)
+    {
+        // take control from player
+        playerMovement.enabled = false;
+
+        areaIntros.SetActive(true);
+
+        switch (areaType)
+        {
+            case 0: 
+                tutorialAreaIntro.SetActive(true); 
+                break;
+            case 1: 
+                neutralAreaIntro.SetActive(true); 
+                neutralAreaNumber.text = $"Area #{currentArea}";
+                break;
+            case 2: 
+                fireAreaIntro.SetActive(true);
+                fireAreaNumber.text = $"Area #{currentArea}";
+                break;
+            case 3: 
+                windAreaIntro.SetActive(true); 
+                windAreaNumber.text = $"Area #{currentArea}";
+                break;
+            case 4: 
+                waterAreaIntro.SetActive(true); 
+                waterAreaNumber.text = $"Area #{currentArea}";
+                break;
+            case 5: 
+                earthAreaIntro.SetActive(true); 
+                earthAreaNumber.text = $"Area #{currentArea}";
+                break;
+            case 6: 
+                finalBossAreaIntro.SetActive(true); 
+                break;
+        }
+
+        yield return StartCoroutine(FadeCanvas(1f));
+
+        yield return new WaitForSeconds(1f);
+
+        // return control to the player  
+        playerMovement.enabled = true;
+
+        yield return StartCoroutine(FadeCanvas(0f));
+
+        neutralAreaIntro.SetActive(false);
+        neutralAreaIntro.SetActive(false);
+        fireAreaIntro.SetActive(false);
+        windAreaIntro.SetActive(false);
+        waterAreaIntro.SetActive(false);
+        earthAreaIntro.SetActive(false);
+        neutralAreaIntro.SetActive(false);
+
+        areaIntros.SetActive(false);
+        
+        yield return null;
+    }
+
+    private IEnumerator FadeCanvas(float targetAlpha)
+    {
+        float fadeDuration = 0.5f;
+        float startAlpha = areaIntrosCanvasGroup.alpha;
+        float time = 0f;
+
+        while (time < fadeDuration)
+        {
+            time += Time.deltaTime;
+            areaIntrosCanvasGroup.alpha = Mathf.Lerp(startAlpha, targetAlpha, time / fadeDuration);
+            yield return null;
+        }
+
+        areaIntrosCanvasGroup.alpha = targetAlpha;
     }
 
     /*
