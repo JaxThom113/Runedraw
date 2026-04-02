@@ -15,10 +15,5 @@ public class EnemySO : EntitySO
     public List<CardSOList> enemyDeck = new List<CardSOList>();
 
     public CardSO ultimateCard;
-
-    [Tooltip("Used when no specific enemy material is assigned.")]
-    public Material defaultEnemyMaterial;
     public Material enemyMaterial;
-
-    public Material ResolvedEnemyMaterial => enemyMaterial != null ? enemyMaterial : defaultEnemyMaterial;
 }

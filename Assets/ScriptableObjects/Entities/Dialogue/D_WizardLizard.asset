@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1451131da94bbf4db8fb5aa74d1f7ce, type: 3}
+  m_Name: D_WizardLizard
+  m_EditorClassIdentifier: 
+  Intro:
+  - WHO GOES THERE! Who dares doth disturb the dastardly WIZARD LIZARD!!!!
+  TurnStart:
+  - Mwehehehe I draw!!!
+  LowHealthTurnStart:
+  - "*pant* heh heh\u2026 I draw\u2026"
+  Attack:
+  - You shall not pass!
+  - Dark Cheese Attack!
+  - HIYAH!!!
+  UltimateAttack:
+  - "Humonculizard!!! Seize him!!! Don\u2019t make me get the hose again!"
+  TakeDamage:
+  - Gadzooks!!!
+  - "Oi, I\u2019m castin\u2019 ere!!!"
+  - Confound it!
+  EndTurn:
+  - I end my turn!
+  LowHealthEndTurn:
+  - "I\u2026 I\u2026 I end my turn!"
+  Lose:
+  - FUCK
+  - "*sigh*... I miss my wife, challenger\u2026"
+  Win:
+  - AHAHAHAHAHAHAHA!!! This is just like that one time *insert cutaway gag*
