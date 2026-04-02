@@ -52,6 +52,7 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public bool LootCard = false;
     public bool InventoryCard = false;
     public bool IsEnemyCard = false;
+    public bool LootFromEnemy = false;
     //ALL TYPES MUST BE THE SAME
     // Start is called before the first frame update
     public void Setup(Card card)
@@ -140,9 +141,7 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if(LootCard){
             SoundEffectSystem.Instance.PlayButtonClickSound();
             PlayerSystem.Instance.player.AddCardToDeck(card.data); 
-            LevelSystem.Instance.LootView.SetActive(false);
-            PlayerWinGA playerWinGA = new();
-            ActionSystem.Instance.Perform(playerWinGA);
+            ActionSystem.Instance.Perform(new LootCardPickupGA(LootFromEnemy));
             return;
         }
         if(InventoryCard) return; 

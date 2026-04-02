@@ -8,7 +8,9 @@ public class PlayerMovement : MonoBehaviour
 {
     [Header("Player Settings")]
     public float moveSpeed = 5f;
-    public Transform movePoint;
+    public Transform movePoint; 
+    public Transform viewTarget; 
+    public GameObject playerViewContainer;
     public LayerMask whatStopsMovement;
 
     [Header("Movement Animation Settings")]

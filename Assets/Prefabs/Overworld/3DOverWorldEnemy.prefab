@@ -302,6 +302,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c91c3ed2466adbc45a77480d90f431a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpriteGameObject: {fileID: 5270687638833008270}
+  targetRenderer: {fileID: 5316573012340273891}
+  material: {fileID: 2100000, guid: 02d5c47cbc43e4b4aaa71ef4e14f9671, type: 2}
   enemyData: {fileID: 11400000, guid: 2c1f280d611e8724fa31ae009f5e2a94, type: 2}
   fadeInDuration: 3
+  fadeOutDuration: 3

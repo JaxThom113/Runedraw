@@ -293,6 +293,7 @@ public class CardSystem : Singleton<CardSystem>
         foreach(var cardSO in lootCards) {
             Card card = new Card(cardSO);
             ApplyCard applyCard = LootCardCreator.Instance.CreateCard(card, Vector3.zero, Quaternion.identity, false);
+            applyCard.LootFromEnemy = lootCardGA.fromEnemy;
              StartCoroutine(LootHandView.Instance.AddCard(applyCard));
         }
     } 

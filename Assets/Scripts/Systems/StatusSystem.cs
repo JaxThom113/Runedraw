@@ -10,6 +10,9 @@ public class StatusSystem : Singleton<StatusSystem>
     // Turns remaining until this keyed effect procs (e.g. poison burst). Separate from stack count.
     Dictionary<StatusEffect, int> enemyStatusTurnRemaining = new Dictionary<StatusEffect, int>();
     Dictionary<StatusEffect, int> playerStatusTurnRemaining = new Dictionary<StatusEffect, int>();
+    // Original applied duration for the currently active status instance. Used for visual normalization.
+    Dictionary<StatusEffect, int> enemyStatusAppliedDuration = new Dictionary<StatusEffect, int>();
+    Dictionary<StatusEffect, int> playerStatusAppliedDuration = new Dictionary<StatusEffect, int>();
     public StatusUI playerStatusUI;
     public StatusUI enemyStatusUI;
 
@@ -39,6 +42,14 @@ public class StatusSystem : Singleton<StatusSystem>
         Dictionary<StatusEffect, int> turnMap = afflictedUnitIsPlayer ? playerStatusTurnRemaining : enemyStatusTurnRemaining;
         if (turnMap.TryGetValue(effect, out int turnsRemaining))
             return turnsRemaining;
+        return effect.duration;
+    }
+
+    public int GetAppliedDuration(StatusEffect effect, bool afflictedUnitIsPlayer)
+    {
+        Dictionary<StatusEffect, int> appliedDurationMap = afflictedUnitIsPlayer ? playerStatusAppliedDuration : enemyStatusAppliedDuration;
+        if (appliedDurationMap.TryGetValue(effect, out int appliedDuration))
+            return appliedDuration;
         return effect.duration;
     }
 
@@ -103,8 +114,10 @@ public class StatusSystem : Singleton<StatusSystem>
     {
         playerStatusEffects.Clear();
         playerStatusTurnRemaining.Clear();
+        playerStatusAppliedDuration.Clear();
         enemyStatusEffects.Clear();
         enemyStatusTurnRemaining.Clear();
+        enemyStatusAppliedDuration.Clear();
 
         if (playerStatusUI != null)
         {
@@ -154,6 +167,7 @@ public class StatusSystem : Singleton<StatusSystem>
         bool afflictedUnitIsPlayer = !instigatorIsPlayer;
         Dictionary<StatusEffect, int> map = afflictedUnitIsPlayer ? playerStatusEffects : enemyStatusEffects;
         Dictionary<StatusEffect, int> turnMap = afflictedUnitIsPlayer ? playerStatusTurnRemaining : enemyStatusTurnRemaining;
+        Dictionary<StatusEffect, int> appliedDurationMap = afflictedUnitIsPlayer ? playerStatusAppliedDuration : enemyStatusAppliedDuration;
         StatusEffect key = addStatusEffect.statusEffect;
 
         // Enemy does not use mana, so stun converts into random enemy card discard instead.
@@ -164,6 +178,7 @@ public class StatusSystem : Singleton<StatusSystem>
             {
                 int initialTurns = addStatusEffect.duration > 0 ? addStatusEffect.duration : key.duration;
                 turnMap[key] = initialTurns;
+                appliedDurationMap[key] = initialTurns;
             }
 
             List<Card> shownEnemyCards = EnemyHandView.Instance != null ? EnemyHandView.Instance.GetShownCards() : null;
@@ -190,6 +205,7 @@ public class StatusSystem : Singleton<StatusSystem>
             // Reapplying a rune refreshes it to one active instance with the latest duration.
             map[key] = 1;
             turnMap[key] = durationToApply;
+            appliedDurationMap[key] = durationToApply;
         }
         else
         {
@@ -198,6 +214,7 @@ public class StatusSystem : Singleton<StatusSystem>
             if (!turnMap.ContainsKey(key))
             {
                 turnMap[key] = durationToApply;
+                appliedDurationMap[key] = durationToApply;
             }
         }
 

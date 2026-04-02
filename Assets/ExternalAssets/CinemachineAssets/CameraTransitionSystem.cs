@@ -23,12 +23,12 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
  
     void OnEnable()
     {
-        ActionSystem.AttachPerformer<PlayerWinGA>(endGamePerformer); 
+        ActionSystem.AttachPerformer<LootCardPickupGA>(LootCardPickupPerformer);
         //ActionSystem.SubscribeReaction<LootCardGA>(endGameViewPreReaction, ReactionTiming.PRE);
     }
     void OnDisable()
     {
-        ActionSystem.DetachPerformer<PlayerWinGA>();
+        ActionSystem.DetachPerformer<LootCardPickupGA>();
         //ActionSystem.UnsubscribeReaction<LootCardGA>(endGameViewPreReaction, ReactionTiming.PRE);
     }
 
@@ -48,7 +48,8 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
                 child.gameObject.SetActive(false);
             }
         } 
-        overworldEnemy.FadeIn();
+        overworldEnemy.FadeIn(); 
+        
         
         
         // transform enemy to look correct in Gameview
@@ -57,15 +58,16 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
        // EnemySprite.transform.DOScale(new Vector3(0.025f, 0.025f, 0.025f), rotationTweenDuration); 
 
         // transform player so they are not in the way of the camera
-        playerViewContainer.transform.DOLocalMove(new Vector3(0f,-2.0f,-1.0f), rotationTweenDuration); 
+        playerViewContainer.transform.DOLocalMove(new Vector3(0f,-1.5f,-1.0f), rotationTweenDuration);  
+    
         playerSprite.SetActive(false);
     }  
     private IEnumerator showGameView(OverworldEnemy overworldEnemy) {  
         GameViewContainer.SetActive(true); 
         matchSetupSystem.SetupMatch(overworldEnemy); 
         yield return new WaitForSeconds(rotationTweenDuration);  
-        overworldViewCamera.Priority = 0; 
-        gameViewCamera.Priority = 10; 
+        // overworldViewCamera.Priority = 0; 
+        // gameViewCamera.Priority = 10; 
         
         
     } 
@@ -73,16 +75,22 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
        
         
     }
-    public IEnumerator endGamePerformer(PlayerWinGA playerWinGA) {
+
+    private IEnumerator LootCardPickupPerformer(LootCardPickupGA lootCardPickupGA)
+    {
+        if (!lootCardPickupGA.fromEnemy)
+            yield break;
+
+        if (EnemySystem.Instance != null && EnemySystem.Instance.overworldEnemy != null)
+            EnemySystem.Instance.overworldEnemy.ClearStatusVisuals();
+
         inBattleScene = false;
         SoundEffectSystem.Instance.PlayOverworldTheme();
-        overworldViewCamera.Priority = 10;  
-        gameViewCamera.Priority = 0;  
         playerSprite.SetActive(true);
         playerViewContainer.transform.DOLocalMove(new Vector3(0f,0.0f,-1.0f), rotationTweenDuration);
-        OverworldHUD.SetActive(true); 
-         GameViewContainer.SetActive(false);
-        yield return null; 
+        OverworldHUD.SetActive(true);
+        GameViewContainer.SetActive(false);
+        yield return null;
     }
 
     
