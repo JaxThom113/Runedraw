@@ -67148,8 +67148,21 @@ MonoBehaviour:
   areaLevel: {fileID: 505575112}
   transitionScreen: {fileID: 965387705}
   LootView: {fileID: 1787748743}
+  areaIntros: {fileID: 0}
+  areaIntrosCanvasGroup: {fileID: 0}
+  tutorialAreaIntro: {fileID: 0}
+  finalBossAreaIntro: {fileID: 0}
+  earthAreaIntro: {fileID: 0}
+  fireAreaIntro: {fileID: 0}
+  neutralAreaIntro: {fileID: 0}
+  waterAreaIntro: {fileID: 0}
+  windAreaIntro: {fileID: 0}
+  earthAreaNumber: {fileID: 0}
+  fireAreaNumber: {fileID: 0}
+  neutralAreaNumber: {fileID: 0}
+  waterAreaNumber: {fileID: 0}
+  windAreaNumber: {fileID: 0}
   playerMovement: {fileID: 1544774762}
-  currentAreaType: 2
 --- !u!1 &1285040819
 GameObject:
   m_ObjectHideFlags: 0
@@ -109908,6 +109921,16 @@ MonoBehaviour:
   enemies:
   - {fileID: 11400000, guid: 212f3b31e8777e84daaae13205bf5d5a, type: 2}
   - {fileID: 11400000, guid: 2c1f280d611e8724fa31ae009f5e2a94, type: 2}
+  - {fileID: 11400000, guid: 1842a786c5724e448b213101d8cf646f, type: 2}
+  - {fileID: 11400000, guid: 399d25e74ff9eff43b5eaa9e61a7a273, type: 2}
+  - {fileID: 11400000, guid: 2c1f280d611e8724fa31ae009f5e2a94, type: 2}
+  - {fileID: 11400000, guid: 78447ce8294b9444d9faebdf39ccf656, type: 2}
+  - {fileID: 11400000, guid: f9a33ed2794e3c24dbb52a0b943352bd, type: 2}
+  - {fileID: 11400000, guid: 979e4e307e0a4f844949633be3ac89c8, type: 2}
+  - {fileID: 11400000, guid: 212f3b31e8777e84daaae13205bf5d5a, type: 2}
+  - {fileID: 11400000, guid: 865104b2f3248ac41933b0c1bff316dc, type: 2}
+  - {fileID: 11400000, guid: 7b10642f3ad044c48b57b60dea24c211, type: 2}
+  - {fileID: 11400000, guid: 7c351b06671a8ef4d98e27914f83f592, type: 2}
 --- !u!1 &2037935646
 GameObject:
   m_ObjectHideFlags: 0

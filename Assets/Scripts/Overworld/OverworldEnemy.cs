@@ -53,10 +53,10 @@ public class OverworldEnemy : MonoBehaviour
 
     public void ApplyCurrentEnemyMaterial()
     {
-        if (enemyData == null || enemyData.ResolvedEnemyMaterial == null)
+        if (enemyData == null || enemyData.enemyMaterial == null)
             return;
 
-        ApplyMaterial(enemyData.ResolvedEnemyMaterial);
+        ApplyMaterial(enemyData.enemyMaterial);
     }
 
     public void ApplyMaterial(Material materialTemplate)
