@@ -6,31 +6,36 @@ using UnityEngine.SceneManagement;
 
 public class MainMenuManager : MonoBehaviour
 {
-    [SerializeField] private AudioSource clickSound;
+    void Start()
+    {
+        AudioSystem.Instance.PlayMusic("menu");
+
+        // reset data when main menu is loaded
+        // Pause > Back to Menu and the Death both take you back here
+        GameData.InitializeData();
+    }
 
     public void OnStartGameClicked()
     {
-        clickSound.Play();
+        AudioSystem.Instance.PlaySFX("click");
         SceneManager.LoadScene("CharacterMenu");
     }
 
     public void OnOptionsClicked()  
     {
-        clickSound.Play();
+        AudioSystem.Instance.PlaySFX("click");
         SceneManager.LoadScene("OptionsMenu");
     }
 
     public void OnCreditsClicked()
     {
-        clickSound.Play();
+        AudioSystem.Instance.PlaySFX("click");
         SceneManager.LoadScene("CreditsMenu");
     }
 
     public void OnQuitClicked()
     {
-        clickSound.Play();
-
-        // quit the game
+        AudioSystem.Instance.PlaySFX("click");
         Application.Quit();
     }
 }

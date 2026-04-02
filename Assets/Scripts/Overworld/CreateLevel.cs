@@ -123,9 +123,24 @@ public class CreateLevel : MonoBehaviour
 
         Vector3Int playerPos = new Vector3Int(0, 0, 0);
 
-        // create thick walls on edges
-        Instantiate(edge, new Vector3(13f, 0f, -0.5f), Quaternion.identity, wallsContainer.transform);
-        Instantiate(edge, new Vector3(-13f, 0f, -0.5f), Quaternion.identity, wallsContainer.transform);
+        // draw left/right edges
+        for (int y = -9; y <= 25; y++)
+        {
+            Vector3Int leftEdgeWorldPos = new Vector3Int(0, y, 0);
+            Vector3Int rightEdgeWorldPos = new Vector3Int(16, y, 0);
+
+            Vector3 leftCubePos = edgeTilemap.GetCellCenterWorld(leftEdgeWorldPos);
+            leftCubePos.z = -0.5f;
+            Instantiate(wallCube, leftCubePos, Quaternion.Euler(-90f, 0f, 0f), wallsContainer.transform);
+
+            Vector3 rightCubePos = edgeTilemap.GetCellCenterWorld(rightEdgeWorldPos);
+            rightCubePos.z = -0.5f;
+            Instantiate(wallCube, rightCubePos, Quaternion.Euler(-90f, 0f, 0f), wallsContainer.transform);
+        }
+
+        // create thick walls on edges (limits number of cubes instantiated on left/right edges)
+        Instantiate(edge, new Vector3(13.5f, 0f, -0.5f), Quaternion.identity, wallsContainer.transform);
+        Instantiate(edge, new Vector3(-13.5f, 0f, -0.5f), Quaternion.identity, wallsContainer.transform);
 
         // draw the top edge
         for (int x = 0; x < gridSize; x++)
@@ -147,41 +162,7 @@ public class CreateLevel : MonoBehaviour
 
                     Vector3 cubePos = edgeTilemap.GetCellCenterWorld(topEdgeWorldPos);
                     cubePos.z = -0.5f;
-                    Instantiate(wallCube, cubePos, Quaternion.identity, wallsContainer.transform);
-                }
-            }
-        }
-
-        // draw the grid, making sure to account for 4th quadrant vs 1st quadrant coordinates
-        for (int y = 0; y < gridSize; y++)
-        {
-            for (int x = 0; x < gridSize; x++)
-            {
-                int flippedY = (gridSize - 1) - y; // convert from 4th quadrant -> 1st quadrant
-                Vector3Int pos = new Vector3Int(x, flippedY, 0);
-
-                if (grid[y][x] == 1)
-                {
-                    wallTilemap.SetTile(pos, wallTile);
-
-                    // add 3D cube on top of wall tiles
-                    Vector3 cubePos = wallTilemap.GetCellCenterWorld(pos);
-                    cubePos.z = -0.5f;
-                    Instantiate(wallCube, cubePos, Quaternion.identity, wallsContainer.transform);
-
-                }
-                else
-                {
-                    wallTilemap.SetTile(pos, null);
-                }
-
-                if (grid[y][x] == 2)
-                {
-                    floorTilemap.SetTile(pos, highlightFloorTile);
-                }
-                else
-                {
-                    floorTilemap.SetTile(pos, floorTile);
+                    Instantiate(wallCube, cubePos, Quaternion.Euler(-90f, 0f, 0f), wallsContainer.transform);
                 }
             }
         }
@@ -210,7 +191,40 @@ public class CreateLevel : MonoBehaviour
 
                     Vector3 cubePos = edgeTilemap.GetCellCenterWorld(bottomEdgeWorldPos);
                     cubePos.z = -0.5f;
-                    Instantiate(wallCube, cubePos, Quaternion.identity, wallsContainer.transform);
+                    Instantiate(wallCube, cubePos, Quaternion.Euler(-90f, 0f, 0f), wallsContainer.transform);
+                }
+            }
+        }
+
+        // draw the grid, making sure to account for 4th quadrant vs 1st quadrant coordinates
+        for (int y = 0; y < gridSize; y++)
+        {
+            for (int x = 0; x < gridSize; x++)
+            {
+                int flippedY = (gridSize - 1) - y; // convert from 4th quadrant -> 1st quadrant
+                Vector3Int pos = new Vector3Int(x, flippedY, 0);
+
+                if (grid[y][x] == 1)
+                {
+                    wallTilemap.SetTile(pos, wallTile);
+
+                    // add 3D cube on top of wall tiles
+                    Vector3 cubePos = wallTilemap.GetCellCenterWorld(pos);
+                    cubePos.z = -0.5f;
+                    Instantiate(wallCube, cubePos, Quaternion.Euler(-90f, 0f, 0f), wallsContainer.transform);
+                }
+                else
+                {
+                    wallTilemap.SetTile(pos, null);
+                }
+
+                if (grid[y][x] == 2)
+                {
+                    floorTilemap.SetTile(pos, highlightFloorTile);
+                }
+                else
+                {
+                    floorTilemap.SetTile(pos, floorTile);
                 }
             }
         }

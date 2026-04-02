@@ -42,7 +42,7 @@ public class Inventory : Singleton<Inventory>
     }
     public List<CardSO> GetCards() => cards;
     public void ToggleCards() {
-        SoundEffectSystem.Instance.PlayButtonClickSound();
+        AudioSystem.Instance.PlaySFX("click");
         if(displayed) { 
             Setup(PlayerSystem.Instance.player.playerDeck);
             HideCards();

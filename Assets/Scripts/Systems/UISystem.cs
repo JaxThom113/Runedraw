@@ -45,21 +45,21 @@ public class UISystem : Singleton<UISystem>
 
     public void OnPauseClicked()
     {
-        SoundEffectSystem.Instance.PlayButtonClickSound();
+        AudioSystem.Instance.PlaySFX("click");
         pauseMenuCanvas.SetActive(true);
         Time.timeScale = 0;
     }
 
     public void OnResumeClicked()
     {
-        SoundEffectSystem.Instance.PlayButtonClickSound();
+        AudioSystem.Instance.PlaySFX("click");
         pauseMenuCanvas.SetActive(false);
         Time.timeScale = 1;
     }
 
     public void OnBackToMenuClicked()
     {
-        SoundEffectSystem.Instance.PlayButtonClickSound();
+        AudioSystem.Instance.PlaySFX("click");
         pauseMenuCanvas.SetActive(false);
         Time.timeScale = 1;
 
@@ -73,7 +73,7 @@ public class UISystem : Singleton<UISystem>
 
     public void OnRunInfoClicked()
     {
-        SoundEffectSystem.Instance.PlayButtonClickSound();
+        AudioSystem.Instance.PlaySFX("click");
         runInfoCanvas.SetActive(!runInfoCanvas.activeSelf);
 
         if (runInfoCanvas.activeSelf)

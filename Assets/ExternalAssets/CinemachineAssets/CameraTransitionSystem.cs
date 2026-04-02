@@ -20,23 +20,24 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
  
 
     public bool inBattleScene = false;
- 
+    void Start()
+    { 
+        AudioSystem.Instance.PlayMusic("overworld", true);
+    } 
     void OnEnable()
     {
         ActionSystem.AttachPerformer<LootCardPickupGA>(LootCardPickupPerformer);
-        //ActionSystem.SubscribeReaction<LootCardGA>(endGameViewPreReaction, ReactionTiming.PRE);
     }
     void OnDisable()
     {
         ActionSystem.DetachPerformer<LootCardPickupGA>();
-        //ActionSystem.UnsubscribeReaction<LootCardGA>(endGameViewPreReaction, ReactionTiming.PRE);
     }
 
    
    
     public void startGame(OverworldEnemy overworldEnemy) {
         inBattleScene = true;
-        SoundEffectSystem.Instance.PlayBattleTheme();
+        AudioSystem.Instance.PlayMusic("battle");
         OverworldHUD.SetActive(false);
          StartCoroutine(showGameView(overworldEnemy));  
          GameObject EnemyContainer = GameObject.Find("EnemyContainer");
@@ -85,7 +86,7 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
             EnemySystem.Instance.overworldEnemy.ClearStatusVisuals();
 
         inBattleScene = false;
-        SoundEffectSystem.Instance.PlayOverworldTheme();
+        AudioSystem.Instance.PlayMusic("overworld", true);
         playerSprite.SetActive(true);
         playerViewContainer.transform.DOLocalMove(new Vector3(0f,0.0f,-1.0f), rotationTweenDuration);
         OverworldHUD.SetActive(true);

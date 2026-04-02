@@ -8,6 +8,7 @@ public class CreditsMenuManager : MonoBehaviour
 {
     public void OnBackClicked()
     {
+        AudioSystem.Instance.PlaySFX("click");
         SceneManager.LoadScene("MainMenu");
     }
 }

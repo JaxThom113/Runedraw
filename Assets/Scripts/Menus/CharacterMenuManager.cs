@@ -15,8 +15,6 @@ public class CharacterMenuManager : MonoBehaviour
     [Header("Seed View")]
     [SerializeField] private GameObject seedInput;
 
-    [SerializeField] private AudioSource clickSound;
-
     /*
         0 = Drawthur
         1 = Decklan
@@ -33,7 +31,7 @@ public class CharacterMenuManager : MonoBehaviour
 
     public void OnLeftArrowClicked()
     {
-        clickSound.Play();
+        AudioSystem.Instance.PlaySFX("click");
 
         if (playerIndex == 0)
             return;
@@ -44,7 +42,7 @@ public class CharacterMenuManager : MonoBehaviour
 
     public void OnRightArrowClicked()
     {
-        clickSound.Play();
+        AudioSystem.Instance.PlaySFX("click");
 
         if (playerIndex == 2)
             return;
@@ -55,44 +53,44 @@ public class CharacterMenuManager : MonoBehaviour
 
     public void OnStartGameClicked()
     {
-        clickSound.Play();
+        AudioSystem.Instance.PlaySFX("click");
+        AudioSystem.Instance.StopMusic();
 
         GameData.SelectedPlayer = playerIndex;
 
-        if (!validSeed)
+        if (GameData.IsSeededRun && !validSeed)
         {
             GameData.IsSeededRun = false;
             Debug.LogWarning("Invalid seed inputted, no longer seeded run & now generating new seed...");
         }
 
         // load splash, the coroutine will handle loading the overworld after
-        LoadingSplash.targetScene = "Overworld";
+        LoadingSplash.targetScene = "JaxOverworld5";
         SceneManager.LoadScene("Splash");
     }
 
     public void OnTutorialClicked()  
     {
-        clickSound.Play();
+        AudioSystem.Instance.PlaySFX("click");
+        AudioSystem.Instance.StopMusic();
 
         GameData.StartedFromTutorial = true;
         GameData.SelectedPlayer = playerIndex;
 
-        if (!validSeed)
+        if (GameData.IsSeededRun && !validSeed)
         {
             GameData.IsSeededRun = false;
             Debug.LogWarning("Invalid seed inputted, no longer seeded run & now generating new seed...");
         }
 
-        // start starting area type to 0 for the tutorial level
-        GameData.SelectedAreaType = 0;
-
         // load into overworld same as if StartGame were clicked
-        LoadingSplash.targetScene = "Overworld";
+        LoadingSplash.targetScene = "JaxOverworld5";
         SceneManager.LoadScene("Splash");
     }
 
     public void OnSeededRunValueChanged()
     {
+        AudioSystem.Instance.PlaySFX("click");
         seedInput.SetActive(!seedInput.activeSelf);
         GameData.IsSeededRun = !GameData.IsSeededRun;
     }
@@ -103,6 +101,11 @@ public class CharacterMenuManager : MonoBehaviour
         {
             validSeed = true;
             GameData.SelectedSeed = result;
+        }
+        else if (seedInput.GetComponent<TMP_InputField>().text == "Test")
+        {
+            // TODO: Make specific seed name load a game with custom level csvs
+            validSeed = false;
         }
         else
         {
