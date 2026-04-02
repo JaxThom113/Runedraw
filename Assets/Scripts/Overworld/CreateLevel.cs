@@ -277,7 +277,8 @@ public class CreateLevel : MonoBehaviour
                     Vector3Int gridPos = new Vector3Int(x, flippedY, 0);
                     Vector3 pos = floorTilemap.GetCellCenterWorld(gridPos);
 
-                    Instantiate(interactable, pos, Quaternion.identity, interactableContainer.transform);
+                    GameObject interactableObject = Instantiate(interactable, pos, Quaternion.identity, interactableContainer.transform);
+                    interactableObject.name = $"Interactable_{x}_{y}";
                 }
             }
         }

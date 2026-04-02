@@ -12,10 +12,11 @@ public class MatchSetupSystem : MonoBehaviour
    
     public void SetupMatch(OverworldEnemy overworldEnemy){  
       
-        playerCamera.Follow = overworldEnemy.SpriteGameObject.transform;
+        //playerCamera.Follow = overworldEnemy.SpriteGameObject.transform;
         EnemySO enemyData = overworldEnemy.enemyData; 
         PlayerSystem.Instance.Setup(playerView);
         EnemySystem.Instance.Setup(overworldEnemy); 
+        overworldEnemy.ApplyMaterial(EnemySystem.Instance.CurrentEnemyMaterial);
         DamageSystem.Instance.Setup(playerView, enemyView);
         ShieldSystem.Instance.Setup(playerView, enemyView); 
         if (enemyData.entityDialogue != null)
@@ -35,12 +36,8 @@ public class MatchSetupSystem : MonoBehaviour
         List<CardSOList> enemyDeck = EnemySystem.Instance.enemy.enemyDeck; 
         CardSystem.Instance.Setup(playerDeck, enemyDeck); 
 
-        DrawEnemyCardGA drawEnemyCardGA = new(EnemySystem.Instance.GetDrawAmount()); 
-        
-        DrawCardGA drawCardGA = new(5);   
-        ActionSystem.Instance.Perform(drawCardGA, ()=> {
-            ActionSystem.Instance.Perform(drawEnemyCardGA, () => ManaSystem.Instance.InitializeMana());
-        });
+        StartRoundGA startRoundGA = new(5, EnemySystem.Instance.GetDrawAmount());
+        ActionSystem.Instance.Perform(startRoundGA, () => ManaSystem.Instance.InitializeMana());
     } 
 
 }

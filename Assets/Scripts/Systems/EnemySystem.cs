@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class EnemySystem : Singleton<EnemySystem>
 { 
     [SerializeField] public Enemy enemy {get; private set;}   
     [SerializeField] public int enemyTurnCount {get;  set;} = 0;
     [SerializeField] public OverworldEnemy overworldEnemy;
+    public Material CurrentEnemyMaterial => enemy != null ? enemy.enemyMaterial : null;
     public void Setup(OverworldEnemy overworldEnemy)
     {
         enemy = new Enemy();
@@ -72,15 +74,26 @@ public class EnemySystem : Singleton<EnemySystem>
     }
     private IEnumerator KillEnemyPerformer(KillEnemyGA killEnemyGA)
     {  
-         DiscardCardGA discardCardGA = new(); 
+        DiscardCardGA discardCardGA = new(); 
         ActionSystem.Instance.AddReaction(discardCardGA);  
+
+        if (overworldEnemy != null)
+        {
+            overworldEnemy.DisableSphereCollider();
+        }
+
         
 
-        yield return new WaitForSeconds(1f); 
-        overworldEnemy.gameObject.SetActive(false); 
-        
-        
-          
+        if (overworldEnemy != null)
+        {
+            Tween fadeOutTween = overworldEnemy.FadeOut();
+            if (fadeOutTween != null)
+                yield return fadeOutTween.WaitForCompletion();
+
+            overworldEnemy.ClearStatusVisuals();
+            overworldEnemy.gameObject.SetActive(false);
+        } 
+        yield return new WaitForSeconds(1f);
     }
     private void ResetEnemyTurnCountPostReaction(KillEnemyGA killEnemyGA)
     {

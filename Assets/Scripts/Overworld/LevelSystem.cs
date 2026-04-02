@@ -66,6 +66,7 @@ public class LevelSystem: Singleton<LevelSystem>
 
     // loot view variables
     private bool skipPressed = false;
+    public bool LootSelectionCompleted { get; private set; } = false;
     private GameObject currentInteractable = null;
 
     private CreateLevel createLevel;
@@ -112,11 +113,13 @@ public class LevelSystem: Singleton<LevelSystem>
     void OnEnable()
     {
         ActionSystem.AttachPerformer<LootCardGA>(LootBoxPerformer);
+        ActionSystem.SubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
     }
 
     void OnDisable()
     {
         ActionSystem.DetachPerformer<LootCardGA>();
+        ActionSystem.UnsubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
     }
 
     void UpdateUI()
@@ -330,19 +333,30 @@ public class LevelSystem: Singleton<LevelSystem>
         yield return null;
     }
 
+    public void BeginLootSelection(GameObject interactable)
+    {
+        currentInteractable = interactable;
+        LootSelectionCompleted = false;
+        skipPressed = false;
+    }
+
+    public void CompleteLootSelection()
+    {
+        LootView.SetActive(false);
+        currentInteractable = null;
+        skipPressed = true;
+        LootSelectionCompleted = true;
+    }
+
+    private void LootCardPickupPostReaction(LootCardPickupGA lootCardPickupGA)
+    {
+        CompleteLootSelection();
+    }
+
     public void OnSkipButtonClick()
     {
         AudioSystem.Instance.PlaySFX("click");
-        // skip button clicked, disable UI and delete the interactable
-        LootView.SetActive(false);
-        
-        if (currentInteractable != null)
-        {
-            Destroy(currentInteractable);
-            currentInteractable = null;
-        }
-
-        skipPressed = true;
+        CompleteLootSelection();
     }
 
     IEnumerator LootBoxActivate()
