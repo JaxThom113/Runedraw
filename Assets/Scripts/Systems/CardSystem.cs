@@ -118,7 +118,8 @@ public class CardSystem : Singleton<CardSystem>
 
     //Performers 
     private IEnumerator PlayCardPerformer(PlayCardGA playCardGA)
-    {
+    { 
+        StartCoroutine(DisableCardCanvasForPlay());
         // Status effects first and before discard tween so stacks/performers are not delayed by animation
         // or by other effects listed later on the card (e.g. draw before stun on the same CardSO).
         foreach (var effect in playCardGA.card.effects)
@@ -292,6 +293,7 @@ public class CardSystem : Singleton<CardSystem>
         foreach(var cardSO in lootCards) {
             Card card = new Card(cardSO);
             ApplyCard applyCard = LootCardCreator.Instance.CreateCard(card, Vector3.zero, Quaternion.identity, false);
+            applyCard.LootFromEnemy = lootCardGA.fromEnemy;
              StartCoroutine(LootHandView.Instance.AddCard(applyCard));
         }
     } 
@@ -395,6 +397,25 @@ public class CardSystem : Singleton<CardSystem>
 
         cardCanvasRaycaster.enabled = false; 
         yield return new WaitForSeconds(7f);
+        cardCanvasRaycaster.enabled = true;
+    } 
+    private IEnumerator DisableCardCanvasForPlay()
+    { 
+        Debug.Log("DisableCardCanvasForDraws");
+        if (cardCanvasRaycaster == null)
+        { 
+            Debug.LogError("CardCanvas is null");
+            cardCanvasRaycaster = cardCanvas != null ? cardCanvas.GetComponent<GraphicRaycaster>() : null;
+        }
+
+        if (cardCanvasRaycaster == null)
+        { 
+            Debug.LogError("CardCanvasRaycaster is null");
+            yield break;
+        }
+
+        cardCanvasRaycaster.enabled = false; 
+        yield return new WaitForSeconds(2.5f);
         cardCanvasRaycaster.enabled = true;
     }
     

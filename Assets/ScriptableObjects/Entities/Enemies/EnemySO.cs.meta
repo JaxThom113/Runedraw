@@ -3,7 +3,12 @@ guid: db3908947c34a464ebedf690cdd7b1a8
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - entityIcon: {instanceID: 0}
+  - entityDialogue: {instanceID: 0}
+  - ultimateCard: {instanceID: 0}
+  - defaultEnemyMaterial: {fileID: 2100000, guid: d4daf1018145d4b4ea5c24f5c00cce94, type: 2}
+  - enemyMaterial: {fileID: 2100000, guid: d4daf1018145d4b4ea5c24f5c00cce94, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

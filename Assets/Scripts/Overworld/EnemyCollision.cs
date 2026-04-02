@@ -8,9 +8,11 @@ public class EnemyCollision : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         { 
+            OverworldEnemy overworldEnemy = GetComponent<OverworldEnemy>();
             GetComponent<SphereCollider>().enabled = false;
+            overworldEnemy.ApplyCurrentEnemyMaterial();
             Debug.Log("Player collided with enemy");
-            CameraTransitionSystem.Instance.startGame(GetComponent<OverworldEnemy>());
+            CameraTransitionSystem.Instance.startGame(overworldEnemy);
         }
     }
 }

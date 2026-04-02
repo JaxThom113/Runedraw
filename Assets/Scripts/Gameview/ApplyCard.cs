@@ -12,7 +12,8 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     //Data originates from the CardSO scriptable object, 
     //and is then fed to the Card class, where it is finally applied here. 
     public Card card; 
-    
+    [SerializeField] public GameObject CardBorderEnter; 
+    [SerializeField] public GameObject CardBorderExit; 
     [SerializeField] public GameObject cardBorder; 
     [SerializeField] public GameObject cardIcon;  
     [SerializeField] public GameObject cardCostText;  
@@ -51,6 +52,7 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public bool LootCard = false;
     public bool InventoryCard = false;
     public bool IsEnemyCard = false;
+    public bool LootFromEnemy = false;
     //ALL TYPES MUST BE THE SAME
     // Start is called before the first frame update
     public void Setup(Card card)
@@ -104,6 +106,7 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     }
     void OnEnable()
     {
+        SetHoverBorderState(false);
         StartCoroutine(TweeningCooldown());
     }
     private IEnumerator TweeningCooldown()
@@ -127,6 +130,7 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if(InventoryCard || LootCard) return;
         //if(tweening) return;
         if(!Interactions.Instance.PlayerCanHover()) return;
+        SetHoverBorderState(true);
         wrapper.SetActive(false);
         
         transform.SetAsLastSibling();
@@ -137,9 +141,7 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if(LootCard){
             SoundEffectSystem.Instance.PlayButtonClickSound();
             PlayerSystem.Instance.player.AddCardToDeck(card.data); 
-            LevelSystem.Instance.LootView.SetActive(false);
-            PlayerWinGA playerWinGA = new();
-            ActionSystem.Instance.Perform(playerWinGA);
+            ActionSystem.Instance.Perform(new LootCardPickupGA(LootFromEnemy));
             return;
         }
         if(InventoryCard) return; 
@@ -147,6 +149,7 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         Interactions.Instance.PlayerIsDragging = true;
         initialPosition = transform.position;
         initialRotation = transform.rotation;
+        SetHoverBorderState(false);
         CardViewHoverSystem.Instance.Hide();
         wrapper.SetActive(true);
         transform.rotation = Quaternion.identity;
@@ -193,8 +196,8 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         else
         {
             Interactions.Instance.PlayerIsDragging = false;
-            transform.DOMove(initialPosition, 0.2f);
-            transform.DORotateQuaternion(initialRotation, 0.2f);
+            if (HandView.Instance != null)
+                StartCoroutine(ReturnCardToHandSpline());
         }
     }
 
@@ -213,9 +216,37 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         if(InventoryCard || LootCard) return;
        //if(tweening) return;
         if(!Interactions.Instance.PlayerCanHover()) return;
+        SetHoverBorderState(false);
         wrapper.SetActive(true);
         transform.SetAsFirstSibling();
         CardViewHoverSystem.Instance.Hide();
+    }
+
+    private void SetHoverBorderState(bool hoverActive)
+    {
+        if (CardBorderEnter != null)
+            CardBorderEnter.SetActive(!hoverActive);
+
+        if (CardBorderExit != null)
+            CardBorderExit.SetActive(hoverActive);
+    }
+
+    private IEnumerator ReturnCardToHandSpline()
+    {
+        SetHoverBorderState(false);
+        wrapper.SetActive(true);
+        transform.SetAsFirstSibling();
+        CardViewHoverSystem.Instance.Hide();
+
+        if (Interactions.Instance != null)
+            Interactions.Instance.PlayerHoverLocked = true;
+
+        HandView.Instance.RefreshHandLayout();
+
+        yield return new WaitForSeconds(HandView.Instance.duration);
+
+        if (Interactions.Instance != null)
+            Interactions.Instance.PlayerHoverLocked = false;
     }
     
     // Note: OnMouseEnter/Exit only work for 3D/2D objects with colliders, not UI

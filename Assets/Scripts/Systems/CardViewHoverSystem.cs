@@ -7,10 +7,11 @@ public class CardViewHoverSystem : Singleton<CardViewHoverSystem>
     [SerializeField] private ApplyCard ApplyCardHover;
     // Start is called before the first frame update
     public void Show(Card card, Vector3 position)
-    {
+    { 
+        ApplyCardHover.transform.DOKill();
         ApplyCardHover.gameObject.SetActive(true);  
         ApplyCardHover.transform.DOScale(0.4f, 0.3f).SetEase(Ease.OutBack); 
-        ApplyCardHover.transform.DOLocalMoveY(100f, 0.3f).SetEase(Ease.OutBack);
+        ApplyCardHover.transform.DOLocalMoveY(-125f, 0.3f).SetEase(Ease.OutBack);
         // Move to top of hierarchy so it renders on top of other UI elements
        
         
@@ -26,7 +27,7 @@ public class CardViewHoverSystem : Singleton<CardViewHoverSystem>
     {
         ApplyCardHover.gameObject.SetActive(false); 
         ApplyCardHover.transform.DOScale(0.2f, 0.3f).SetEase(Ease.InBack);
-        ApplyCardHover.transform.DOLocalMoveY(0f, 0.3f).SetEase(Ease.InBack);
+       // ApplyCardHover.transform.DOLocalMoveY(-25f, 0.3f).SetEase(Ease.InBack);
     }
 
     /// <summary>Call when stun (or other) changes modified mana so an open hover shows the new cost.</summary>

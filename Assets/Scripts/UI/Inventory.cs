@@ -52,15 +52,15 @@ public class Inventory : Singleton<Inventory>
     } 
     private void OnEnable()
     {
-        ActionSystem.SubscribeReaction<PlayerWinGA>(PlayerWinPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
        
     }
     private void OnDisable()
     {
-        ActionSystem.UnsubscribeReaction<PlayerWinGA>(PlayerWinPostReaction, ReactionTiming.POST);
+        ActionSystem.UnsubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
         
     }
-    public void PlayerWinPostReaction(PlayerWinGA playerWinGA)
+    public void LootCardPickupPostReaction(LootCardPickupGA lootCardPickupGA)
     {
         
         Setup(PlayerSystem.Instance.player.playerDeck); 
