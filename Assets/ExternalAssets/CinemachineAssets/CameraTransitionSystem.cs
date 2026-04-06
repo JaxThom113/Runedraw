@@ -81,6 +81,8 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
         if (!lootCardPickupGA.fromEnemy)
             yield break;
 
+        matchSetupSystem.BeginFogHideDistanceTweenToLower();
+
         EnemySystem.Instance.overworldEnemy.ClearStatusVisuals();
 
         inBattleScene = false;

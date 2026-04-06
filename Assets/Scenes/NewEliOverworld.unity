@@ -47328,6 +47328,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FogVFX
       objectReference: {fileID: 0}
+    - target: {fileID: 546041150910281162, guid: 3345ddfe637e5fd43b2ba26dc5a8c073, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 7156152794914678858, guid: 3345ddfe637e5fd43b2ba26dc5a8c073, type: 3}
       propertyPath: m_LocalPosition.x
       value: 1.937875
@@ -74376,6 +74380,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1337633387}
   m_CullTransparentMesh: 1
+--- !u!2083052967 &1340988395 stripped
+VisualEffect:
+  m_CorrespondingSourceObject: {fileID: 5416053568566338124, guid: 3345ddfe637e5fd43b2ba26dc5a8c073, type: 3}
+  m_PrefabInstance: {fileID: 952972599}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1343003899
 GameObject:
   m_ObjectHideFlags: 0
@@ -82345,6 +82354,10 @@ MonoBehaviour:
   enemyView: {fileID: 2112701908}
   enemyCanvas: {fileID: 507812849}
   playerCamera: {fileID: 2263749820919243607}
+  hideDistanceLowerBound: 0.3
+  hideDistanceUpperBound: 3
+  hideDistanceTweenDuration: 5
+  fogVisualEffect: {fileID: 1340988395}
 --- !u!1 &1440907861
 GameObject:
   m_ObjectHideFlags: 0
@@ -87363,7 +87376,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1545166539}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: VFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124256,7 +124269,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 3127
+    m_Bits: 7223
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
