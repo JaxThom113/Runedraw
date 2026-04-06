@@ -8,7 +8,6 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
     [SerializeField] GameObject GameViewContainer;  
     [SerializeField] MatchSetupSystem matchSetupSystem;
     [SerializeField] GameObject playerSprite;  
-    [SerializeField] GameObject playerViewContainer; 
     [SerializeField] GameObject EnemyContainer;
     [SerializeField] GameObject OverworldHUD;
     [SerializeField] CinemachineVirtualCamera gameViewCamera; 
@@ -57,16 +56,15 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
         //EnemySprite.transform.DOLocalMove(new Vector3(0.0f, 0.5f, -0.5f), rotationTweenDuration); 
        // EnemySprite.transform.DOScale(new Vector3(0.025f, 0.025f, 0.025f), rotationTweenDuration); 
 
-        // transform player so they are not in the way of the camera
-        playerViewContainer.transform.DOLocalMove(new Vector3(0f,-1.5f,-0.5f), rotationTweenDuration);  
-    
+        PlayerSystem.Instance.ViewTweenToInteractLocal();
+
         playerSprite.SetActive(false);
     }  
     private IEnumerator showGameView(OverworldEnemy overworldEnemy) {  
         GameViewContainer.SetActive(true);  
         matchSetupSystem.enemyCanvas.SetActive(true);
         matchSetupSystem.SetupMatch(overworldEnemy); 
-        yield return new WaitForSeconds(rotationTweenDuration);   
+        yield return new WaitForSeconds(PlayerSystem.Instance.viewTweenDuration);   
 
         // overworldViewCamera.Priority = 0; 
         // gameViewCamera.Priority = 10; 
@@ -83,13 +81,12 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
         if (!lootCardPickupGA.fromEnemy)
             yield break;
 
-        if (EnemySystem.Instance != null && EnemySystem.Instance.overworldEnemy != null)
-            EnemySystem.Instance.overworldEnemy.ClearStatusVisuals();
+        EnemySystem.Instance.overworldEnemy.ClearStatusVisuals();
 
         inBattleScene = false;
         AudioSystem.Instance.PlayMusic("overworld", true);
         playerSprite.SetActive(true);
-        playerViewContainer.transform.DOLocalMove(new Vector3(0f,0.0f,-0.5f), rotationTweenDuration);
+        PlayerSystem.Instance.ViewTweenToDefaultLocal();
         OverworldHUD.SetActive(true);
         GameViewContainer.SetActive(false);
         matchSetupSystem.enemyCanvas.SetActive(false);

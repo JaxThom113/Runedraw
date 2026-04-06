@@ -365,6 +365,8 @@ public class CardSystem : Singleton<CardSystem>
                     continue;
                 ActionSystem.Instance.AddReaction(new PerformEffectGA(effect, instigatorIsPlayer: false));
             }
+            if (!card.IsUltimate)
+                yield return StartCoroutine(EnemySystem.Instance.TweenEnemyCardToPlayZone(applyCard));
             yield return EnemyHandView.Instance.RemoveEnemyCard(card);
         }
         

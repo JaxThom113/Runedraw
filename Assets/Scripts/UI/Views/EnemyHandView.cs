@@ -66,7 +66,7 @@ public class EnemyHandView : Singleton<EnemyHandView>
     public ApplyCard GetApplyCardForCard(Card card) => GetApplyCard(card);
     
     private IEnumerator UpdateCardPositions(ApplyCard card)
-    {  
+    {   
         cards.RemoveAll(c => c == null || c.gameObject == null); 
 
         if (splineContainer == null)
@@ -78,7 +78,7 @@ public class EnemyHandView : Singleton<EnemyHandView>
         Spline spline = splineContainer.Spline;
         Transform splineTransform = splineContainer.transform;
 
-        float cardSpacing = 1.5f / 10f;
+        float cardSpacing = 0.4f / 10f;
         float firstCardPosition = 0.5f - (cards.Count - 1) * cardSpacing / 2f;
 
         for (int i = 0; i < cards.Count; i++)
