@@ -8,6 +8,14 @@ public class EnemySystem : Singleton<EnemySystem>
     [SerializeField] public Enemy enemy {get; private set;}   
     [SerializeField] public int enemyTurnCount {get;  set;} = 0;
     [SerializeField] public OverworldEnemy overworldEnemy;
+
+    [Header("Enemy card transforms")]
+    public Transform enemyDrawPileTransform;
+    public Transform enemyDiscardPileTransform;
+    public Transform enemyPlayZoneTransform;
+    public Transform enemyUltimateWindupCenterTransform;
+    public Transform enemyUltimateWindupExitTransform;
+    public float enemyPlayZoneTweenDuration = 0.25f;
     public Material CurrentEnemyMaterial => enemy != null ? enemy.enemyMaterial : null;
     public void Setup(OverworldEnemy overworldEnemy)
     {
@@ -56,6 +64,18 @@ public class EnemySystem : Singleton<EnemySystem>
                     continue;
                 ActionSystem.Instance.AddReaction(new PerformEffectGA(effect, instigatorIsPlayer: false));
             }
+
+            ApplyCard enemyCardView = EnemyHandView.Instance.GetApplyCardForCard(card);
+            if (enemyCardView != null && enemyPlayZoneTransform != null)
+            {
+                float d = enemyPlayZoneTweenDuration;
+                Transform t = enemyCardView.transform;
+                t.DOKill();
+                t.DOMove(enemyPlayZoneTransform.position, d);
+                t.DORotateQuaternion(enemyPlayZoneTransform.rotation, d);
+                yield return new WaitForSeconds(d);
+            }
+
             yield return EnemyHandView.Instance.RemoveEnemyCard(card);
         } 
         EnemyTurnHandler();

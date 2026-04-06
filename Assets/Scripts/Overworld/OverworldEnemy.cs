@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 using DG.Tweening;
 
 public class OverworldEnemy : MonoBehaviour
@@ -10,7 +11,10 @@ public class OverworldEnemy : MonoBehaviour
     private static readonly int ColorPropertyId = Shader.PropertyToID("_Color");
     [SerializeField] private Renderer targetRenderer;
     [SerializeField] private Transform visualRoot;
-    [SerializeField] private ParticleSystem bleedParticles;
+    public GameObject bleedParticles;
+    [SerializeField] private float bleedHitFlashDuration = 0.35f;
+    private Coroutine bleedFlashCoroutine;
+    public GameObject poisonParticles;
     [SerializeField] private float fadeInDuration = 3f;
     [SerializeField] private float fadeOutDuration = 3f;
     [Header("Status Visuals")]
@@ -25,7 +29,6 @@ public class OverworldEnemy : MonoBehaviour
     private Material runtimeMaterial;
     private Vector3 baseVisualScale = Vector3.one;
     private Color baseMaterialColor = Color.white;
-    private bool bleedActive;
     private bool stunActive;
     private bool vulnerableActive;
     private float currentStunAlpha = 1f;
@@ -49,6 +52,15 @@ public class OverworldEnemy : MonoBehaviour
 
         baseVisualScale = visualRoot.localScale;
         CacheMaterialDefaults();
+
+        if (bleedParticles != null)
+            bleedParticles.SetActive(false);
+    }
+
+    public void SetBleedVisualEnabled(bool enabled)
+    {
+        if (bleedParticles != null)
+            bleedParticles.SetActive(enabled);
     }
 
     public void ApplyCurrentEnemyMaterial()
@@ -136,19 +148,25 @@ public class OverworldEnemy : MonoBehaviour
         ).SetEase(Ease.InOutSine);
     }
 
-    public void SetBleedActive(bool active)
+    public void PlayBleedHitFlash()
     {
-        if (bleedActive == active)
-            return;
-
-        bleedActive = active;
         if (bleedParticles == null)
             return;
 
-        if (bleedActive)
-            bleedParticles.Play();
-        else
-            bleedParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        if (bleedFlashCoroutine != null)
+            StopCoroutine(bleedFlashCoroutine);
+
+        bleedFlashCoroutine = StartCoroutine(BleedHitFlashRoutine());
+    }
+
+    private IEnumerator BleedHitFlashRoutine()
+    {
+        VisualEffect bloodVfx = bleedParticles.GetComponent<VisualEffect>();
+        if (bloodVfx != null)
+            bloodVfx.SendEvent("OnPlay");
+
+        yield return new WaitForSeconds(bleedHitFlashDuration);
+        bleedFlashCoroutine = null;
     }
 
     public void SetStunActive(bool active)
@@ -199,7 +217,6 @@ public class OverworldEnemy : MonoBehaviour
 
     public void ClearStatusVisuals()
     {
-        bleedActive = false;
         vulnerableActive = false;
         currentStunAlpha = 1f;
         currentPoisonAmount = 0f;
@@ -209,9 +226,6 @@ public class OverworldEnemy : MonoBehaviour
         stunTween?.Kill();
         poisonTween = null;
         stunTween = null;
-
-        if (bleedParticles != null)
-            bleedParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
 
         if (visualRoot != null)
             visualRoot.localScale = baseVisualScale;
@@ -263,7 +277,6 @@ public class OverworldEnemy : MonoBehaviour
             material.SetFloat(poisonMaterialProperty, currentPoisonAmount);
 
         ApplyStatusMaterialColor();
-        SetBleedActive(bleedActive);
         SetVulnerableActive(vulnerableActive);
         if (stunActive)
         {
@@ -285,6 +298,12 @@ public class OverworldEnemy : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (bleedFlashCoroutine != null)
+        {
+            StopCoroutine(bleedFlashCoroutine);
+            bleedFlashCoroutine = null;
+        }
+
         poisonTween?.Kill();
         stunTween?.Kill();
         if (runtimeMaterial != null)

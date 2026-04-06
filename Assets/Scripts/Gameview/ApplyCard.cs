@@ -39,15 +39,38 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public IEnumerator UltimateWindupRoutine()
     {
-        if (transform == null) yield break; 
+        if (!transform)
+            yield break;
+
         transform.DOKill();
-        transform.DOScale(Vector3.one * UltimateScale, UltimateTweenDuration).SetEase(Ease.OutQuad); 
-        transform.DOMove(Vector3.zero + new Vector3(0, 1, 0), UltimateTweenDuration);
-        yield return new WaitForSeconds(UltimateTweenDuration); 
-        UISystem.Instance.TransformShake(this.transform);
-        yield return new WaitForSeconds(UltimateWindupSeconds); 
-        transform.DOMove(new Vector3(25, 1, 0), UltimateTweenDuration); 
-        yield return new WaitForSeconds(UltimateTweenDuration);
+
+        Transform center = IsEnemyCard ? EnemySystem.Instance.enemyUltimateWindupCenterTransform : null;
+        Transform exit = IsEnemyCard ? EnemySystem.Instance.enemyUltimateWindupExitTransform : null;
+        bool enemyAnchors = center != null && exit != null;
+
+        float dur = UltimateTweenDuration;
+        transform.DOScale(Vector3.one * UltimateScale, dur).SetEase(Ease.OutQuad);
+        if (enemyAnchors)
+        {
+            transform.DOMove(center.position, dur);
+            transform.DORotateQuaternion(center.rotation, dur);
+        }
+        else
+            transform.DOMove(new Vector3(0, 1, 0), dur);
+
+        yield return new WaitForSeconds(dur);
+        UISystem.Instance.TransformShake(transform);
+        yield return new WaitForSeconds(UltimateWindupSeconds);
+
+        if (enemyAnchors)
+        {
+            transform.DOMove(exit.position, dur);
+            transform.DORotateQuaternion(exit.rotation, dur);
+        }
+        else
+            transform.DOMove(new Vector3(25, 1, 0), dur);
+
+        yield return new WaitForSeconds(dur);
     }
     public bool LootCard = false;
     public bool InventoryCard = false;

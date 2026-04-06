@@ -6,12 +6,18 @@ using Cinemachine;
 public class MatchSetupSystem : MonoBehaviour
 { 
     [SerializeField] public PlayerView playerView;
-    [SerializeField] public EnemyView enemyView; 
+    [SerializeField] public EnemyView enemyView;  
+    [SerializeField] public GameObject enemyCanvas;
     [SerializeField] public CinemachineVirtualCamera playerCamera;
       
    
     public void SetupMatch(OverworldEnemy overworldEnemy){  
       
+        foreach (OverworldEnemy oe in FindObjectsByType<OverworldEnemy>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            oe.SetBleedVisualEnabled(false);
+
+        overworldEnemy.SetBleedVisualEnabled(true);
+
         //playerCamera.Follow = overworldEnemy.SpriteGameObject.transform;
         EnemySO enemyData = overworldEnemy.enemyData; 
         PlayerSystem.Instance.Setup(playerView);
@@ -23,7 +29,8 @@ public class MatchSetupSystem : MonoBehaviour
             DialogueSystem.Instance.Setup(enemyData.entityDialogue);
         playerView.Setup(PlayerSystem.Instance.currentPlayerData); 
         
-        enemyView.Setup(enemyData, overworldEnemy); 
+        enemyView.Setup(enemyData, overworldEnemy);  
+        
         
          StartCoroutine(SetupCards());
     }

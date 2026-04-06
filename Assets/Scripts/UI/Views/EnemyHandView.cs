@@ -7,9 +7,10 @@ using UnityEngine.Splines;
 
 public class EnemyHandView : Singleton<EnemyHandView>
 { 
-    //Same as HandView, but no card rotation
     [SerializeField] private SplineContainer splineContainer;
-    public Transform discardPileTransform;
+    [SerializeField]
+    [Tooltip("If on, cards match this object's rotation each layout tick (put on your world-space hand/canvas root). If off, use spline tilt like the player hand.")]
+    private bool alignCardRotationToHand = true;
     public float duration = 0.5f;  
     private List<ApplyCard> cards = new();  
     public bool IsTweening {get; set;} = false;
@@ -26,7 +27,7 @@ public class EnemyHandView : Singleton<EnemyHandView>
         }
         cards.Clear();
     }
-    public IEnumerator RemoveEnemyCard(Card card, bool useDiscardPileTarget = false)
+    public IEnumerator RemoveEnemyCard(Card card)
     {  
         ApplyCard applyCard = GetApplyCard(card); 
         if (applyCard == null) yield break; 
@@ -38,12 +39,9 @@ public class EnemyHandView : Singleton<EnemyHandView>
             Destroy(applyCard.gameObject);
             yield break;
         }
-        Vector3 discardTarget = Vector3.zero;
-        if (useDiscardPileTarget && discardPileTransform != null)
-        {
-            discardTarget = discardPileTransform.position;
-        }
-        applyCard.transform.DOMove(discardTarget, duration);
+        Transform discard = EnemySystem.Instance.enemyDiscardPileTransform;
+        applyCard.transform.DOMove(discard.position, duration);
+        applyCard.transform.DORotateQuaternion(discard.rotation, duration);
         cards.Remove(applyCard);
         yield return StartCoroutine(UpdateCardPositions(null));
         Destroy(applyCard.gameObject, 0.5f);
@@ -64,28 +62,47 @@ public class EnemyHandView : Singleton<EnemyHandView>
     private ApplyCard GetApplyCard(Card card){ 
         return cards.Where(applyCard => applyCard.card == card).FirstOrDefault();
     }
+
+    public ApplyCard GetApplyCardForCard(Card card) => GetApplyCard(card);
     
     private IEnumerator UpdateCardPositions(ApplyCard card)
     {  
         cards.RemoveAll(c => c == null || c.gameObject == null); 
 
-       
-        if(cards.Count == 0) yield break; // Stop if no cards
-        float cardSpacing = 1.5f/10f; // spacing between cards along the spline
-        float firstCardPosition = 0.5f - (cards.Count-1)*cardSpacing/2f; //Finds the center to place the first card 
-        //spline is percentage based, so 0.5 is the center, but takes into account number of cards so new card will always be in the center
-        Spline spline = splineContainer.Spline; 
-        for (int i = 0; i < cards.Count; i++) { 
-            float p = firstCardPosition + i*cardSpacing; 
-            Vector3 splinePosition = spline.EvaluatePosition(p); //gets world position of spline
-            Vector3 forwardSpline = spline.EvaluateTangent(p); // we need forward and up vectors to rotate the card
-            Vector3 outSpline = spline.EvaluateUpVector(p);  
-            //Quaternion rotation = Quaternion.LookRotation(-outSpline, Vector3.Cross(-outSpline, forwardSpline).normalized); // rotates card alone the spline axis
-            cards[i].transform.DOMove(splinePosition +transform.position + 0.01f*i*Vector3.back, duration); 
-            //cards[i].transform.DORotateQuaternion(rotation, duration);
-        } 
-        yield return new WaitForSeconds(duration); 
-      
+        if (splineContainer == null)
+            yield break;
+
+        if (cards.Count == 0)
+            yield break;
+
+        Spline spline = splineContainer.Spline;
+        Transform splineTransform = splineContainer.transform;
+
+        float cardSpacing = 1.5f / 10f;
+        float firstCardPosition = 0.5f - (cards.Count - 1) * cardSpacing / 2f;
+
+        for (int i = 0; i < cards.Count; i++)
+        {
+            float t = firstCardPosition + i * cardSpacing;
+            Vector3 localPos = spline.EvaluatePosition(t);
+            Vector3 worldPos = splineTransform.TransformPoint(localPos);
+            float depth = 0.01f * i;
+            worldPos -= transform.forward * depth;
+
+            cards[i].transform.DOMove(worldPos, duration);
+
+            if (alignCardRotationToHand)
+                cards[i].transform.DORotateQuaternion(transform.rotation, duration);
+            else
+            {
+                Vector3 forwardSpline = splineTransform.TransformDirection(spline.EvaluateTangent(t)).normalized;
+                Vector3 outSpline = splineTransform.TransformDirection(spline.EvaluateUpVector(t)).normalized;
+                Quaternion rotation = Quaternion.LookRotation(-outSpline, Vector3.Cross(-outSpline, forwardSpline).normalized);
+                cards[i].transform.DORotateQuaternion(rotation, duration);
+            }
+        }
+
+        yield return new WaitForSeconds(duration);
     }
 
 }

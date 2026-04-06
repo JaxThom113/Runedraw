@@ -23,15 +23,16 @@ public class BleedSystem : Singleton<BleedSystem>
     public void RefreshStatusUI(bool afflictedUnitIsPlayer)
     {
         if (StatusSystem.Instance == null) return;
-        StatusUI statusUI = StatusSystem.Instance.GetStatusUI(afflictedUnitIsPlayer);
-        if (statusUI == null) return;
 
         Dictionary<StatusEffect, int> stacksMap = StatusSystem.Instance.GetStacksMap(afflictedUnitIsPlayer);
-        Dictionary<StatusEffect, int> turnMap = StatusSystem.Instance.GetTurnMap(afflictedUnitIsPlayer); 
+        Dictionary<StatusEffect, int> turnMap = StatusSystem.Instance.GetTurnMap(afflictedUnitIsPlayer);
         int bleedTicks = 0;
         int bleedStacks = 0;
         GetStatusData(stacksMap, turnMap, out bleedTicks, out bleedStacks);
-        statusUI.UpdateBleed(bleedTicks, bleedStacks);
+
+        StatusUI statusUI = StatusSystem.Instance.GetStatusUI(afflictedUnitIsPlayer);
+        if (statusUI != null)
+            statusUI.UpdateBleed(bleedTicks, bleedStacks);
     }
 
     private void GetStatusData(Dictionary<StatusEffect, int> stacksMap, Dictionary<StatusEffect, int> turnMap, out int ticks, out int stacks)
@@ -85,6 +86,8 @@ public class BleedSystem : Singleton<BleedSystem>
                 turnMap[bleedGA.statusEffect] = turnsRemaining;
                 int totalDamage = bleedGA.damage * stacks;
                 ActionSystem.Instance.AddReaction(new DealDamageGA(totalDamage, damageHitsEnemy));
+                if (damageHitsEnemy && EnemySystem.Instance.overworldEnemy != null)
+                    EnemySystem.Instance.overworldEnemy.PlayBleedHitFlash();
                 if (statusUI != null) statusUI.ScreenShake();
                 if (turnsRemaining <= 0)
                 {

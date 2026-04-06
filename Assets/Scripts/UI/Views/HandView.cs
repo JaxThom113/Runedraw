@@ -101,20 +101,32 @@ public class HandView : Singleton<HandView>
         cards.RemoveAll(c => c == null || c.gameObject == null); 
 
        
-        if(cards.Count == 0) yield break; // Stop if no cards
-        float cardSpacing = 1.2f/10f; // spacing between cards along the spline
-        float firstCardPosition = 0.5f - (cards.Count-1)*cardSpacing/2f; //Finds the center to place the first card 
-        //spline is percentage based, so 0.5 is the center, but takes into account number of cards so new card will always be in the center
-        Spline spline = splineContainer.Spline; 
-        for (int i = 0; i < cards.Count; i++) { 
-            float p = firstCardPosition + i*cardSpacing; 
-            Vector3 splinePosition = spline.EvaluatePosition(p); //gets world position of spline
-            Vector3 forwardSpline = spline.EvaluateTangent(p); // we need forward and up vectors to rotate the card
-            Vector3 outSpline = spline.EvaluateUpVector(p);  
-            Quaternion rotation = Quaternion.LookRotation(-outSpline, Vector3.Cross(-outSpline, forwardSpline).normalized); // rotates card alone the spline axis
-            cards[i].transform.DOMove(splinePosition +transform.position + 0.01f*i*Vector3.back, duration); 
+        if (splineContainer == null)
+            yield break;
+
+        if (cards.Count == 0)
+            yield break;
+
+        Spline spline = splineContainer.Spline;
+        Transform splineTransform = splineContainer.transform;
+
+        float cardSpacing = 1.2f / 10f;
+        float firstCardPosition = 0.5f - (cards.Count - 1) * cardSpacing / 2f;
+
+        for (int i = 0; i < cards.Count; i++)
+        {
+            float t = firstCardPosition + i * cardSpacing;
+            Vector3 localPos = spline.EvaluatePosition(t);
+            Vector3 worldPos = splineTransform.TransformPoint(localPos);
+            worldPos -= transform.forward * (0.01f * i);
+
+            Vector3 forwardSpline = splineTransform.TransformDirection(spline.EvaluateTangent(t)).normalized;
+            Vector3 outSpline = splineTransform.TransformDirection(spline.EvaluateUpVector(t)).normalized;
+            Quaternion rotation = Quaternion.LookRotation(-outSpline, Vector3.Cross(-outSpline, forwardSpline).normalized);
+
+            cards[i].transform.DOMove(worldPos, duration);
             cards[i].transform.DORotateQuaternion(rotation, duration);
-        } 
+        }
         yield return new WaitForSeconds(duration); 
       
     }

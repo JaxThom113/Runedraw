@@ -181,15 +181,12 @@ public class StatusSystem : Singleton<StatusSystem>
                 appliedDurationMap[key] = initialTurns;
             }
 
-            List<Card> shownEnemyCards = EnemyHandView.Instance != null ? EnemyHandView.Instance.GetShownCards() : null;
+            List<Card> shownEnemyCards = EnemyHandView.Instance.GetShownCards();
             if (shownEnemyCards != null && shownEnemyCards.Count > 0)
             {
                 Card randomCard = shownEnemyCards[Random.Range(0, shownEnemyCards.Count)];
-                CardSystem.Instance?.enemyDeck.Remove(randomCard);
-                if (EnemyHandView.Instance != null)
-                {
-                    yield return StartCoroutine(EnemyHandView.Instance.RemoveEnemyCard(randomCard, true));
-                }
+                CardSystem.Instance.enemyDeck.Remove(randomCard);
+                yield return StartCoroutine(EnemyHandView.Instance.RemoveEnemyCard(randomCard));
             }
 
             RefreshStatusUIGA refreshStatusAfterEnemyStunDiscard = new RefreshStatusUIGA(afflictedUnitIsPlayer);
