@@ -65,7 +65,7 @@ public class CharacterMenuManager : MonoBehaviour
         }
 
         // load splash, the coroutine will handle loading the overworld after
-        LoadingSplash.targetScene = "JaxOverworld5";
+        LoadingSplash.targetScene = "JaxOverworld";
         SceneManager.LoadScene("Splash");
     }
 
@@ -84,7 +84,7 @@ public class CharacterMenuManager : MonoBehaviour
         }
 
         // load into overworld same as if StartGame were clicked
-        LoadingSplash.targetScene = "JaxOverworld5";
+        LoadingSplash.targetScene = "JaxOverworld";
         SceneManager.LoadScene("Splash");
     }
 

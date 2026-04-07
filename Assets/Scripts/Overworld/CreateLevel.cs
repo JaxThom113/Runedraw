@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,6 +25,7 @@ public class CreateLevel : MonoBehaviour
     [Header("3D Elements")]
     public GameObject edge; 
     public GameObject wallCube; 
+    public GameObject torch;
 
     // grid parameters
     private int gridSize;
@@ -31,10 +33,11 @@ public class CreateLevel : MonoBehaviour
     private List<int> topEdge;
     private List<int> bottomEdge;
 
-    // containers for wall/enemy/interactable prefabs
+    // containers for different prefabs
     private GameObject wallsContainer; 
     private GameObject enemyContainer;
     private GameObject interactableContainer;
+    private GameObject torchContainer;
 
     void OnEnable()
     {
@@ -47,6 +50,7 @@ public class CreateLevel : MonoBehaviour
         Destroy(wallsContainer);
         Destroy(enemyContainer);
         Destroy(interactableContainer);
+        Destroy(torchContainer);
     }
 
     void Update()
@@ -286,6 +290,120 @@ public class CreateLevel : MonoBehaviour
 
     private void AddModels()
     {
-        // will be used to add torches, cobwebs, other decorations
+        if (torchContainer != null)
+        {
+            Destroy(torchContainer);
+        }
+        torchContainer = new GameObject("TorchContainer"); // recreate container
+
+        Dictionary<Vector2Int, List<bool>> availableTorchPositions = new Dictionary<Vector2Int, List<bool>>();
+
+        List<Vector2Int> directions = new List<Vector2Int>()
+        {
+            new Vector2Int(0, 1),
+            new Vector2Int(0, -1),
+            new Vector2Int(1, 0),
+            new Vector2Int(-1, 0)
+        };
+
+        for (int y = 0; y < gridSize; y++)
+        {
+            for (int x = 0; x < gridSize; x++)
+            {
+                // ignore cells with walls, the enemies, and interactables
+                if (grid[y][x] == 1 || grid[y][x] == 3 || grid[y][x] == 4)
+                    continue;
+                
+                // check what adjacent tiles have walls where we can place torches, in this order: up, down, left, right
+                List<bool> neighbors = new List<bool>();
+                for (int i = 0; i < 4; i++)
+                {
+                    int dy = y + directions[i].y;
+                    int dx = x + directions[i].x;
+
+                    // bounds check to avoid errors
+                    if (dy >= 0 && dy < gridSize && dx >= 0 && dx < gridSize)
+                    {
+                        if (grid[dy][dx] == 1)
+                            neighbors.Add(true);
+                        else
+                            neighbors.Add(false);
+                    }
+                    else
+                    {
+                        neighbors.Add(true);
+                    }
+                }
+                
+                // ignore if there are no adjacent walls
+                if (!neighbors.Contains(true))
+                    continue;
+
+                // ignore if this is a correct path tile on the top/bottom edge to avoid floating torched spawning at start/end of level
+                if ((y == 0 || y == gridSize - 1) && grid[y][x] == 2)
+                    continue;
+
+                // add this position, with its neighboring tiles, as a valid place to put a torch
+                availableTorchPositions.Add(new Vector2Int(y, x), neighbors);
+            }
+        }
+
+        int numTorches = 15;
+        for (int i = 0; i < numTorches; i++)
+        {
+            int randPos = Random.Range(0, availableTorchPositions.Count);
+            var torchLocation = availableTorchPositions.ElementAt(randPos);
+            availableTorchPositions.Remove(torchLocation.Key); // remove it so torches can't be placed on top of each other
+
+            int flippedY = (gridSize - 1) - torchLocation.Key.x; // convert from 4th quadrant -> 1st quadrant
+            Vector3Int gridPos = new Vector3Int(torchLocation.Key.y, flippedY, 0);
+            Vector3 pos = floorTilemap.GetCellCenterWorld(gridPos);
+
+            // pick a random wall from the walls neighboring this flooring tile to place the torch
+            List<int> availableWalls = new List<int>();
+            for (int k = 0; k < 4; k++)
+            {
+                if (torchLocation.Value[k])
+                    availableWalls.Add(k);
+            }
+            
+            int randWall = Random.Range(0, availableWalls.Count);
+            switch (availableWalls[randWall])
+            {
+                case 0: // place torch on top wall
+                    Instantiate(
+                        torch, 
+                        new Vector3(pos.x, pos.y, pos.z-0.5f), 
+                        Quaternion.Euler(270f, 90f, -90f), 
+                        torchContainer.transform
+                    ).transform.localScale = Vector3.one * 0.0275f;
+                    
+                    break;
+                case 1: // place torch on bottom wall
+                    Instantiate(
+                        torch, 
+                        new Vector3(pos.x, pos.y, pos.z-0.5f), 
+                        Quaternion.Euler(90f, 90f, -90f), 
+                        torchContainer.transform
+                    ).transform.localScale = Vector3.one * 0.0275f;
+                    break;
+                case 2: // place torch on left wall
+                    Instantiate(
+                        torch, 
+                        new Vector3(pos.x, pos.y, pos.z-0.5f), 
+                        Quaternion.Euler(180f, 90f, -90f), 
+                        torchContainer.transform
+                    ).transform.localScale = Vector3.one * 0.0275f;
+                    break;
+                case 3: // place torch on right wall
+                    Instantiate(
+                        torch, 
+                        new Vector3(pos.x, pos.y, pos.z-0.5f),
+                        Quaternion.Euler(0f, 90f, -90f), 
+                        torchContainer.transform
+                    ).transform.localScale = Vector3.one * 0.0275f;
+                    break;
+            }
+        }
     }
 }
