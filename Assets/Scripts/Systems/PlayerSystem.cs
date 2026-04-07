@@ -1,9 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class PlayerSystem : Singleton<PlayerSystem>
 { 
+    [Header("Player view tween (loot & battle intro)")]
+    public Transform playerViewTarget;
+    public Vector3 viewTweenInteractLocal = new(0f, -1.5f, -1f);
+    public Vector3 viewTweenDefaultLocal = new(0f, 0f, -1f);
+    public float viewTweenDuration = 0.5f;
+
     [Header("Player SO References")]
     [SerializeField] public PlayerSO drawthurPlayerData;
     [SerializeField] public PlayerSO decklanPlayerData;
@@ -20,6 +27,20 @@ public class PlayerSystem : Singleton<PlayerSystem>
     public GameObject DeathView; 
     public GameObject GameView;
     public int storedHealth; 
+
+    public void ViewTweenToInteractLocal()
+    {
+        Transform transform = playerViewTarget;
+        transform.DOKill();
+        transform.DOLocalMove(viewTweenInteractLocal, viewTweenDuration);
+    }
+
+    public void ViewTweenToDefaultLocal()
+    {
+        Transform transform = playerViewTarget;
+        transform.DOKill();
+        transform.DOLocalMove(viewTweenDefaultLocal, viewTweenDuration);
+    }
 
     void Start()
     {   

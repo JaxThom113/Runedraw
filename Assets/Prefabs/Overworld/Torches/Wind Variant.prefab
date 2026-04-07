@@ -12,9 +12,13 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 4ea3a666eeb9b624cabb4d3b434628bc, type: 2}
+    - target: {fileID: 3135854041937695158, guid: 9f3c69cdb39646645a7e82f7581611c3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a6dad3405d5fcb94e9d9bf42982e31dc, type: 2}
     - target: {fileID: 5672525718715828589, guid: 9f3c69cdb39646645a7e82f7581611c3, type: 3}
       propertyPath: m_Name
-      value: Air Variant
+      value: Wind Variant
       objectReference: {fileID: 0}
     - target: {fileID: 6493507078056911823, guid: 9f3c69cdb39646645a7e82f7581611c3, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -60,8 +64,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8362651021698310212, guid: 9f3c69cdb39646645a7e82f7581611c3, type: 3}
+      propertyPath: meshRenderer
+      value: 
+      objectReference: {fileID: 6448429820457854237}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 7110321310875825998, guid: 9f3c69cdb39646645a7e82f7581611c3, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f3c69cdb39646645a7e82f7581611c3, type: 3}
+--- !u!23 &6448429820457854237 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 6493507078056911823, guid: 9f3c69cdb39646645a7e82f7581611c3, type: 3}
+  m_PrefabInstance: {fileID: 243474244937975506}
+  m_PrefabAsset: {fileID: 0}

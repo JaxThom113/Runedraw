@@ -39,15 +39,29 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
 
     public IEnumerator UltimateWindupRoutine()
     {
-        if (transform == null) yield break; 
+        if (!transform)
+            yield break;
+
+        if (IsEnemyCard && EnemySystem.Instance != null)
+        {
+            yield return EnemySystem.Instance.EnemyUltimateWindupRoutine(this);
+            yield break;
+        }
+
+        // Overlay camera: player ultimate (scale + screen-space style moves).
         transform.DOKill();
-        transform.DOScale(Vector3.one * UltimateScale, UltimateTweenDuration).SetEase(Ease.OutQuad); 
-        transform.DOMove(Vector3.zero + new Vector3(0, 1, 0), UltimateTweenDuration);
-        yield return new WaitForSeconds(UltimateTweenDuration); 
-        UISystem.Instance.TransformShake(this.transform);
-        yield return new WaitForSeconds(UltimateWindupSeconds); 
-        transform.DOMove(new Vector3(25, 1, 0), UltimateTweenDuration); 
-        yield return new WaitForSeconds(UltimateTweenDuration);
+
+        float dur = UltimateTweenDuration;
+        transform.DOScale(Vector3.one * UltimateScale, dur).SetEase(Ease.OutQuad);
+        transform.DOMove(new Vector3(0, 1, 0), dur);
+
+        yield return new WaitForSeconds(dur);
+        UISystem.Instance.TransformShake(transform);
+        yield return new WaitForSeconds(UltimateWindupSeconds);
+
+        transform.DOMove(new Vector3(25, 1, 0), dur);
+
+        yield return new WaitForSeconds(dur);
     }
     public bool LootCard = false;
     public bool InventoryCard = false;

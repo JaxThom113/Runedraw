@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 public class CardSystem : Singleton<CardSystem>
 { 
@@ -25,14 +26,18 @@ public class CardSystem : Singleton<CardSystem>
     // Start is called before the first frame update 
     [SerializeField] private CardSO cardSO; 
     
-    [SerializeField] private Transform drawPileTransform;
-    [SerializeField] private Transform discardPileTransform;
-    [SerializeField] private Transform enemyHandTransform;
-    
+    [FormerlySerializedAs("drawPileTransform")]
+    [SerializeField] private Transform playerDrawPileTransform;
+    [FormerlySerializedAs("discardPileTransform")]
+    [SerializeField] private Transform playerDiscardPileTransform;
+    [SerializeField] private Transform playerHandContainer;
+    [SerializeField] private Transform enemyHandContainer;
+
     private List<Card> drawPile = new(); 
     private List<Card> discardPile = new();  
     private List<Card> hand = new();    
-    public List<Card> enemyDeck = new();  
+    public List<Card> enemyDeck = new();
+
     private bool actionHooksBound = false;
     private EnemyTurnGA lastProcessedEnemyTurnGA = null;
 
@@ -274,15 +279,19 @@ public class CardSystem : Singleton<CardSystem>
         Card card = drawPile.Draw(); 
         if (card == null) yield break;
         hand.Add(card);
-        ApplyCard applyCard = CardCreator.Instance.CreateCard(card, drawPileTransform.position, drawPileTransform.rotation, false);    
-        yield return  StartCoroutine(HandView.Instance.AddCard(applyCard));
+        Transform playerDraw = playerDrawPileTransform != null ? playerDrawPileTransform : playerHandContainer;
+        Vector3 spawnPos = playerDraw != null ? playerDraw.position : Vector3.zero;
+        Quaternion spawnRot = playerDraw != null ? playerDraw.rotation : Quaternion.identity;
+        ApplyCard applyCard = CardCreator.Instance.CreateCard(card, spawnPos, spawnRot, false);
+        ParentCardToHand(applyCard.transform, playerHandContainer);
+        yield return StartCoroutine(HandView.Instance.AddCard(applyCard));
     } 
     private void CreateLootCardsPostReaction(LootCardGA lootCardGA)  
     { 
         List<CardSO> lootCards;
         if (lootCardGA.fromEnemy)
         {
-            CardSO ultimateCard = EnemySystem.Instance != null ? EnemySystem.Instance.enemy?.ultimateCard : null;
+            CardSO ultimateCard = EnemySystem.Instance.enemy?.ultimateCard;
             lootCards = lootCardBank.GetRandomCardsEnemy(ultimateCard);
         }
         else
@@ -338,8 +347,15 @@ public class CardSystem : Singleton<CardSystem>
         }
           
         enemyDeck.Add(card);
-        ApplyCard applyCard = CardCreator.Instance.CreateCard(card, enemyHandTransform.position, enemyHandTransform.rotation, true);    
-       yield return StartCoroutine(EnemyHandView.Instance.AddCard(applyCard));
+        if (enemyHandContainer == null)
+            yield break;
+        Transform enemyDrawPile = EnemySystem.Instance.enemyDrawPileTransform;
+        if (enemyDrawPile == null)
+            yield break;
+
+        ApplyCard applyCard = CardCreator.Instance.CreateCard(card, enemyDrawPile.position, enemyDrawPile.rotation, true);
+        ParentCardToHand(applyCard.transform, enemyHandContainer);
+        yield return StartCoroutine(EnemyHandView.Instance.AddCard(applyCard));
         bool playWhenDrawn = card.effects != null && card.effects.Exists(e => e.playWhenDrawnByEnemy);
         if (playWhenDrawn)
         {
@@ -349,6 +365,8 @@ public class CardSystem : Singleton<CardSystem>
                     continue;
                 ActionSystem.Instance.AddReaction(new PerformEffectGA(effect, instigatorIsPlayer: false));
             }
+            if (!card.IsUltimate)
+                yield return StartCoroutine(EnemySystem.Instance.TweenEnemyCardToPlayZone(applyCard));
             yield return EnemyHandView.Instance.RemoveEnemyCard(card);
         }
         
@@ -367,12 +385,22 @@ public class CardSystem : Singleton<CardSystem>
         ActionSystem.Instance.AddReaction(lootCardGA);
     }
 
+    private static void ParentCardToHand(Transform cardTransform, Transform handContainer)
+    {
+        if (cardTransform == null || handContainer == null)
+            return;
+
+        cardTransform.SetParent(handContainer, true);
+    }
+
     private IEnumerator DiscardCard(ApplyCard applyCard) 
     {
         if(applyCard == null || !applyCard.gameObject.activeInHierarchy) yield break;
         AudioSystem.Instance.PlaySFX("cardDiscard");
         applyCard.transform.DOScale(Vector3.zero, 0.15f);
-        Tween tween = applyCard.transform.DOMove(discardPileTransform.position, 0.15f); 
+        Transform pile = playerDiscardPileTransform != null ? playerDiscardPileTransform : playerDrawPileTransform;
+        Vector3 discardWorld = pile != null ? pile.position : applyCard.transform.position;
+        Tween tween = applyCard.transform.DOMove(discardWorld, 0.15f);
         yield return tween.WaitForCompletion();
         Destroy(applyCard.gameObject);
         

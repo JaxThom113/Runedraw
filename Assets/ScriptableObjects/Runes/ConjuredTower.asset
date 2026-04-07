@@ -15,7 +15,7 @@ MonoBehaviour:
   cardName: ConjuredTower
   cardCost: 3
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
-  cardIcon: {fileID: 21300000, guid: d85af894eb9b2fb489eaa38f1b74bc04, type: 3}
+  cardIcon: {fileID: 21300000, guid: ce232afeab3ebe643b90ee00a1c5c13c, type: 3}
   cardDescription: 
   cardElement: 0
   cardElementIcon: {fileID: 21300000, guid: 7b6c5390240409445a46abfb97e084ec, type: 3}

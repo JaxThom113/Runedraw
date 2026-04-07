@@ -348,7 +348,7 @@ public class CreateLevel : MonoBehaviour
             }
         }
 
-        int numTorches = 15;
+        int numTorches = 30;
         for (int i = 0; i < numTorches; i++)
         {
             int randPos = Random.Range(0, availableTorchPositions.Count);

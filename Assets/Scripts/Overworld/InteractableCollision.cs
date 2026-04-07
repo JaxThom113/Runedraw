@@ -8,10 +8,7 @@ public class InteractableCollision : MonoBehaviour
     [SerializeField] private Material material; 
     [SerializeField] private float fadeInDuration = 3f;
     [SerializeField] private float fadeOutPauseDuration = 0.2f;
-    private static readonly Vector3 InteractViewPosition = new(0f, -1.5f, -1.0f);
-    private static readonly Vector3 DefaultViewPosition = new(0f, 0f, -1.0f);
-
-    private PlayerMovement playerMovement;
+    private PlayerMovement playermovement;
     private Collider interactableCollider;
     private bool interactionStarted;
 
@@ -36,10 +33,9 @@ public class InteractableCollision : MonoBehaviour
             return;
 
         interactionStarted = true;
-        if (interactableCollider != null)
-            interactableCollider.enabled = false;
+        interactableCollider.enabled = false;
 
-        playerMovement = other.GetComponent<PlayerMovement>();
+        playermovement = other.GetComponent<PlayerMovement>();
 
         LevelSystem.Instance?.BeginLootSelection(gameObject);
         ShowCurrentInteractableVisual();
@@ -122,34 +118,26 @@ public class InteractableCollision : MonoBehaviour
 
     private void EnterInteractableView()
     {
-        if (playerMovement == null)
-            return;
+        playermovement.enabled = false;
+        playermovement.playerViewContainer.SetActive(false);
 
-        playerMovement.enabled = false;
-        playerMovement.playerViewContainer.SetActive(false);
-
-        if (playerMovement.viewTarget != null)
-        {
-            playerMovement.viewTarget.DOKill();
-            playerMovement.viewTarget.DOLocalMove(InteractViewPosition, 0.5f);
-        }
+        Transform transform = PlayerSystem.Instance.playerViewTarget;
+        transform.DOKill();
+        transform.DOLocalMove(PlayerSystem.Instance.viewTweenInteractLocal, PlayerSystem.Instance.viewTweenDuration); 
+        FogSystem.Instance.TweenFogHideDistanceToUpper();
     }
 
     private IEnumerator RestorePlayerState()
     {
-        if (playerMovement == null)
-            yield break;
+        Transform transform = PlayerSystem.Instance.playerViewTarget;
+        transform.DOKill();
+        Tween tween = transform.DOLocalMove(PlayerSystem.Instance.viewTweenDefaultLocal, PlayerSystem.Instance.viewTweenDuration);
+        yield return tween.WaitForCompletion();
 
-        if (playerMovement.viewTarget != null)
-        {
-            playerMovement.viewTarget.DOKill();
-            Tween returnTween = playerMovement.viewTarget.DOLocalMove(DefaultViewPosition, 0.5f);
-            yield return returnTween.WaitForCompletion();
-        }
-
-        playerMovement.playerViewContainer.SetActive(true);
-        playerMovement.ResetMovePoint();
-        playerMovement.enabled = true;
+        playermovement.playerViewContainer.SetActive(true);
+        playermovement.ResetMovePoint();
+        playermovement.enabled = true;
+          FogSystem.Instance.BeginFogHideDistanceTweenToLower();
     }
 
     private void ResetMaterial()

@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 74c1498da520bb84d8431ae26abae186, type: 2}
+    - target: {fileID: 3135854041937695158, guid: 9f3c69cdb39646645a7e82f7581611c3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a68d163e5aeed2f4792d21285d79ce2e, type: 2}
     - target: {fileID: 5672525718715828589, guid: 9f3c69cdb39646645a7e82f7581611c3, type: 3}
       propertyPath: m_Name
       value: Earth Variant

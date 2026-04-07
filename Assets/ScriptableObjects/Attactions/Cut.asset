@@ -33,11 +33,11 @@ MonoBehaviour:
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         playWhenDrawnByEnemy: 0
-        damageAmount: 1
+        damageAmount: 2
     - rid: 5118777032282996739
       type: {class: BleedStatusEffect, ns: , asm: Assembly-CSharp}
       data:
         playWhenDrawnByEnemy: 0
         duration: 2
         turnPhase: 0
-        damage: 1
+        damage: 5

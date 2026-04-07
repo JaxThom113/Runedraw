@@ -119,18 +119,15 @@ public class StunSystem : Singleton<StunSystem>
             int discardsToApply = enemyStacks;
             for (int i = 0; i < discardsToApply; i++)
             {
-                List<Card> shownEnemyCards = EnemyHandView.Instance != null ? EnemyHandView.Instance.GetShownCards() : null;
+                List<Card> shownEnemyCards = EnemyHandView.Instance.GetShownCards();
                 if (shownEnemyCards == null || shownEnemyCards.Count <= 0)
                 {
                     break;
                 }
 
                 Card randomCard = shownEnemyCards[Random.Range(0, shownEnemyCards.Count)];
-                CardSystem.Instance?.enemyDeck.Remove(randomCard);
-                if (EnemyHandView.Instance != null)
-                {
-                    yield return StartCoroutine(EnemyHandView.Instance.RemoveEnemyCard(randomCard, true));
-                }
+                CardSystem.Instance.enemyDeck.Remove(randomCard);
+                yield return StartCoroutine(EnemyHandView.Instance.RemoveEnemyCard(randomCard));
             }
 
             int turnsRemaining = turnMap.TryGetValue(stunEffectGA.statusEffect, out int turns) ? turns : stunEffectGA.duration;

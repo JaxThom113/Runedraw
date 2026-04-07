@@ -110,12 +110,15 @@ public class PoisonSystem : Singleton<PoisonSystem>
         if (afflictedUnitIsPlayer)
             return;
 
-        OverworldEnemy overworldEnemy = EnemySystem.Instance != null ? EnemySystem.Instance.overworldEnemy : null;
+        OverworldEnemy overworldEnemy = EnemySystem.Instance.overworldEnemy;
         if (overworldEnemy == null)
             return;
 
         int maxPoisonDuration = effect != null ? StatusSystem.Instance.GetAppliedDuration(effect, afflictedUnitIsPlayer) : 0;
         int turnsRemaining = poisonStacks > 0 ? poisonTicks : 0;
         overworldEnemy.SetPoisonTurnsRemaining(turnsRemaining, maxPoisonDuration);
+
+        if (overworldEnemy.poisonParticles != null)
+            overworldEnemy.poisonParticles.SetActive(poisonStacks > 0);
     }
 }

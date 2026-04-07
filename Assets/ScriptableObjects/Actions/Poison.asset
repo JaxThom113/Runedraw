@@ -25,13 +25,19 @@ MonoBehaviour:
   IsUltimate: 0
   effects:
   - rid: 5118776945593810945
+  - rid: 474873739107368960
   references:
     version: 2
     RefIds:
+    - rid: 474873739107368960
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        playWhenDrawnByEnemy: 0
+        damageAmount: 2
     - rid: 5118776945593810945
       type: {class: PoisonStatusEffect, ns: , asm: Assembly-CSharp}
       data:
-        isPlayer: 0
         playWhenDrawnByEnemy: 0
         duration: 2
-        damage: 2
+        turnPhase: 0
+        damage: 10

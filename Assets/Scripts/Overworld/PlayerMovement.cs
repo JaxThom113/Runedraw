@@ -42,8 +42,6 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.G))
             ResetMovePoint();
 
-   
-
         if (Vector3.Distance(transform.position, movePoint.position) <= 0.05f && !isMoving)
         {
            
