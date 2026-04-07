@@ -170,20 +170,6 @@
         {
             "m_OutputSlot": {
                 "m_Node": {
-                    "m_Id": "62c13de197db4675a1f0f07249c73c8b"
-                },
-                "m_SlotId": 3
-            },
-            "m_InputSlot": {
-                "m_Node": {
-                    "m_Id": "b9b6fad501b345e5a627063653cadd6b"
-                },
-                "m_SlotId": 0
-            }
-        },
-        {
-            "m_OutputSlot": {
-                "m_Node": {
                     "m_Id": "6408620dc9a64e75aa132c080e024cf4"
                 },
                 "m_SlotId": 3
@@ -630,7 +616,7 @@
     "m_Hidden": false,
     "m_ShaderOutputName": "Alpha",
     "m_StageCapability": 2,
-    "m_Value": 0.0,
+    "m_Value": 1.0,
     "m_DefaultValue": 1.0,
     "m_Labels": []
 }
@@ -819,7 +805,7 @@
     "m_Title": "Diffuse",
     "m_Position": {
         "x": -757.0,
-        "y": -241.99998474121095
+        "y": -242.0
     }
 }
 
@@ -1607,10 +1593,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": 553.9999389648438,
-            "y": 482.9999694824219,
-            "width": 123.00006103515625,
-            "height": 34.000091552734378
+            "x": 562.0,
+            "y": 491.0,
+            "width": 151.0,
+            "height": 34.0
         }
     },
     "m_Slots": [
@@ -2548,7 +2534,7 @@
     "m_Type": "UnityEditor.ShaderGraph.Vector4MaterialSlot",
     "m_ObjectId": "9b3d128d198445bdb6e1daa2fe915dc8",
     "m_Id": 0,
-    "m_DisplayName": "Emissive",
+    "m_DisplayName": "EmissionColor",
     "m_SlotType": 1,
     "m_Hidden": false,
     "m_ShaderOutputName": "Out",
@@ -3489,10 +3475,10 @@
     "m_Guid": {
         "m_GuidSerialized": "866b826f-8c77-4710-a44f-35c41aad97f4"
     },
-    "m_Name": "Emissive",
+    "m_Name": "EmissionColor",
     "m_DefaultRefNameVersion": 1,
-    "m_RefNameGeneratedByDisplayName": "Emissive",
-    "m_DefaultReferenceName": "_Emissive",
+    "m_RefNameGeneratedByDisplayName": "EmissionColor",
+    "m_DefaultReferenceName": "_EmissionColor",
     "m_OverrideReferenceName": "",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,

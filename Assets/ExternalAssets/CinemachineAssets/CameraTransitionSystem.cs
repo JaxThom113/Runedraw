@@ -81,7 +81,7 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
         if (!lootCardPickupGA.fromEnemy)
             yield break;
 
-        matchSetupSystem.BeginFogHideDistanceTweenToLower();
+        FogSystem.Instance.BeginFogHideDistanceTweenToLower();
 
         EnemySystem.Instance.overworldEnemy.ClearStatusVisuals();
 

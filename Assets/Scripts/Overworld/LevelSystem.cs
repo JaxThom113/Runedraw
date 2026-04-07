@@ -46,7 +46,9 @@ public class LevelSystem: Singleton<LevelSystem>
     public TextMeshProUGUI windAreaNumber;
 
     [Header("Script References")]
-    public PlayerMovement playerMovement;
+    public PlayerMovement playerMovement; 
+
+
 
     // current level and area
     private int currentLevel = 1;
@@ -63,6 +65,7 @@ public class LevelSystem: Singleton<LevelSystem>
             6 = FinalBoss level
     */
     private int currentAreaType;
+    public int CurrentAreaType => currentAreaType;
 
     // loot view variables
     private bool skipPressed = false;
