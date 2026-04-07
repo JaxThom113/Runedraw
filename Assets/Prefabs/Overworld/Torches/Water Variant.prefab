@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 822f291f4b71e9c46b72877ac44caea4, type: 2}
+    - target: {fileID: 3135854041937695158, guid: 9f3c69cdb39646645a7e82f7581611c3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 705bfdd0841ad6f4485d76e5ef65c4f7, type: 2}
     - target: {fileID: 5672525718715828589, guid: 9f3c69cdb39646645a7e82f7581611c3, type: 3}
       propertyPath: m_Name
       value: Water Variant

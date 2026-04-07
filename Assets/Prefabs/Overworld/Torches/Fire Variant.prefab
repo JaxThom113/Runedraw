@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: ed63acfd86573c746a6ae47bc44c700f, type: 2}
+    - target: {fileID: 3135854041937695158, guid: 9f3c69cdb39646645a7e82f7581611c3, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: e6664d1ab20066b4f84f4d5d4603043e, type: 2}
     - target: {fileID: 5672525718715828589, guid: 9f3c69cdb39646645a7e82f7581611c3, type: 3}
       propertyPath: m_Name
       value: Fire Variant
