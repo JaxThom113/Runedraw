@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.VFX;
 
 using DG.Tweening;
 
@@ -11,7 +12,8 @@ public class PlayerMovement : MonoBehaviour
     public Transform movePoint; 
     public Transform viewTarget; 
     public GameObject playerViewContainer;
-    public LayerMask whatStopsMovement;
+    public LayerMask whatStopsMovement; 
+    public VisualEffect fogVFX;
 
     [Header("Movement Animation Settings")]
     public float jumpPower = 0.4f;
@@ -42,7 +44,8 @@ public class PlayerMovement : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.G))
             ResetMovePoint();
 
-   
+        if (fogVFX != null && viewTarget != null)
+            fogVFX.SetVector3("PlayerPosition", viewTarget.position);
 
         if (Vector3.Distance(transform.position, movePoint.position) <= 0.05f && !isMoving)
         {

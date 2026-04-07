@@ -34739,7 +34739,7 @@ Camera:
   m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 896
+    m_Bits: 4992
   m_RenderingPath: 1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -73526,7 +73526,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 1879
+    m_Bits: 5975
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: c1a197367967f004594a60c75535bb0b, type: 2}
   m_TargetDisplay: 0
@@ -87392,7 +87392,7 @@ Transform:
   m_GameObject: {fileID: 1545166538}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: -3.74, y: -2.13, z: -3}
+  m_LocalPosition: {x: -3.74, y: -0.97, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -124269,7 +124269,7 @@ Camera:
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 7223
+    m_Bits: 3127
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -124563,6 +124563,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1239576289}
     m_Modifications:
+    - target: {fileID: 179571911302823429, guid: 57e653efbc6031c4b97541d1a23a9b1d, type: 3}
+      propertyPath: fogVFX
+      value: 
+      objectReference: {fileID: 1340988395}
     - target: {fileID: 179571911302823429, guid: 57e653efbc6031c4b97541d1a23a9b1d, type: 3}
       propertyPath: moveSpeed
       value: 1
