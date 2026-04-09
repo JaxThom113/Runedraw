@@ -6,16 +6,22 @@ using DG.Tweening;
 public class FogSystem : Singleton<FogSystem>
 {
     const string FogHideDistanceProperty = "HideDistance";
-    const string PlayerPositionProperty = "PlayerPosition";
+    const string PlayerPositionProperty = "PlayerPosition"; 
+
+    [Header("Debug")] 
+    public bool DisableFog = true;
 
     [Header("Fog VFX (one active by area type)")]
-    public VisualEffect normalFog;
-    public VisualEffect fireFog;
-    public VisualEffect windFog;
-    public VisualEffect waterFog;
-    public VisualEffect earthFog;
-    public VisualEffect finalBossFog;
-
+    public VisualEffect[] Fog;
+    /* 
+     0: Normal
+     1: Fire
+     2: Wind
+     3: Water
+     4: Earth
+     5: Final Boss
+     
+    */
     [Header("Hide distance tween")]
     public float hideDistanceLowerBound = 0.3f;
     public float hideDistanceUpperBound = 5.0f;
@@ -29,9 +35,25 @@ public class FogSystem : Singleton<FogSystem>
     Tween fogHideDistanceTween;
 
     void Update()
-    {
-        SyncFogToAreaType();
-
+    {  
+        if(DisableFog){ 
+            foreach(VisualEffect fog in Fog){
+                if(fog == null)
+                    continue;
+                fog.gameObject.SetActive(false);
+            } 
+            return;
+        } 
+        else{  
+            foreach(VisualEffect fog in Fog){
+                if(fog == null)
+                    continue;
+                fog.gameObject.SetActive(true);
+            }
+        }
+        SyncFogToAreaType(); 
+        
+       
         if (currentFog == null)
             return;
 
@@ -68,36 +90,13 @@ public class FogSystem : Singleton<FogSystem>
     void ApplyAreaTypeFog(int areaType)
     {
         VisualEffect selected;
-        switch (areaType)
-        {
-            case 0:
-            case 1:
-                selected = normalFog;
-                break;
-            case 2:
-                selected = fireFog;
-                break;
-            case 3:
-                selected = windFog;
-                break;
-            case 4:
-                selected = waterFog;
-                break;
-            case 5:
-                selected = earthFog;
-                break;
-            case 6:
-                selected = finalBossFog;
-                break;
-            default:
-                selected = normalFog;
-                break;
-        }
+        selected = Fog[areaType]; 
+        selected.gameObject.SetActive(true);
 
         if (selected == null)
-            selected = normalFog;
+            return;
 
-        VisualEffect[] all = { normalFog, fireFog, windFog, waterFog, earthFog, finalBossFog };
+        VisualEffect[] all = Fog;
         foreach (VisualEffect fx in all)
         {
             if (fx == null)
