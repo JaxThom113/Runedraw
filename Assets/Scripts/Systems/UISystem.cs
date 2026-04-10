@@ -23,9 +23,7 @@ public class UISystem : Singleton<UISystem>
     [SerializeField] private TextMeshProUGUI enemiesFought;
     [SerializeField] private TextMeshProUGUI chestsLooted;
     [SerializeField] private TextMeshProUGUI timesRested;
-    [SerializeField] private TextMeshProUGUI cardsBurned;
     [SerializeField] private TextMeshProUGUI runesPlayed;
-    [SerializeField] private TextMeshProUGUI mostPlayedCard;
 
     void Update()
     {
@@ -91,6 +89,11 @@ public class UISystem : Singleton<UISystem>
         area2.text = GameData.Area2.ToString();
         area3.text = GameData.Area3.ToString();
         winRun.text = GameData.WinRun ? "Yes" : "No";
+
+        enemiesFought.text = GameData.EnemiesFought.ToString();
+        chestsLooted.text = GameData.ChestsLooted.ToString();
+        timesRested.text = GameData.TimesRested.ToString();
+        runesPlayed.text = GameData.RunesPlayed.ToString();
     } 
    
     public void TransformShake(Transform objectTransform)

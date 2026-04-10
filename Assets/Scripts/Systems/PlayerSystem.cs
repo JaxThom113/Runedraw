@@ -26,7 +26,9 @@ public class PlayerSystem : Singleton<PlayerSystem>
     public PlayerView playerView; 
     public GameObject DeathView; 
     public GameObject GameView;
+
     public int storedHealth; 
+    public int maxHealth;
 
     public void ViewTweenToInteractLocal()
     {
@@ -106,5 +108,14 @@ public class PlayerSystem : Singleton<PlayerSystem>
         yield return null;
     }
 
-
+    // gank health function (why don't we have one variable for health lol)
+    public void AddHealth(int amount)
+    {
+        if (!(storedHealth + amount > maxHealth))
+        {
+            storedHealth += amount;
+            playerView.currentHealth = storedHealth;
+            playerView.UpdateHealthDisplay();
+        }
+    }
 }

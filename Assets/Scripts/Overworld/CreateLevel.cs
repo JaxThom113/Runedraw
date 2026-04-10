@@ -19,7 +19,8 @@ public class CreateLevel : MonoBehaviour
     [Header("Entity References")]
     public GameObject player;
     public GameObject enemy;    
-    public GameObject interactable;
+    public GameObject lootBox;
+    public GameObject campfire;
     public EnemyBank enemyBank;
 
     [Header("3D Elements")]
@@ -281,8 +282,18 @@ public class CreateLevel : MonoBehaviour
                     Vector3Int gridPos = new Vector3Int(x, flippedY, 0);
                     Vector3 pos = floorTilemap.GetCellCenterWorld(gridPos);
 
-                    GameObject interactableObject = Instantiate(interactable, pos, Quaternion.identity, interactableContainer.transform);
-                    interactableObject.name = $"Interactable_{x}_{y}";
+                    GameObject lootBoxObject = Instantiate(lootBox, pos, Quaternion.identity, interactableContainer.transform);
+                    lootBoxObject.name = $"Interactable_{x}_{y}";
+                }
+
+                if (grid[y][x] == 5)
+                {
+                    int flippedY = (gridSize - 1) - y; // convert from 4th quadrant -> 1st quadrant
+                    Vector3Int gridPos = new Vector3Int(x, flippedY, 0);
+                    Vector3 pos = floorTilemap.GetCellCenterWorld(gridPos);
+
+                    GameObject campfireObject = Instantiate(campfire, pos, Quaternion.identity, interactableContainer.transform);
+                    campfireObject.name = $"Interactable_{x}_{y}";
                 }
             }
         }

@@ -13,6 +13,7 @@ public class OverworldHealth : MonoBehaviour
    void Start()
    { 
       healthSlider.maxValue = PlayerSystem.Instance.currentPlayerData.entityHealth;
+      PlayerSystem.Instance.maxHealth = PlayerSystem.Instance.currentPlayerData.entityHealth;
    }
 
    void Update()
