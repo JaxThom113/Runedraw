@@ -13,10 +13,10 @@ MonoBehaviour:
   m_Name: Tornado
   m_EditorClassIdentifier: 
   cardName: Tornado
-  cardCost: 5
+  cardCost: 3
   cardBorder: {fileID: 21300000, guid: d48326ba42e455447b0ccce8fad6f2e4, type: 3}
   cardIcon: {fileID: 21300000, guid: 66f3b285ff1a4244e882b61a7544771e, type: 3}
-  cardDescription: 
+  cardDescription: Deal 4 damage, draw 2 cards
   cardElement: 4
   cardElementIcon: {fileID: 21300000, guid: 8c033ef14828495408918f27f16541e4, type: 3}
   cardType: 0
@@ -25,11 +25,17 @@ MonoBehaviour:
   IsUltimate: 0
   effects:
   - rid: 5118776516904747008
+  - rid: 3988028971208409090
   references:
     version: 2
     RefIds:
+    - rid: 3988028971208409090
+      type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
+      data:
+        playWhenDrawnByEnemy: 0
+        drawAmount: 2
     - rid: 5118776516904747008
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         playWhenDrawnByEnemy: 0
-        damageAmount: 5
+        damageAmount: 4

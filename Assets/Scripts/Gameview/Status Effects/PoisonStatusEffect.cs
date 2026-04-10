@@ -24,6 +24,6 @@ public class PoisonStatusEffect : StatusEffect
 
    public override string GetDescription()
    {
-    return $"Applys {damage} Poison for {duration} turns";
+    return $"Apply {damage} Poison for {duration} turns";
    }
 }

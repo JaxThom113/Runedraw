@@ -77,11 +77,11 @@ public static class ProcGen
         // Step #6: Place loot at dead ends
         SpawnLootDeadEnds();
 
-        // Step #7: Place enemies in front of loot / in branching paths
-        SpawnEnemiesBranchingPaths();
+        // Step #7: Change a random numnber of lootboxes into campfires
+        SpawnCampfires();
 
-        // print results to console for debugging
-        GridDebug();
+        // Step #8: Place enemies in front of loot / in branching paths
+        SpawnEnemiesBranchingPaths();
     }
 
     /*
@@ -256,10 +256,33 @@ public static class ProcGen
 
                 if (numFloors == 1 && numWalls == 3)
                 {
-                    // 4 = interactable
-                    grid[y][x] = 4; // add a 4 to represent this interactable instance
+                    // 4 = lootbox
+                    grid[y][x] = 4;
                 }
             }
+        }
+    }
+
+    private static void SpawnCampfires()
+    {
+        List<Vector2Int> lootTiles = new List<Vector2Int>();
+        for (int y = 0; y < GRID_SIZE; y++)
+        {
+            for (int x = 0; x < GRID_SIZE; x++)
+            {
+                if (grid[y][x] == 4)
+                    lootTiles.Add(new Vector2Int(y, x));
+            }
+        }
+
+        int numCampfires = Random.Range(0, 3);
+
+        for (int i = 0; i < numCampfires; i++)
+        {
+            int randPos = Random.Range(0, lootTiles.Count);
+
+            // 5 = campfire
+            grid[lootTiles[randPos].x][lootTiles[randPos].y] = 5;
         }
     }
 
@@ -299,10 +322,5 @@ public static class ProcGen
             // 3 = enemy
             grid[openFloorTiles[randPos].x][openFloorTiles[randPos].y] = 3;
         }
-    }
-
-    private static void GridDebug()
-    {
-        
     }
 }

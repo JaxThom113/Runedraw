@@ -20,9 +20,7 @@ public static class GameData
     public static int EnemiesFought;
     public static int ChestsLooted;
     public static int TimesRested;
-    public static int CardsBurned;
     public static int RunesPlayed;
-    public static int MostPlayedCard;   
 
     public static void InitializeData()
     {
@@ -40,8 +38,6 @@ public static class GameData
         EnemiesFought = 0;
         ChestsLooted = 0;
         TimesRested = 0;
-        CardsBurned = 0;
         RunesPlayed = 0;
-        MostPlayedCard = 0;   
     }
 }

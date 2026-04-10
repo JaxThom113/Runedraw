@@ -8,6 +8,7 @@ public class InteractableCollision : MonoBehaviour
     [SerializeField] private Material material; 
     [SerializeField] private float fadeInDuration = 3f;
     [SerializeField] private float fadeOutPauseDuration = 0.2f;
+
     private PlayerMovement playermovement;
     private Collider interactableCollider;
     private bool interactionStarted;
@@ -37,13 +38,31 @@ public class InteractableCollision : MonoBehaviour
 
         playermovement = other.GetComponent<PlayerMovement>();
 
-        LevelSystem.Instance?.BeginLootSelection(gameObject);
-        ShowCurrentInteractableVisual();
-        FadeIn();
-        EnterInteractableView();
+        if (material.name == "LootBox")
+        {
+            GameData.ChestsLooted++;
 
-        StartCoroutine(LootCard());
+            ShowCurrentInteractableVisual();
+            FadeIn();
+            EnterInteractableView();
+
+            StartCoroutine(LootCard());
+        }
+        else if (material.name == "Campfire")
+        {
+            GameData.TimesRested++;
+
+            ShowCurrentInteractableVisual();
+            FadeIn();
+            EnterInteractableView();
+
+            StartCoroutine(CampfireInteract());
+        }
     }
+
+    /*
+        Effects
+    */
 
     public void FadeIn()
     {
@@ -75,21 +94,44 @@ public class InteractableCollision : MonoBehaviour
         ).SetEase(Ease.InOutSine);
     }
 
+    /*
+        Interactable functionality
+        (lootbox/campfire)
+    */
+
     public IEnumerator LootCard()
     {
         yield return new WaitForSeconds(fadeInDuration);
-        ActionSystem.Instance.Perform(new LootCardGA(3));
+        ActionSystem.Instance.Perform(new LootCardGA(3)); // give player 3 cards to pick from
 
-        yield return new WaitUntil(() => LevelSystem.Instance == null || LevelSystem.Instance.LootSelectionCompleted);
+        yield return new WaitUntil(() => LevelSystem.Instance.LootSelectionCompleted);
 
         FadeOut();
         yield return new WaitForSeconds(fadeInDuration);
-      
 
         yield return RestorePlayerState();
         ShowAllInteractableVisuals();
         Destroy(gameObject);
     }
+
+    public IEnumerator CampfireInteract()
+    {
+        yield return new WaitForSeconds(fadeInDuration);
+        ActionSystem.Instance.Perform(new CampfireGA(10)); // heal the player 10 HP
+
+        yield return new WaitUntil(() => LevelSystem.Instance.CampfireInteractCompleted);
+
+        FadeOut();
+        yield return new WaitForSeconds(fadeInDuration);
+
+        yield return RestorePlayerState();
+        ShowAllInteractableVisuals();
+        Destroy(gameObject);
+    }
+
+    /*
+        Helper functions
+    */
 
     private void ShowCurrentInteractableVisual()
     {
@@ -137,7 +179,7 @@ public class InteractableCollision : MonoBehaviour
         playermovement.playerViewContainer.SetActive(true);
         playermovement.ResetMovePoint();
         playermovement.enabled = true;
-          FogSystem.Instance.BeginFogHideDistanceTweenToLower();
+        FogSystem.Instance.BeginFogHideDistanceTweenToLower();
     }
 
     private void ResetMaterial()

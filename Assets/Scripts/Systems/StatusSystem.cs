@@ -139,8 +139,7 @@ public class StatusSystem : Singleton<StatusSystem>
     private void ApplyStatusEffectsForSide(Dictionary<StatusEffect, int> statusMap, bool afflictedUnitIsPlayer, StatusTurnPhase turnPhase)
     {  
         foreach (KeyValuePair<StatusEffect, int> kvp in statusMap)
-        {  
-            
+        { 
             int stacks = kvp.Value;
             if (stacks <= 0) continue;
             if (kvp.Key is VunerableStatusEffect || kvp.Key is StunStatusEffect) continue;
@@ -203,8 +202,8 @@ public class StatusSystem : Singleton<StatusSystem>
             // Reapplying a rune refreshes it to one active instance with the latest duration.
             map[key] = 1;
             turnMap[key] = durationToApply;
-            appliedDurationMap[key] = durationToApply; 
-            
+            appliedDurationMap[key] = durationToApply;
+            GameData.RunesPlayed++;
         }
         else
         {

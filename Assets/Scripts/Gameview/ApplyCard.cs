@@ -37,6 +37,32 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public const float UltimateScale = 0.5f;
     public const float UltimateTweenDuration = 0.25f;
 
+    public bool LootCard = false;
+    public bool PickedUpCard = false;
+    public bool InventoryCard = false;
+    public bool IsEnemyCard = false;
+    public bool LootFromEnemy = false;
+    //ALL TYPES MUST BE THE SAME
+    // Start is called before the first frame update
+    public void Setup(Card card)
+    {  
+        if(card == null) return; 
+      
+        this.card = card; 
+        cardBorder.GetComponent<Image>().sprite = card.cardBorder; 
+        cardIcon.GetComponent<Image>().sprite = card.cardIcon; 
+        costTextComponent = cardCostText != null ? cardCostText.GetComponent<TextMeshProUGUI>() : null;
+        RefreshManaCostText();
+        RefreshDescriptionText();
+        //cardElement.GetComponent<Image>().sprite = card.cardElement;  
+        cardTypeIcon.GetComponent<Image>().sprite = card.cardTypeIcon;
+        cardElementIcon.GetComponent<Image>().sprite = card.cardElementIcon;
+        //cardActions.GetComponent<Image>().sprite = card.cardActions;
+        cardNameText.GetComponent<TextMeshProUGUI>().text = card.cardName;   
+        //cardType = card.cardType; 
+        cardTypeName.GetComponent<TextMeshProUGUI>().text = card.cardType.ToString();
+    }
+
     public IEnumerator UltimateWindupRoutine()
     {
         if (!transform)
@@ -62,30 +88,6 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         transform.DOMove(new Vector3(25, 1, 0), dur);
 
         yield return new WaitForSeconds(dur);
-    }
-    public bool LootCard = false;
-    public bool InventoryCard = false;
-    public bool IsEnemyCard = false;
-    public bool LootFromEnemy = false;
-    //ALL TYPES MUST BE THE SAME
-    // Start is called before the first frame update
-    public void Setup(Card card)
-    {  
-        if(card == null) return; 
-      
-        this.card = card; 
-        cardBorder.GetComponent<Image>().sprite = card.cardBorder; 
-        cardIcon.GetComponent<Image>().sprite = card.cardIcon; 
-        costTextComponent = cardCostText != null ? cardCostText.GetComponent<TextMeshProUGUI>() : null;
-        RefreshManaCostText();
-        RefreshDescriptionText();
-        //cardElement.GetComponent<Image>().sprite = card.cardElement;  
-        cardTypeIcon.GetComponent<Image>().sprite = card.cardTypeIcon;
-        cardElementIcon.GetComponent<Image>().sprite = card.cardElementIcon;
-        //cardActions.GetComponent<Image>().sprite = card.cardActions;
-        cardNameText.GetComponent<TextMeshProUGUI>().text = card.cardName;   
-        //cardType = card.cardType; 
-        cardTypeName.GetComponent<TextMeshProUGUI>().text = card.cardType.ToString();
     }
 
     public void RefreshManaCostText()
@@ -152,8 +154,8 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     } 
     public void OnPointerDown(PointerEventData eventData)
     { 
-        if(LootCard){   
-            
+        if(LootCard && !PickedUpCard){
+            PickedUpCard = true;
             AudioSystem.Instance.PlaySFX("click");
             PlayerSystem.Instance.player.AddCardToDeck(card.data); 
             ActionSystem.Instance.Perform(new LootCardPickupGA(LootFromEnemy));
