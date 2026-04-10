@@ -13,7 +13,8 @@ public class RuneStatusEffect : StatusEffect
     {
         if (stacks <= 0) return;
         isPlayer = afflictedUnitIsPlayer;
-        int turnsRemaining = statusSystem.GetStatusTurnRemaining(this, afflictedUnitIsPlayer);
+        int turnsRemaining = statusSystem.GetStatusTurnRemaining(this, afflictedUnitIsPlayer); 
+
         ActionSystem.Instance.AddReaction(new RuneGA(effect, turnsRemaining, afflictedUnitIsPlayer, ApplyToEnemy, this));
     }
     
