@@ -19,6 +19,6 @@ public class VunerableStatusEffect : StatusEffect
 
     public override string GetDescription()
     {
-        return $"Applys {damage} Vunerable for {duration} turns";
+        return $"Apply {damage} Vulnerable for {duration} turns";
     }
 }

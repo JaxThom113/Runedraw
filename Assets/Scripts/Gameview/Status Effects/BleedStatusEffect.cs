@@ -23,6 +23,6 @@ public class BleedStatusEffect : StatusEffect
 
     public override string GetDescription()
     {
-        return $"Applys {damage} Bleed for {duration} turns";
+        return $"Apply {damage} Bleed for {duration} turns";
     }
 }

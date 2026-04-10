@@ -28,6 +28,7 @@ public class LevelSystem: Singleton<LevelSystem>
     public TextMeshProUGUI areaLevel;
     public GameObject transitionScreen;
     public GameObject LootView;
+    public GameObject campfireView;
 
     [Header("Area Intros")]
     public GameObject areaIntros;
@@ -67,10 +68,9 @@ public class LevelSystem: Singleton<LevelSystem>
     private int currentAreaType;
     public int CurrentAreaType => currentAreaType;
 
-    // loot view variables
-    private bool skipPressed = false;
+    // interactable view variables
     public bool LootSelectionCompleted { get; private set; } = false;
-    private GameObject currentInteractable = null;
+    public bool CampfireInteractCompleted { get; private set; } = false;
 
     private CreateLevel createLevel;
 
@@ -116,12 +116,14 @@ public class LevelSystem: Singleton<LevelSystem>
     void OnEnable()
     {
         ActionSystem.AttachPerformer<LootCardGA>(LootBoxPerformer);
+        ActionSystem.AttachPerformer<CampfireGA>(CampfirePerformer);
         ActionSystem.SubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
     }
 
     void OnDisable()
     {
         ActionSystem.DetachPerformer<LootCardGA>();
+        ActionSystem.DetachPerformer<CampfireGA>();
         ActionSystem.UnsubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
     }
 
@@ -321,55 +323,55 @@ public class LevelSystem: Singleton<LevelSystem>
     }
 
     /*
-        Interactables
+        Lootboxes
     */
 
     public IEnumerator LootBoxPerformer(LootCardGA lootCardGA)
     {
-        // store the interactable instance for later deletion
-        //currentInteractable = interactable;
-
-        // display card pickup UI, start card pickup coroutine 
         LootView.SetActive(true);
         AudioSystem.Instance.PlayMusic("victory");
-
-        yield return null;
-    }
-
-    public void BeginLootSelection(GameObject interactable)
-    {
-        currentInteractable = interactable;
         LootSelectionCompleted = false;
-        skipPressed = false;
-    }
-
-    public void CompleteLootSelection()
-    {
-        LootView.SetActive(false);
-        currentInteractable = null;
-        skipPressed = true;
-        LootSelectionCompleted = true;
+        yield return null;
     }
 
     private void LootCardPickupPostReaction(LootCardPickupGA lootCardPickupGA)
     {
-        CompleteLootSelection();
+        AudioSystem.Instance.PlaySFX("click");
+        AudioSystem.Instance.PlayMusic("overworld", true);
+        LootView.SetActive(false);
+        LootSelectionCompleted = true;
     }
 
-    public void OnSkipButtonClick()
+    public void OnSkipButtonClicked()
     {
         AudioSystem.Instance.PlaySFX("click");
-        CompleteLootSelection();
+        AudioSystem.Instance.PlayMusic("overworld", true);
+        LootView.SetActive(false);
+        LootSelectionCompleted = true;
     }
 
-    IEnumerator LootBoxActivate()
+    /*
+        Campfires
+    */
+    
+    public IEnumerator CampfirePerformer(CampfireGA campfireGA)
     {
-        // given the current level and area, allow player to pick a card
-        // weaker cards appear at earlier levels/areas, stronger cards appear later
-        skipPressed = false;
+        campfireView.SetActive(true);
+        AudioSystem.Instance.PlayMusic("victory");
+        CampfireInteractCompleted = false;
 
-        yield return new WaitUntil(() => skipPressed);
-        LootView.SetActive(false);
+        // heal player
+        PlayerSystem.Instance.AddHealth(campfireGA.amount);
+
+        yield return null;
+    }
+
+    public void OnContinueButtonClicked()
+    {
+        AudioSystem.Instance.PlaySFX("click");
+        AudioSystem.Instance.PlayMusic("overworld", true);
+        campfireView.SetActive(false);
+        CampfireInteractCompleted = true;
     }
 
     /*

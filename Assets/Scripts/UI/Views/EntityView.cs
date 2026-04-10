@@ -38,7 +38,7 @@ public class EntityView : MonoBehaviour
         } 
     }
 
-    private void UpdateHealthDisplay()
+    public void UpdateHealthDisplay()
     {
         int displayHealth = Mathf.Max(0, currentHealth);
         if (healthText != null)

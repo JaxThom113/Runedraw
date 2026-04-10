@@ -203,6 +203,7 @@ public class StatusSystem : Singleton<StatusSystem>
             map[key] = 1;
             turnMap[key] = durationToApply;
             appliedDurationMap[key] = durationToApply;
+            GameData.RunesPlayed++;
         }
         else
         {

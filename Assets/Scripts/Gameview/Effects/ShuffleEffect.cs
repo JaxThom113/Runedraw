@@ -14,6 +14,6 @@ public class ShuffleEffect : Effect
 
     public override string GetDescription()
     {
-        return $"Discard your hand, shuffle that same amount of cards";
+        return $"Draw a new hand of cards";
     }
 }

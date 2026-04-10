@@ -16,7 +16,7 @@ MonoBehaviour:
   cardCost: 0
   cardBorder: {fileID: 21300000, guid: a259d248a8de13f4ab4ee295b30f072e, type: 3}
   cardIcon: {fileID: 21300000, guid: 035aec961f9fe504ea40797282e6b0ea, type: 3}
-  cardDescription: 
+  cardDescription: Deal 2 damage
   cardElement: 2
   cardElementIcon: {fileID: 21300000, guid: 82142cada99b54e4f86147d06c158e36, type: 3}
   cardType: 0
@@ -32,4 +32,4 @@ MonoBehaviour:
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         playWhenDrawnByEnemy: 0
-        damageAmount: 3
+        damageAmount: 2
