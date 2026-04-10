@@ -92809,6 +92809,7 @@ MonoBehaviour:
   cardNameText: {fileID: 1592455970}
   wrapper: {fileID: 1127125248}
   LootCard: 0
+  PickedUpCard: 0
   InventoryCard: 0
   IsEnemyCard: 0
   LootFromEnemy: 0
@@ -119908,7 +119909,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemies:
   - {fileID: 11400000, guid: 212f3b31e8777e84daaae13205bf5d5a, type: 2}
-  - {fileID: 11400000, guid: 2c1f280d611e8724fa31ae009f5e2a94, type: 2}
+  - {fileID: 11400000, guid: 865104b2f3248ac41933b0c1bff316dc, type: 2}
 --- !u!1 &2037935646
 GameObject:
   m_ObjectHideFlags: 0
@@ -120843,7 +120844,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemies:
   - {fileID: 11400000, guid: 212f3b31e8777e84daaae13205bf5d5a, type: 2}
-  - {fileID: 11400000, guid: 6936215d3650dba41b0dce444d7de650, type: 2}
+  - {fileID: 11400000, guid: 865104b2f3248ac41933b0c1bff316dc, type: 2}
 --- !u!1 &2083724039
 GameObject:
   m_ObjectHideFlags: 0

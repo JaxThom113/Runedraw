@@ -34,6 +34,4 @@ public class CardSO : ScriptableObject
     [SerializeField] public bool IsUltimate;
     [SerializeReference, SR(typeof(Effect))]
     [SerializeField] public List<Effect> effects = new List<Effect>();  
-    
-    
 }

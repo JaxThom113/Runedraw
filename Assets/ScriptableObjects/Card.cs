@@ -26,31 +26,27 @@ public class Card
     public CardSO data;
     public Card(CardSO dataSO) { 
         data = dataSO; 
-         cardElement = dataSO.cardElement;  
-        DescribeCard();  
+        cardElement = dataSO.cardElement;  
+        DescribeCard();
         cardCost = dataSO.cardCost;     
-       
         cardType = dataSO.cardType; 
     } 
+
     void DescribeCard()
     { 
         cardDescription = "";
-        if(effects != null){ 
-            foreach(var effect in effects){
+
+        if(effects != null)
+        { 
+            foreach(var effect in effects)
+            {
                 cardDescription += effect.GetDescription() + ", "; 
-               
-            
-                
-               
-            }
-            if(cardElement != Element.None){
-                cardDescription += cardElement.ToString();
-            } 
-            else{
-                cardDescription = cardDescription.TrimEnd(',', ' ');
             }
 
+            if(cardElement != Element.None)
+                cardDescription += cardElement.ToString();
+            else
+                cardDescription = cardDescription.TrimEnd(',', ' ');
         }
     }
-    
 }

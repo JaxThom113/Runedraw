@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f12edb9ed77eadb45a86c21c6f438cad, type: 3}
-  m_Name: Sludge
+  m_Name: Conjured Ward
   m_EditorClassIdentifier: 
-  cardName: Sludge
-  cardCost: 3
+  cardName: Conjured Ward
+  cardCost: 5
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
-  cardIcon: {fileID: 21300000, guid: 1c66918f1c2a5b045b168511ed39d464, type: 3}
-  cardDescription: 
+  cardIcon: {fileID: 21300000, guid: d85af894eb9b2fb489eaa38f1b74bc04, type: 3}
+  cardDescription: Gain 2 shield at the start of every turn for 3 turns
   cardElement: 0
   cardElementIcon: {fileID: 21300000, guid: 7b6c5390240409445a46abfb97e084ec, type: 3}
   cardType: 2
@@ -34,14 +34,12 @@ MonoBehaviour:
       data:
         playWhenDrawnByEnemy: 1
         duration: 3
-        turnPhase: 0
+        turnPhase: 1
         effect:
-          rid: 5118777032282996767
-        ApplyToEnemy: 1
-    - rid: 5118777032282996767
-      type: {class: PoisonStatusEffect, ns: , asm: Assembly-CSharp}
+          rid: 5118777032282996755
+        ApplyToEnemy: 0
+    - rid: 5118777032282996755
+      type: {class: ApplyShieldEffect, ns: , asm: Assembly-CSharp}
       data:
         playWhenDrawnByEnemy: 0
-        duration: 3
-        turnPhase: 0
-        damage: 1
+        shieldAmount: 2

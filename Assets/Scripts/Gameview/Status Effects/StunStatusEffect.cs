@@ -19,6 +19,6 @@ public class StunStatusEffect : StatusEffect
 
     public override string GetDescription()
     {
-        return $"Applys Stun for {duration} turns";
+        return $"Apply Stun for {duration} turns";
     }
 }

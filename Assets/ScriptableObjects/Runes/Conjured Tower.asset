@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f12edb9ed77eadb45a86c21c6f438cad, type: 3}
-  m_Name: ConjuredTower
+  m_Name: Conjured Tower
   m_EditorClassIdentifier: 
-  cardName: ConjuredTower
-  cardCost: 3
+  cardName: Conjured Tower
+  cardCost: 5
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
   cardIcon: {fileID: 21300000, guid: ce232afeab3ebe643b90ee00a1c5c13c, type: 3}
-  cardDescription: 
+  cardDescription: Deal 2 damage at the start of each turn for 3 turns
   cardElement: 0
   cardElementIcon: {fileID: 21300000, guid: 7b6c5390240409445a46abfb97e084ec, type: 3}
   cardType: 2
@@ -42,4 +42,4 @@ MonoBehaviour:
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         playWhenDrawnByEnemy: 0
-        damageAmount: 1
+        damageAmount: 2
