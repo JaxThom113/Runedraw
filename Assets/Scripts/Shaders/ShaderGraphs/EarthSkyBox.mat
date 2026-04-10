@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: WaterSkybpx
+  m_Name: EarthSkyBox
   m_Shader: {fileID: -6465566751694194690, guid: 43b0872e8426f6f4baa583b1358622b2, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -28,7 +28,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _WaterTexture:
-        m_Texture: {fileID: 2800000, guid: a2fd50de3f65ba945bb9699441bd2803, type: 3}
+        m_Texture: {fileID: 2800000, guid: de629a63e6de1c6418c097482a0d40ab, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
@@ -45,7 +45,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Alpha: 0.48
+    - _Alpha: 2.1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _TornadoPower: 1.5
@@ -53,15 +53,15 @@ Material:
     - _TwirlSize: 0.2
     - _TwirlSpeed: 0.5
     - _TwirlStrength: 50
-    - _WaveHeight: 0.1
-    - _WaveNoiseScale: 10
+    - _WaveHeight: 0.01
+    - _WaveNoiseScale: 106.26
     m_Colors:
-    - _Color: {r: 2.482063, g: 2.4844034, b: 2.4938264, a: 0}
-    - _Speed1: {r: 0.05, g: 0.05, b: 0, a: 0}
-    - _Speed2: {r: -0.03, g: 0.04, b: 0, a: 0}
-    - _Tiling: {r: 5, g: 5, b: 0, a: 0}
+    - _Color: {r: 0.65837497, g: 0.33716366, b: 0.0047769533, a: 1}
+    - _Speed1: {r: 0.05, g: -0.05, b: 0, a: 0}
+    - _Speed2: {r: -0.05, g: 0.05, b: 0, a: 0}
+    - _Tiling: {r: 20, g: 10, b: 0, a: 0}
   m_BuildTextureStacks: []
---- !u!114 &5619855576755385473
+--- !u!114 &2656403806396626817
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

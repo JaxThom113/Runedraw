@@ -152,7 +152,8 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     } 
     public void OnPointerDown(PointerEventData eventData)
     { 
-        if(LootCard){
+        if(LootCard){   
+            
             AudioSystem.Instance.PlaySFX("click");
             PlayerSystem.Instance.player.AddCardToDeck(card.data); 
             ActionSystem.Instance.Perform(new LootCardPickupGA(LootFromEnemy));

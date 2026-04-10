@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Water
+  m_Name: Wind
   m_Shader: {fileID: -6465566751694194690, guid: e988ed8644140fa47a8a54a98d3237af, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -37,16 +37,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Float: 0
-    - _GlintStep: 0.98
-    - _NoiseScale: 5
-    - _NoiseStrength: 0.02
-    - _Range: 0.6
-    - _ScrolFreq: 0.5
-    - _ScrollSpeed: 0.84
-    - _Smooth: 1
-    - _TintStrength: 0.1
-    - _TotalDistortion: 0.8
+    - _NoiseScale: 0.5
+    - _NoiseStrength: 0.05
+    - _Range: 1
+    - _ScrolFreq: 5
+    - _Smooth: 0.117
+    - _TintStrength: 0.937
+    - _TotalDistortion: 0.454
     m_Colors:
-    - _WaterTint: {r: 0.3964934, g: 0.8396282, b: 0.8490566, a: 0}
+    - _WaterTint: {r: 0.6567517, g: 0.9528302, b: 0.56181026, a: 0}
   m_BuildTextureStacks: []
