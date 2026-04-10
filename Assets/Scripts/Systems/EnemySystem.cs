@@ -16,7 +16,6 @@ public class EnemySystem : Singleton<EnemySystem>
     public float enemyPlayZoneTweenDuration = 0.25f;
     public Material CurrentEnemyMaterial => enemy != null ? enemy.enemyMaterial : null;
 
-    /// <summary>Move/rotate to play zone (normal enemy plays and play-when-drawn).</summary>
     public IEnumerator TweenEnemyCardToPlayZone(ApplyCard enemyCardView)
     {
         if (enemyCardView == null || enemyPlayZoneTransform == null)
@@ -30,9 +29,7 @@ public class EnemySystem : Singleton<EnemySystem>
         yield return new WaitForSeconds(d);
     }
 
-    /// <summary>
-    /// World-space ultimate: play zone, shake, hold, then discard. Player ultimates stay on <see cref="ApplyCard"/>.
-    /// </summary>
+
     public IEnumerator EnemyUltimateWindupRoutine(ApplyCard enemyCardView)
     {
         if (enemyCardView == null || enemyPlayZoneTransform == null || enemyDiscardPileTransform == null)
@@ -88,8 +85,11 @@ public class EnemySystem : Singleton<EnemySystem>
             foreach (var effect in card.effects)
             {
                 if (effect is StatusEffect statusEffect)
-                {
-                    ActionSystem.Instance.AddReaction(new AddStatusEffect(statusEffect, statusEffect.duration, instigatorIsPlayer: false));
+                { 
+                    if(effect.effectSelf)
+                        ActionSystem.Instance.AddReaction(new AddStatusEffect(statusEffect, statusEffect.duration, instigatorIsPlayer: false));
+                    else
+                        ActionSystem.Instance.AddReaction(new AddStatusEffect(statusEffect, statusEffect.duration, instigatorIsPlayer: true));
                 }
             }
 
@@ -102,8 +102,11 @@ public class EnemySystem : Singleton<EnemySystem>
             foreach (var effect in card.effects)
             {
                 if (effect is StatusEffect)
-                    continue;
-                ActionSystem.Instance.AddReaction(new PerformEffectGA(effect, instigatorIsPlayer: false));
+                    continue; 
+                if(effect.effectSelf)
+                    ActionSystem.Instance.AddReaction(new PerformEffectGA(effect, instigatorIsPlayer: false));
+                else
+                    ActionSystem.Instance.AddReaction(new PerformEffectGA(effect, instigatorIsPlayer: true));
             }
 
             ApplyCard enemyCardView = EnemyHandView.Instance.GetApplyCardForCard(card);

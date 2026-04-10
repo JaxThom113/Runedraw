@@ -6,7 +6,7 @@ using UnityEngine;
 [System.Serializable]
 public abstract class Effect 
 {
-    /// <summary>Runtime-only targeting side. Systems set this before GetGameAction() so nested effect assets do not expose misleading inspector state.</summary>
+    [SerializeField] public bool effectSelf;
     [System.NonSerialized] public bool isPlayer;
     [System.NonSerialized] public int displayAdditionalDamage;
     [SerializeField] public bool playWhenDrawnByEnemy;

@@ -131,7 +131,10 @@ public class CardSystem : Singleton<CardSystem>
         {
             if (effect is StatusEffect statusEffect)
             {
-                ActionSystem.Instance.AddReaction(new AddStatusEffect(statusEffect, statusEffect.duration, instigatorIsPlayer: true));
+                if (statusEffect.effectSelf)
+                    ActionSystem.Instance.AddReaction(new AddStatusEffect(statusEffect, statusEffect.duration, instigatorIsPlayer: false));
+                else
+                    ActionSystem.Instance.AddReaction(new AddStatusEffect(statusEffect, statusEffect.duration, instigatorIsPlayer: true));
             }
         }
 
@@ -151,7 +154,10 @@ public class CardSystem : Singleton<CardSystem>
         {
             if (effect is StatusEffect)
                 continue;
-            ActionSystem.Instance.AddReaction(new PerformEffectGA(effect, instigatorIsPlayer: true));
+            if (effect.effectSelf)
+                ActionSystem.Instance.AddReaction(new PerformEffectGA(effect, instigatorIsPlayer: false));
+            else
+                ActionSystem.Instance.AddReaction(new PerformEffectGA(effect, instigatorIsPlayer: true));
         }
     }
     private IEnumerator DrawCardPerformer(DrawCardGA drawCardGA)
@@ -367,7 +373,7 @@ public class CardSystem : Singleton<CardSystem>
             }
             if (!card.IsUltimate)
                 yield return StartCoroutine(EnemySystem.Instance.TweenEnemyCardToPlayZone(applyCard));
-            yield return EnemyHandView.Instance.RemoveEnemyCard(card);
+             yield return EnemyHandView.Instance.RemoveEnemyCard(card);
         }
         
     }
