@@ -8,13 +8,14 @@ Group project for UF Digital Worlds Convergence 2026
 ## Links
 
 **Itch:** https://cidthunder.itch.io/runedraw
+
 **Behance:** https://www.behance.net/gallery/245282559/RuneDraw
 
 ## Credits
 
 Programmers
-- Elijah Lowe, @elijahlowe77 - [Card Game System Design, Shaders]
-- Jaxon Kundrat, @JaxThom113 - [Overworld Level Generation, UI/UX]
+- Elijah Lowe ([@elijahlowe77](https://github.com/elijahlowe77)) - [Card Game System Design, Shaders]
+- Jaxon Kundrat ([@JaxThom113](https://github.com/JaxThom113)) - [Overworld Level Generation, UI/UX]
 
 Artists
 - Tyler Hudelson - [Project Manager, Audio Design]
