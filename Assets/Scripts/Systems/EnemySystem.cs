@@ -87,9 +87,9 @@ public class EnemySystem : Singleton<EnemySystem>
                 if (effect is StatusEffect statusEffect)
                 { 
                     if(effect.effectSelf)
-                        ActionSystem.Instance.AddReaction(new AddStatusEffect(statusEffect, statusEffect.duration, instigatorIsPlayer: false));
-                    else
                         ActionSystem.Instance.AddReaction(new AddStatusEffect(statusEffect, statusEffect.duration, instigatorIsPlayer: true));
+                    else
+                        ActionSystem.Instance.AddReaction(new AddStatusEffect(statusEffect, statusEffect.duration, instigatorIsPlayer: false));
                 }
             }
 
@@ -104,9 +104,9 @@ public class EnemySystem : Singleton<EnemySystem>
                 if (effect is StatusEffect)
                     continue; 
                 if(effect.effectSelf)
-                    ActionSystem.Instance.AddReaction(new PerformEffectGA(effect, instigatorIsPlayer: false));
-                else
                     ActionSystem.Instance.AddReaction(new PerformEffectGA(effect, instigatorIsPlayer: true));
+                else
+                    ActionSystem.Instance.AddReaction(new PerformEffectGA(effect, instigatorIsPlayer: false));
             }
 
             ApplyCard enemyCardView = EnemyHandView.Instance.GetApplyCardForCard(card);

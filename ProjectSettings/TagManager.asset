@@ -9,13 +9,13 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Loot
   - Water
   - UI
   - Player
   - BattleUI
   - GameOver
-  - Loot
+  - 
   - StopsMovement
   - EnemyUI
   - VFX
