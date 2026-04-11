@@ -10,7 +10,9 @@ public class LevelSystem: Singleton<LevelSystem>
 {
     [Header("Debug")]
     public bool enemies = true;
-    public bool interactables = true;
+    public bool interactables = true; 
+    public bool chooseLevel = true; 
+    public int level = 0;
 
     [Header("Areas")]
     public GameObject earthArea;
@@ -75,7 +77,11 @@ public class LevelSystem: Singleton<LevelSystem>
     private CreateLevel createLevel;
 
     void Start()
-    {
+    { 
+        if(chooseLevel) { 
+            currentAreaType = level;   
+            currentArea = level;
+        }
         if (GameData.IsSeededRun)
         {
             // get the seed that was selected on the menu
@@ -89,11 +95,21 @@ public class LevelSystem: Singleton<LevelSystem>
         }
 
         // set the active area GameObject in ---- Overworld ----
-        // this could be tutorial or a random level, depending on what button was clicked in CharacterMenu
+        // this could be tutorial or a random level, depending on what button was clicked in CharacterMenu 
+        
         if (!GameData.StartedFromTutorial)
-        {
-            GameData.SelectedAreaType = UnityEngine.Random.Range(1, 6);
-            GameData.Area1 = GameData.SelectedAreaType; 
+        { 
+            if(chooseLevel) { 
+                currentAreaType = level;   
+                currentArea = level; 
+                GameData.SelectedAreaType = level; 
+                GameData.Area1 = GameData.SelectedAreaType; 
+            } 
+            else{ 
+                GameData.SelectedAreaType = UnityEngine.Random.Range(1, 6);
+                GameData.Area1 = GameData.SelectedAreaType; 
+            }
+            
         }
         currentAreaType = GameData.SelectedAreaType;
         SetActiveArea(currentAreaType);
@@ -106,7 +122,8 @@ public class LevelSystem: Singleton<LevelSystem>
         {
             TextAsset lvlFile = Resources.Load<TextAsset>("Levels/Tutorial");
             createLevel.DrawLevel(lvlFile);
-        }
+        } 
+        
 
         StartCoroutine(ShowAreaIntro(currentAreaType));
 
@@ -156,7 +173,8 @@ public class LevelSystem: Singleton<LevelSystem>
     */
 
     public void NextLevel()
-    {
+    { 
+      
         if (currentAreaType == 0)
         {
             currentAreaType = 1;
@@ -197,7 +215,7 @@ public class LevelSystem: Singleton<LevelSystem>
 
             StartCoroutine(StartTransition());
         }
-
+        
         UpdateUI();
     }
 
