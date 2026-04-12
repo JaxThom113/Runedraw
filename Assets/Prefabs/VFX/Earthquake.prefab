@@ -50,9 +50,27 @@ VisualEffect:
   m_ResourceVersion: 1
   m_PropertySheet:
     m_Float:
-      m_Array: []
+      m_Array:
+      - m_Value: 60
+        m_Name: QuadrantSize
+        m_Overridden: 1
+      - m_Value: 2
+        m_Name: SpawnRate
+        m_Overridden: 1
+      - m_Value: 15
+        m_Name: LifeTime
+        m_Overridden: 1
+      - m_Value: 15
+        m_Name: QuadrantRandomness
+        m_Overridden: 1
     m_Vector2f:
-      m_Array: []
+      m_Array:
+      - m_Value: {x: -10, y: 10}
+        m_Name: SizeOfFristCrack
+        m_Overridden: 1
+      - m_Value: {x: 10, y: 30}
+        m_Name: ScaleRangeLength
+        m_Overridden: 1
     m_Vector3f:
       m_Array: []
     m_Vector4f:

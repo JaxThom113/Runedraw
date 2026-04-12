@@ -160,6 +160,7 @@ public class InteractableCollision : MonoBehaviour
 
     private void EnterInteractableView()
     {
+        playermovement.KillMoveTweenAndSync();
         playermovement.enabled = false;
         playermovement.playerViewContainer.SetActive(false);
 
@@ -177,7 +178,7 @@ public class InteractableCollision : MonoBehaviour
         yield return tween.WaitForCompletion();
 
         playermovement.playerViewContainer.SetActive(true);
-        playermovement.ResetMovePoint();
+        playermovement.KillMoveTweenAndSync();
         playermovement.enabled = true;
         FogSystem.Instance.BeginFogHideDistanceTweenToLower();
     }

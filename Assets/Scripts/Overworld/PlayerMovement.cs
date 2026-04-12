@@ -83,6 +83,22 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+ 
+    public void KillMoveTweenAndSync()
+    {
+        transform.DOKill();
+        if (movePoint == null)
+        {
+            isMoving = false;
+            return;
+        }
+
+        movePoint.DOKill();
+        isMoving = false;
+        transform.position = movePoint.position;
+        ResetMovePoint();
+    }
+
     public void ResetMovePoint()
     {
         // set the movepoint as child of the player when resetting
