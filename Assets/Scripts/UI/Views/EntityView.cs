@@ -62,7 +62,6 @@ public class EntityView : MonoBehaviour
     public void TakeDamage(int amount)
     {  
         if (this is EnemyView){   
-            UISystem.Instance.TransformShake(overworldEnemy.transform);
             DialogueSystem.Instance.TakeDamageDialogue();
         }
             

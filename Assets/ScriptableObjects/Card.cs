@@ -48,5 +48,21 @@ public class Card
             else
                 cardDescription = cardDescription.TrimEnd(',', ' ');
         }
+    } 
+    public int GetElementIndex(){
+        switch(cardElement){
+            case Element.None:
+                return 1;
+            case Element.Fire:
+                return 2;
+            case Element.Air:
+                return 3;
+            case Element.Water:
+                return 4;
+            case Element.Earth:
+                return 5; 
+            default:
+                return 1;
+        }
     }
 }

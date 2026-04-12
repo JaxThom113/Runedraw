@@ -79,9 +79,17 @@ public class EnemySystem : Singleton<EnemySystem>
 
     private IEnumerator EnemyTurnPerformer(EnemyTurnGA enemyTurnGA) 
     {  
-   
-        foreach (var card in EnemyHandView.Instance.GetShownCards())
+    
+        
+        List<Card> shownCards = EnemyHandView.Instance.GetShownCards();
+        for (int i = 0; i < shownCards.Count; i++)
         {
+         
+
+            Card card = shownCards[i];
+            if (card.data is AttactionSO)
+                yield return ShaderSystem.Instance.PlaySpellCastVfx(card.GetElementIndex(), false);
+
             foreach (var effect in card.effects)
             {
                 if (effect is StatusEffect statusEffect)
