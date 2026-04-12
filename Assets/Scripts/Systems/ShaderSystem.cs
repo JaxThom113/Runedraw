@@ -88,8 +88,11 @@ public class ShaderSystem : Singleton<ShaderSystem>
         }
         else
         { 
-            StartCoroutine(SpawnPositionRandomizer(enemySpellCast));
-            yield return new WaitForSeconds(spellCastDelay);
+            
+           
+             yield return new WaitForSeconds(spellCastDelay);  
+             yield return new WaitForSeconds(spellCastDelay); 
+             StartCoroutine(SpawnPositionRandomizer(enemySpellCast));
             enemySpellCast.SendEvent("OnPlay");
             enemySpellCast.SetInt("ElementType", spellIndex);
         }

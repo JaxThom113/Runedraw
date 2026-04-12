@@ -88,7 +88,7 @@ public class EnemySystem : Singleton<EnemySystem>
 
             Card card = shownCards[i];
             if (card.data is AttactionSO)
-                yield return ShaderSystem.Instance.PlaySpellCastVfx(card.GetElementIndex(), false);
+                 ShaderSystem.Instance.StartCoroutine(ShaderSystem.Instance.PlaySpellCastVfx(card.GetElementIndex(), false));
 
             foreach (var effect in card.effects)
             {
