@@ -292,8 +292,7 @@ public class CardSystem : Singleton<CardSystem>
         Transform playerDraw = playerDrawPileTransform != null ? playerDrawPileTransform : playerHandContainer;
         Vector3 spawnPos = playerDraw != null ? playerDraw.position : Vector3.zero;
         Quaternion spawnRot = playerDraw != null ? playerDraw.rotation : Quaternion.identity;
-        ApplyCard applyCard = CardCreator.Instance.CreateCard(card, spawnPos, spawnRot, false);
-        ParentCardToHand(applyCard.transform, playerHandContainer);
+        ApplyCard applyCard = CardCreator.Instance.CreateCard(card, spawnPos, spawnRot, false, playerHandContainer);
         yield return StartCoroutine(HandView.Instance.AddCard(applyCard));
     } 
     private void CreateLootCardsPostReaction(LootCardGA lootCardGA)  
@@ -363,8 +362,12 @@ public class CardSystem : Singleton<CardSystem>
         if (enemyDrawPile == null)
             yield break;
 
-        ApplyCard applyCard = CardCreator.Instance.CreateCard(card, enemyDrawPile.position, enemyDrawPile.rotation, true);
-        ParentCardToHand(applyCard.transform, enemyHandContainer);
+        ApplyCard applyCard = CardCreator.Instance.CreateCard(
+            card,
+            enemyDrawPile.position,
+            enemyDrawPile.rotation,
+            true,
+            enemyHandContainer);
         yield return StartCoroutine(EnemyHandView.Instance.AddCard(applyCard));
         bool playWhenDrawn = card.effects != null && card.effects.Exists(e => e.playWhenDrawnByEnemy);
         if (playWhenDrawn)
@@ -393,14 +396,6 @@ public class CardSystem : Singleton<CardSystem>
         RefillDeck();
         LootCardGA lootCardGA = new LootCardGA(3, true);
         ActionSystem.Instance.AddReaction(lootCardGA);
-    }
-
-    private static void ParentCardToHand(Transform cardTransform, Transform handContainer)
-    {
-        if (cardTransform == null || handContainer == null)
-            return;
-
-        cardTransform.SetParent(handContainer, true);
     }
 
     private IEnumerator DiscardCard(ApplyCard applyCard) 

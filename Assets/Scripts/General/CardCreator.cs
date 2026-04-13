@@ -8,11 +8,10 @@ public class CardCreator : Singleton<CardCreator>
     [SerializeField] private Canvas canvas;
     [SerializeField] private ApplyCard applyCardPrefab; 
     public float cardScale = 0.25f;
-    public ApplyCard CreateCard(Card card, Vector3 position, Quaternion rotation, bool isEnemy)
+    public ApplyCard CreateCard(Card card, Vector3 position, Quaternion rotation, bool isEnemy, Transform handParent = null)
     {
-        ApplyCard applyCard = Instantiate(applyCardPrefab, canvas.transform); 
-        applyCard.transform.position = position; 
-        applyCard.transform.rotation = rotation;  
+        Transform parent = handParent != null ? handParent : canvas.transform;
+        ApplyCard applyCard = Instantiate(applyCardPrefab, position, rotation, parent);
         applyCard.IsEnemyCard = isEnemy;
         applyCard.InventoryCard = isEnemy;  
         applyCard.Setup(card); 
