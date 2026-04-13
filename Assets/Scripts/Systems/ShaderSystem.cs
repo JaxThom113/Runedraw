@@ -8,13 +8,12 @@ public class ShaderSystem : Singleton<ShaderSystem>
 {
     static readonly int TotalDistortionPropertyId = Shader.PropertyToID("_TotalDistortion");
     const float TotalDistortionTweenDuration = 2f;
+    const float DistortionOutTarget = 0.7f;
 
     [Tooltip("Forward Renderer Data asset that contains your Full Screen Pass Renderer Feature (e.g. Ultra_PipelineAsset_ForwardRenderer).")]
     [SerializeField] UniversalRendererData forwardRendererData;
 
     private FullScreenPassRendererFeature fullScreenPassFeature;
-
-    float savedTotalDistortion;
 
     [SerializeField] Material[] screenSpaceMaterials = new Material[7]; 
 
@@ -52,7 +51,7 @@ public class ShaderSystem : Singleton<ShaderSystem>
             && fullScreenPassFeature.passMaterial != null
             && fullScreenPassFeature.passMaterial.HasProperty(TotalDistortionPropertyId))
         {
-            fullScreenPassFeature.passMaterial.SetFloat(TotalDistortionPropertyId, savedTotalDistortion);
+            fullScreenPassFeature.passMaterial.SetFloat(TotalDistortionPropertyId, DistortionOutTarget);
         }
     }
     protected override void Awake()
@@ -81,13 +80,16 @@ public class ShaderSystem : Singleton<ShaderSystem>
 
     void SyncPassMaterialToAreaType()
     {
-       
+        if (fullScreenPassFeature == null || LevelSystem.Instance == null)
+            return;
 
         int areaType = LevelSystem.Instance.CurrentAreaType;
-      
+        if (screenSpaceMaterials == null || areaType < 0 || areaType >= screenSpaceMaterials.Length)
+            return;
 
         Material selected = screenSpaceMaterials[areaType];
-       
+        if (selected == null)
+            return;
 
         lastSyncedAreaType = areaType;
         fullScreenPassFeature.passMaterial = selected;
@@ -123,17 +125,17 @@ public class ShaderSystem : Singleton<ShaderSystem>
 
     void StartRoundPreReaction(StartRoundGA startRoundGA)
     {
-        if (fullScreenPassFeature == null || fullScreenPassFeature.passMaterial == null
-            || !fullScreenPassFeature.passMaterial.HasProperty(TotalDistortionPropertyId))
-            return;
-
-        savedTotalDistortion = fullScreenPassFeature.passMaterial.GetFloat(TotalDistortionPropertyId);
         DistortionIn();
     }
 
     void DistortionIn()
     {
-        if (fullScreenPassFeature == null || fullScreenPassFeature.passMaterial == null
+        if (fullScreenPassFeature == null)
+            return;
+
+        SyncPassMaterialToAreaType();
+
+        if (fullScreenPassFeature.passMaterial == null
             || !fullScreenPassFeature.passMaterial.HasProperty(TotalDistortionPropertyId))
             return;
 
@@ -149,7 +151,12 @@ public class ShaderSystem : Singleton<ShaderSystem>
 
     void DistortionOut()
     {
-        if (fullScreenPassFeature == null || fullScreenPassFeature.passMaterial == null
+        if (fullScreenPassFeature == null)
+            return;
+
+        SyncPassMaterialToAreaType();
+
+        if (fullScreenPassFeature.passMaterial == null
             || !fullScreenPassFeature.passMaterial.HasProperty(TotalDistortionPropertyId))
             return;
 
@@ -158,7 +165,7 @@ public class ShaderSystem : Singleton<ShaderSystem>
         DOTween.To(
             () => material.GetFloat(TotalDistortionPropertyId),
             x => material.SetFloat(TotalDistortionPropertyId, x),
-            savedTotalDistortion,
+            DistortionOutTarget,
             TotalDistortionTweenDuration
         ).SetEase(Ease.InOutSine).SetTarget(this);
     }
