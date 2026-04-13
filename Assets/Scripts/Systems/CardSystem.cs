@@ -61,7 +61,7 @@ public class CardSystem : Singleton<CardSystem>
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE); //same thing as above, but if prereaction or postreaction we call subscribe reaction instead of attach perfomer
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST); 
         ActionSystem.SubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
-        ActionSystem.SubscribeReaction<KillEnemyGA>(DiscardEnemyCardPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<KillEnemyGA>(DiscardEnemyCardPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<KillEnemyGA>(RefillDeckPostReaction, ReactionTiming.POST);
      } 
     private void OnDisable() 
@@ -89,7 +89,7 @@ public class CardSystem : Singleton<CardSystem>
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE); 
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST); 
         ActionSystem.UnsubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
-        ActionSystem.UnsubscribeReaction<KillEnemyGA>(DiscardEnemyCardPostReaction, ReactionTiming.POST);
+        ActionSystem.UnsubscribeReaction<KillEnemyGA>(DiscardEnemyCardPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<KillEnemyGA>(RefillDeckPostReaction, ReactionTiming.POST); 
         //Remove from dictionary so we wont get an error when unsubscribing reaction
     }  
@@ -228,14 +228,10 @@ public class CardSystem : Singleton<CardSystem>
         ActionSystem.Instance.AddReaction(applyStatusEffectGA);
         yield return null;
     }
-    private void DiscardEnemyCardPostReaction(KillEnemyGA killEnemyGA)
-    { 
+    private void DiscardEnemyCardPreReaction(KillEnemyGA killEnemyGA)
+    {
         ShieldSystem.Instance.ClearAllShields();
-        foreach(var card in enemyDeck) { 
-            
-           EnemyHandView.Instance.ClearEnemyHand(); 
-            
-        }
+        EnemyHandView.Instance.ClearEnemyHand();
         enemyDeck.Clear();
     } 
 
