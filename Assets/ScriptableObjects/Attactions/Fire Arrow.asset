@@ -16,7 +16,7 @@ MonoBehaviour:
   cardCost: 3
   cardBorder: {fileID: 21300000, guid: 50c948eb6a4581e40a4444ec0b5d8b91, type: 3}
   cardIcon: {fileID: 21300000, guid: b10589e360d8f844893a7b3840b9903c, type: 3}
-  cardDescription: Deal 6 damage, apply 2 vulnerable to yourself
+  cardDescription: 
   cardElement: 1
   cardElementIcon: {fileID: 21300000, guid: 6904c290dbd2c324c9793f88052c3f04, type: 3}
   cardType: 0
@@ -25,11 +25,19 @@ MonoBehaviour:
   IsUltimate: 0
   effects:
   - rid: 3501867012751622144
+  - rid: 3988028975431548928
   references:
     version: 2
     RefIds:
     - rid: 3501867012751622144
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         damageAmount: 6
+    - rid: 3988028975431548928
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        effectSelf: 1
+        playWhenDrawnByEnemy: 0
+        damageAmount: 2

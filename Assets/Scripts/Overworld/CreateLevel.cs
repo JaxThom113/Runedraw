@@ -21,7 +21,6 @@ public class CreateLevel : MonoBehaviour
     public GameObject enemy;    
     public GameObject lootBox;
     public GameObject campfire;
-    public EnemyBank enemyBank;
 
     [Header("3D Elements")]
     public GameObject edge; 
@@ -40,6 +39,9 @@ public class CreateLevel : MonoBehaviour
     private GameObject interactableContainer;
     private GameObject torchContainer;
 
+    // enemy bank
+    private EnemyBank enemyBank;
+    
     void OnEnable()
     {
         DrawLevel();
@@ -246,6 +248,12 @@ public class CreateLevel : MonoBehaviour
             Destroy(enemyContainer);
         }
         enemyContainer = new GameObject("EnemyContainer"); // recreate container
+
+        // get the currently active enemy bank for the current area (A1, A2, A3)
+        enemyBank = FindFirstObjectByType<EnemyBank>(FindObjectsInactive.Exclude);
+
+        // set up spawn weights for enemies like Wizard Lizard
+        enemyBank.SetupSpawnWeights();
 
         for (int y = 0; y < gridSize; y++)
         {

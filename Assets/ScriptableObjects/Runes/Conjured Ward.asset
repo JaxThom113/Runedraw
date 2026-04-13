@@ -16,7 +16,7 @@ MonoBehaviour:
   cardCost: 5
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
   cardIcon: {fileID: 21300000, guid: d85af894eb9b2fb489eaa38f1b74bc04, type: 3}
-  cardDescription: Gain 2 shield at the start of every turn for 3 turns
+  cardDescription: 
   cardElement: 0
   cardElementIcon: {fileID: 21300000, guid: 7b6c5390240409445a46abfb97e084ec, type: 3}
   cardType: 2
