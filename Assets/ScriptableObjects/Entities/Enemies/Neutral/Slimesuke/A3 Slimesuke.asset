@@ -10,20 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: db3908947c34a464ebedf690cdd7b1a8, type: 3}
-  m_Name: Slimesuke
+  m_Name: A3 Slimesuke
   m_EditorClassIdentifier: 
   entityName: Slimesuke
   entityIcon: {fileID: 21300000, guid: bed155b1dcc339a49a54a430827985a3, type: 3}
-  entityHealth: 2
+  entityHealth: 6
   entityDialogue: {fileID: 11400000, guid: e916a363ec892884898533dcd663f000, type: 2}
   enemyDeck:
   - enemyHand:
     - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
-    - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
-  - enemyHand:
     - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
     - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
-  - enemyHand:
-    - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
   ultimateCard: {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
   enemyMaterial: {fileID: 2100000, guid: 42f9b29824dd0b74dac7b7ed946e2fbc, type: 2}

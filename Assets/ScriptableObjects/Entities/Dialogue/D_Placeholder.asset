@@ -15,17 +15,17 @@ MonoBehaviour:
   Intro:
   - I challenge you!
   TurnStart:
-  - It's my turn
+  - It's my turn.
   LowHealthTurnStart:
   - This is not looking good for me!
   Attack:
-  - Take this attack!
+  - Take this!
   UltimateAttack:
   - Here comes my ultimate attack!
   TakeDamage:
   - Ouch!
   EndTurn:
-  - That's it for my turn
+  - That's it for my turn.
   LowHealthEndTurn:
   - I need to think of something - quick!
   Lose:

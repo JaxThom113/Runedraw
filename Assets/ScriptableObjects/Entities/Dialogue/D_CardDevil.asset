@@ -13,26 +13,25 @@ MonoBehaviour:
   m_Name: D_CardDevil
   m_EditorClassIdentifier: 
   Intro:
-  - "Didn\u2019t learn your lesson the first time, bi***!!!!"
+  - I see you haven't learned your lesson - let's duel.
   TurnStart:
-  - "It\u2019s My turn to draw!!!"
+  - My turn.
   LowHealthTurnStart:
-  - " I still\u2026 I still believe in the heart of the cheese - I DRAW!"
+  - Huff... My turn.
   Attack:
-  - Take This!
-  - Dark Cheese Attack!
-  - HIYAH!!!
+  - Ha!
+  - Haha!
   UltimateAttack:
-  - You will see why I am the best RuneTerrian!!!!
+  - Now you will witness true power...
   TakeDamage:
-  - Ouch!!!
-  - Grrr!!!
-  - Oow!
+  - Oof!
+  - Agh!
+  - Ugh!
   EndTurn:
-  - I End my Turn
+  - I end my turn.
   LowHealthEndTurn:
-  - "I\u2026 I\u2026 I end my turn!"
+  - 'Huff... I end my turn. '
   Lose:
-  - "How could I lose?!? I\u2019m literally the Card Devil, like, from the Card Bible!!!"
+  - Congratulations, Card Champion. I yield...
   Win:
-  - Have fun in hell, bi***!
+  - Pathetic.

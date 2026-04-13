@@ -16,7 +16,7 @@ MonoBehaviour:
   cardCost: 4
   cardBorder: {fileID: 21300000, guid: 88d2aab404442694ab4fce3c32c7370c, type: 3}
   cardIcon: {fileID: 21300000, guid: e5398e8c4ed723e45a940a3d2f182d21, type: 3}
-  cardDescription: Deal 4 damage, gain 2 shield
+  cardDescription: 
   cardElement: 3
   cardElementIcon: {fileID: 21300000, guid: 0ad7c8a63d1b7184b9944b0e7a08a71d, type: 3}
   cardType: 0

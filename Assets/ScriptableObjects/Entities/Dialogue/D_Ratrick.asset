@@ -13,22 +13,22 @@ MonoBehaviour:
   m_Name: D_Ratrick
   m_EditorClassIdentifier: 
   Intro:
-  - "It\u2019s time to D-D-D-D-Duel!!!!"
+  - "It\u2019s time to D-D-D-D-Duel!"
   TurnStart:
-  - "It\u2019s My turn to draw!!!"
+  - "It\u2019s my turn to draw!!!"
   LowHealthTurnStart:
   - "I still\u2026 I still believe in the heart of the cheese - I DRAW!"
   Attack:
   - Take This!
-  - HIYAH!!!
+  - Hiyah!
   UltimateAttack:
-  - You will see why I am the best Runedrawer!!!!
+  - I summon Pot of Cheese!
   TakeDamage:
-  - Ouch!!!
-  - Grrr!!!
-  - Oow!
+  - Ouch!
+  - Grrr!
+  - Ow!
   EndTurn:
-  - I End my Turn
+  - I end my turn.
   LowHealthEndTurn:
   - "I\u2026 I\u2026 I end my turn!"
   Lose:

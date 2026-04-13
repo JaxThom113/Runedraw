@@ -16,7 +16,7 @@ MonoBehaviour:
   cardCost: 2
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
   cardIcon: {fileID: 21300000, guid: 55caf7e599ac0b2409425ed2bf069a2a, type: 3}
-  cardDescription: Apply 3 poison
+  cardDescription: 
   cardElement: 3
   cardElementIcon: {fileID: 21300000, guid: 0ad7c8a63d1b7184b9944b0e7a08a71d, type: 3}
   cardType: 0
@@ -24,19 +24,14 @@ MonoBehaviour:
   sound: {fileID: 8300000, guid: 6f48c24495cc4dc41bc3728706620384, type: 3}
   IsUltimate: 0
   effects:
-  - rid: 3501866668757090310
   - rid: 5118777032282996766
   references:
     version: 2
     RefIds:
-    - rid: 3501866668757090310
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data:
-        playWhenDrawnByEnemy: 0
-        damageAmount: 1
     - rid: 5118777032282996766
       type: {class: PoisonStatusEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         duration: 3
         turnPhase: 0

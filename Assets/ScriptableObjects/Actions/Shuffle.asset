@@ -16,7 +16,7 @@ MonoBehaviour:
   cardCost: 1
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
   cardIcon: {fileID: 21300000, guid: 9f2d0082fe2ddfa458711b53e1582226, type: 3}
-  cardDescription: Draw a new hand of cards
+  cardDescription: 
   cardElement: 0
   cardElementIcon: {fileID: 21300000, guid: 7b6c5390240409445a46abfb97e084ec, type: 3}
   cardType: 1

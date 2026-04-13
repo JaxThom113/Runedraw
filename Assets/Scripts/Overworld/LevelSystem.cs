@@ -96,7 +96,8 @@ public class LevelSystem: Singleton<LevelSystem>
             GameData.Area1 = GameData.SelectedAreaType; 
         }
         currentAreaType = GameData.SelectedAreaType;
-        SetActiveArea(currentAreaType);
+        SetActiveArea();
+        SetActiveEnemyBank();
 
         // get reference to the CreateLevel script in the currently active area GameObject (in Board)
         createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
@@ -164,7 +165,7 @@ public class LevelSystem: Singleton<LevelSystem>
             // start the actual game once completing tutorial level
             StartCoroutine(StartTransition(true));
         }
-        else if (currentLevel == 3)
+        else if (currentLevel == 1)
         {
             if (currentArea == 3)
             {
@@ -213,7 +214,8 @@ public class LevelSystem: Singleton<LevelSystem>
 
         if (areaTransition)
         {
-            SetActiveArea(currentAreaType);
+            SetActiveArea();
+            SetActiveEnemyBank();
         
             createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
         }
@@ -378,7 +380,7 @@ public class LevelSystem: Singleton<LevelSystem>
         Helper functions
     */
 
-    private void SetActiveArea(int areaIndex)
+    private void SetActiveArea()
     {
         tutorialLevel.SetActive(false);
         neutralArea.SetActive(false); 
@@ -389,7 +391,7 @@ public class LevelSystem: Singleton<LevelSystem>
         finalBossLevel.SetActive(false);
 
         // transition to level 1 of the next area
-        switch (areaIndex)
+        switch (currentAreaType)
         {
             case 0: tutorialLevel.SetActive(true); break;
             case 1: neutralArea.SetActive(true); break;
@@ -401,8 +403,33 @@ public class LevelSystem: Singleton<LevelSystem>
         }
     }
 
-    public void SetCurrentAreaType(int areaIndex)
+    private void SetActiveEnemyBank()
     {
-        currentAreaType = areaIndex;
+        GameObject enemyBank;
+
+        // get the enemy bank of the currently active area
+        switch (currentAreaType)
+        {
+            case 1: enemyBank = neutralArea.transform.Find("Enemy Bank").gameObject; break;
+            case 2: enemyBank = fireArea.transform.Find("Enemy Bank").gameObject; break;
+            case 3: enemyBank = windArea.transform.Find("Enemy Bank").gameObject; break;
+            case 4: enemyBank = waterArea.transform.Find("Enemy Bank").gameObject; break;
+            case 5: enemyBank = earthArea.transform.Find("Enemy Bank").gameObject; break;
+            default: return;
+        }
+
+        enemyBank.transform.GetChild(0).gameObject.SetActive(false); // A1 enemy bank
+        enemyBank.transform.GetChild(1).gameObject.SetActive(false); // A2 enemy bank
+        enemyBank.transform.GetChild(2).gameObject.SetActive(false); // A3 enemy bank
+
+        // activate the correct area enemy bank for enemy difficulty scaling
+        switch (currentArea)
+        {
+            case 1: enemyBank.transform.GetChild(0).gameObject.SetActive(true); break;
+            case 2: enemyBank.transform.GetChild(1).gameObject.SetActive(true); break;
+            case 3: enemyBank.transform.GetChild(2).gameObject.SetActive(true); break;
+            default: return;
+        }
     }
+
 }
