@@ -16,7 +16,7 @@ MonoBehaviour:
   cardCost: 2
   cardBorder: {fileID: 21300000, guid: 88d2aab404442694ab4fce3c32c7370c, type: 3}
   cardIcon: {fileID: 21300000, guid: b03f56a2ed75dbd4dbfe8f87da8fcf12, type: 3}
-  cardDescription: Deal 2 damage, gain 1 shield
+  cardDescription: 
   cardElement: 3
   cardElementIcon: {fileID: 21300000, guid: 0ad7c8a63d1b7184b9944b0e7a08a71d, type: 3}
   cardType: 0
@@ -32,10 +32,12 @@ MonoBehaviour:
     - rid: 3501867081277112320
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         damageAmount: 2
     - rid: 3988028971208409093
       type: {class: ApplyShieldEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         shieldAmount: 1

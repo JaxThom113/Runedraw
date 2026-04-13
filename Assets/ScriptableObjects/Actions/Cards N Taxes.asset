@@ -16,7 +16,7 @@ MonoBehaviour:
   cardCost: 4
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
   cardIcon: {fileID: 21300000, guid: eb8411b03a8f8a44488c6c9ad212af1d, type: 3}
-  cardDescription: Apply 2 stun
+  cardDescription: 
   cardElement: 0
   cardElementIcon: {fileID: 21300000, guid: 7b6c5390240409445a46abfb97e084ec, type: 3}
   cardType: 1
@@ -32,12 +32,14 @@ MonoBehaviour:
     - rid: 5118777032282996764
       type: {class: StunStatusEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 1
         duration: 2
         turnPhase: 1
     - rid: 5118777032282996765
       type: {class: StunStatusEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 1
         duration: 2
         turnPhase: 1

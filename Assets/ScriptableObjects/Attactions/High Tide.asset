@@ -16,7 +16,7 @@ MonoBehaviour:
   cardCost: 2
   cardBorder: {fileID: 21300000, guid: a259d248a8de13f4ab4ee295b30f072e, type: 3}
   cardIcon: {fileID: 21300000, guid: 1fc0f61766ee150408d9b5e07f135166, type: 3}
-  cardDescription: Deal damage equal to the # of water cards played this turn
+  cardDescription: 
   cardElement: 2
   cardElementIcon: {fileID: 21300000, guid: 82142cada99b54e4f86147d06c158e36, type: 3}
   cardType: 0
@@ -31,5 +31,6 @@ MonoBehaviour:
     - rid: 5118777032282996768
       type: {class: DealDamageFromTrackedElementEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         element: 2

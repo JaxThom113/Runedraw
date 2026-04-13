@@ -16,7 +16,7 @@ MonoBehaviour:
   cardCost: 1
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
   cardIcon: {fileID: 21300000, guid: 878273c007c03774eaa451f441b02838, type: 3}
-  cardDescription: Deal 1 damage, draw 1 card
+  cardDescription: 
   cardElement: 0
   cardElementIcon: {fileID: 21300000, guid: 7b6c5390240409445a46abfb97e084ec, type: 3}
   cardType: 1
@@ -32,10 +32,12 @@ MonoBehaviour:
     - rid: 5118777032282996759
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         damageAmount: 1
     - rid: 5118777032282996760
       type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 1
         drawAmount: 1

@@ -114,7 +114,7 @@ public class LevelSystem: Singleton<LevelSystem>
         }
         currentAreaType = GameData.SelectedAreaType;
 
-        if (level == 6)
+        if (chooseLevel && level == 6)
         {
             GameData.SelectedAreaType = 6;
             GameData.Area1 = 6;
@@ -134,13 +134,10 @@ public class LevelSystem: Singleton<LevelSystem>
             TextAsset lvlFile = Resources.Load<TextAsset>("Levels/Tutorial");
             createLevel.DrawLevel(lvlFile);
         }
-        else if (level == 6)
+        else if (chooseLevel && level == 6)
         {
             TextAsset finalBossFile = Resources.Load<TextAsset>("Levels/FinalBoss");
-            if (finalBossFile == null)
-                Debug.LogWarning($"{nameof(LevelSystem)}: Missing Resources asset at Levels/FinalBoss (TextAsset).");
-            else if (createLevel != null)
-                createLevel.DrawLevel(finalBossFile);
+            
         }
 
 
@@ -203,7 +200,7 @@ public class LevelSystem: Singleton<LevelSystem>
         }
         else if (currentLevel == 3 || isConvergence)
         {
-            if (currentArea == 3)
+            if (currentArea == 3 || isConvergence)
             {
                 // transition to the final boss level 
                 currentAreaType = 6;

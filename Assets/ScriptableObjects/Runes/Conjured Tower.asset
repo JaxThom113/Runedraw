@@ -16,7 +16,7 @@ MonoBehaviour:
   cardCost: 5
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
   cardIcon: {fileID: 21300000, guid: ce232afeab3ebe643b90ee00a1c5c13c, type: 3}
-  cardDescription: Deal 2 damage at the start of each turn for 3 turns
+  cardDescription: 
   cardElement: 0
   cardElementIcon: {fileID: 21300000, guid: 7b6c5390240409445a46abfb97e084ec, type: 3}
   cardType: 2
@@ -32,6 +32,7 @@ MonoBehaviour:
     - rid: 5118777032282996754
       type: {class: RuneStatusEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 1
         duration: 3
         turnPhase: 0
@@ -41,5 +42,6 @@ MonoBehaviour:
     - rid: 5118777032282996756
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         damageAmount: 2

@@ -16,7 +16,7 @@ MonoBehaviour:
   cardCost: 2
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
   cardIcon: {fileID: 21300000, guid: 6b5bd6883c0856e40ada5ff9dde1eac0, type: 3}
-  cardDescription: Deal 1 damage, apply 2 poison
+  cardDescription: 
   cardElement: 0
   cardElementIcon: {fileID: 21300000, guid: 7b6c5390240409445a46abfb97e084ec, type: 3}
   cardType: 1
@@ -32,11 +32,13 @@ MonoBehaviour:
     - rid: 474873739107368960
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         damageAmount: 2
     - rid: 5118776945593810945
       type: {class: PoisonStatusEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         duration: 3
         turnPhase: 0
