@@ -5,26 +5,29 @@ using UnityEngine;
 public class EnemyBank : MonoBehaviour
 {
     public List<EnemySO> enemies;
-    private List<EnemySO> drawPile = new List<EnemySO>();
+
+    private bool spawnWizardLizard;
+
+    public void SetupSpawnWeights()
+    {
+        // this bool being true will make a CHANCE that an enemy will spawn
+        spawnWizardLizard = Random.value > 0.3f;
+    }
 
     public EnemySO GetRandomEnemy()
     {
-        if (drawPile.Count == 0)
-            RefillDrawPile();
+        int index;
 
-        if (drawPile.Count == 0)
-            return null;
+        if (spawnWizardLizard)
+        {
+            index = 2;
+            spawnWizardLizard = false;
+        }
+        else
+        {
+            index = Random.Range(0, enemies.Count-1);
+        }
 
-        int index = Random.Range(0, drawPile.Count);
-        EnemySO chosen = drawPile[index];
-        drawPile.RemoveAt(index);
-        return chosen;
-    }
-
-    public void RefillDrawPile()
-    {
-        drawPile.Clear();
-        if (enemies != null && enemies.Count > 0)
-            drawPile.AddRange(enemies);
+        return enemies[index];
     }
 }

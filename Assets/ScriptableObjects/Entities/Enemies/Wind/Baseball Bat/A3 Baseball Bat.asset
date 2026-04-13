@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db3908947c34a464ebedf690cdd7b1a8, type: 3}
+  m_Name: A3 Baseball Bat
+  m_EditorClassIdentifier: 
+  entityName: Baseball Bat
+  entityIcon: {fileID: 21300000, guid: 0f8f25f5f5abc454194588d8863c5ee3, type: 3}
+  entityHealth: 8
+  entityDialogue: {fileID: 11400000, guid: 72906ec9d4d97e04d9358838b8e12bdd, type: 2}
+  enemyDeck:
+  - enemyHand:
+    - {fileID: 11400000, guid: 6d59212212b3f5a408ce9e704e8620bd, type: 2}
+    - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
+  ultimateCard: {fileID: 11400000, guid: 6d59212212b3f5a408ce9e704e8620bd, type: 2}
+  enemyMaterial: {fileID: 2100000, guid: a5c8630fedc616247be8173fe07eae1d, type: 2}

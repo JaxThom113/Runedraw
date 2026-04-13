@@ -25,6 +25,7 @@ MonoBehaviour:
   IsUltimate: 0
   effects:
   - rid: 3501867012751622144
+  - rid: 3988028975431548929
   references:
     version: 2
     RefIds:
@@ -34,3 +35,9 @@ MonoBehaviour:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
         damageAmount: 4
+    - rid: 3988028975431548929
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        effectSelf: 1
+        playWhenDrawnByEnemy: 0
+        damageAmount: 1

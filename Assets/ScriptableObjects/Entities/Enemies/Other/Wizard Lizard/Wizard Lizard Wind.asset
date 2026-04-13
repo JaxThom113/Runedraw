@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db3908947c34a464ebedf690cdd7b1a8, type: 3}
+  m_Name: Wizard Lizard Wind
+  m_EditorClassIdentifier: 
+  entityName: Wizard Lizard
+  entityIcon: {fileID: 21300000, guid: 915488e4eb926f046a07c25b940b44ef, type: 3}
+  entityHealth: 10
+  entityDialogue: {fileID: 11400000, guid: 6dfcf525541ca074ba004ae06f44ffd7, type: 2}
+  enemyDeck:
+  - enemyHand:
+    - {fileID: 11400000, guid: 1c84116bc6771824f9a66347efc42561, type: 2}
+    - {fileID: 11400000, guid: 6d59212212b3f5a408ce9e704e8620bd, type: 2}
+  - enemyHand:
+    - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
+  ultimateCard: {fileID: 11400000, guid: 6d59212212b3f5a408ce9e704e8620bd, type: 2}
+  enemyMaterial: {fileID: 2100000, guid: 936d677e625328147acb431031b995c4, type: 2}

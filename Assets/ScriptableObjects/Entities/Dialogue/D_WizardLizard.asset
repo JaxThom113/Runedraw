@@ -13,27 +13,24 @@ MonoBehaviour:
   m_Name: D_WizardLizard
   m_EditorClassIdentifier: 
   Intro:
-  - WHO GOES THERE! Who dares doth disturb the dastardly WIZARD LIZARD!!!!
+  - Who dares doth disturb the dastardly WIZARD LIZARD!?
   TurnStart:
-  - Mwehehehe I draw!!!
+  - Mwehehehe I draw!
   LowHealthTurnStart:
-  - "*pant* heh heh\u2026 I draw\u2026"
+  - "Huff... Heh heh\u2026 I draw!"
   Attack:
   - You shall not pass!
   - Dark Cheese Attack!
-  - HIYAH!!!
   UltimateAttack:
-  - "Humonculizard!!! Seize him!!! Don\u2019t make me get the hose again!"
+  - "Humonculizard! Seize him! Don\u2019t make me get the hose again!"
   TakeDamage:
-  - Gadzooks!!!
-  - "Oi, I\u2019m castin\u2019 ere!!!"
+  - Gadzooks!
   - Confound it!
   EndTurn:
   - I end my turn!
   LowHealthEndTurn:
   - "I\u2026 I\u2026 I end my turn!"
   Lose:
-  - FUCK
-  - "*sigh*... I miss my wife, challenger\u2026"
+  - AGGHHH!
   Win:
-  - AHAHAHAHAHAHAHA!!! This is just like that one time *insert cutaway gag*
+  - AHAHAHAHAHAHAHA! This is just like that one time *insert cutaway gag*

@@ -15,14 +15,12 @@ MonoBehaviour:
   entityName: Wizard Lizard
   entityIcon: {fileID: 21300000, guid: 915488e4eb926f046a07c25b940b44ef, type: 3}
   entityHealth: 10
-  entityDialogue: {fileID: 11400000, guid: 72906ec9d4d97e04d9358838b8e12bdd, type: 2}
+  entityDialogue: {fileID: 11400000, guid: 6dfcf525541ca074ba004ae06f44ffd7, type: 2}
   enemyDeck:
   - enemyHand:
-    - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
-    - {fileID: 11400000, guid: 49ced29c338d02c4480d7a93ff94cdd3, type: 2}
-    - {fileID: 11400000, guid: 1c84116bc6771824f9a66347efc42561, type: 2}
-    - {fileID: 11400000, guid: 266fd6d7184f613428643540193b1ef5, type: 2}
+    - {fileID: 11400000, guid: e1e5e027eebb24142a795f29730252e8, type: 2}
+    - {fileID: 11400000, guid: 387f83a579c4123448652e40e561808a, type: 2}
   - enemyHand:
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
-  ultimateCard: {fileID: 11400000, guid: 6d59212212b3f5a408ce9e704e8620bd, type: 2}
+  ultimateCard: {fileID: 11400000, guid: 387f83a579c4123448652e40e561808a, type: 2}
   enemyMaterial: {fileID: 2100000, guid: 936d677e625328147acb431031b995c4, type: 2}
