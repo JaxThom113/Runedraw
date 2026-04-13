@@ -166,8 +166,8 @@ public class InteractableCollision : MonoBehaviour
 
         Transform transform = PlayerSystem.Instance.playerViewTarget;
         transform.DOKill();
-        transform.DOLocalMove(PlayerSystem.Instance.viewTweenInteractLocal, PlayerSystem.Instance.viewTweenDuration); 
-        FogSystem.Instance.TweenFogHideDistanceToUpper();
+        transform.DOLocalMove(PlayerSystem.Instance.viewTweenInteractLocal, PlayerSystem.Instance.viewTweenDuration);
+        // FogSystem.Instance.TweenFogHideDistanceToUpper();
     }
 
     private IEnumerator RestorePlayerState()
@@ -180,7 +180,7 @@ public class InteractableCollision : MonoBehaviour
         playermovement.playerViewContainer.SetActive(true);
         playermovement.KillMoveTweenAndSync();
         playermovement.enabled = true;
-        FogSystem.Instance.BeginFogHideDistanceTweenToLower();
+        // FogSystem.Instance.BeginFogHideDistanceTweenToLower();
     }
 
     private void ResetMaterial()

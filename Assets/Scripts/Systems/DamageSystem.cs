@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using DG.Tweening;
 
 public class DamageSystem : Singleton<DamageSystem>
 {   
@@ -41,7 +40,8 @@ public class DamageSystem : Singleton<DamageSystem>
             if(enemyView.currentHealth <= 0) {   
                
                 killQueued = true;
-                KillEnemyGA killEnemyGA = new(enemyView); 
+                KillEnemyGA killEnemyGA = new(enemyView);  
+                CameraTransitionSystem.Instance.GameViewContainer.SetActive(false);
                 ActionSystem.Instance.AddReaction(killEnemyGA);
             }
         } else { 

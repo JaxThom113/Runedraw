@@ -2,13 +2,19 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.VFX;
+using DG.Tweening;
 
 public class ShaderSystem : Singleton<ShaderSystem>
 {
+    static readonly int TotalDistortionPropertyId = Shader.PropertyToID("_TotalDistortion");
+    const float TotalDistortionTweenDuration = 2f;
+
     [Tooltip("Forward Renderer Data asset that contains your Full Screen Pass Renderer Feature (e.g. Ultra_PipelineAsset_ForwardRenderer).")]
     [SerializeField] UniversalRendererData forwardRendererData;
 
     private FullScreenPassRendererFeature fullScreenPassFeature;
+
+    float savedTotalDistortion;
 
     [SerializeField] Material[] screenSpaceMaterials = new Material[7]; 
 
@@ -32,10 +38,22 @@ public class ShaderSystem : Singleton<ShaderSystem>
     void OnEnable()
     {
         ActionSystem.SubscribeReaction<SpellCastGA>(SpellCastPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<KillEnemyGA>(KillEnemyPostReaction, ReactionTiming.POST);
     }
     void OnDisable()
     {
         ActionSystem.UnsubscribeReaction<SpellCastGA>(SpellCastPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<KillEnemyGA>(KillEnemyPostReaction, ReactionTiming.POST);
+
+        DOTween.Kill(this, false);
+        if (fullScreenPassFeature != null
+            && fullScreenPassFeature.passMaterial != null
+            && fullScreenPassFeature.passMaterial.HasProperty(TotalDistortionPropertyId))
+        {
+            fullScreenPassFeature.passMaterial.SetFloat(TotalDistortionPropertyId, savedTotalDistortion);
+        }
     }
     protected override void Awake()
     {
@@ -101,7 +119,54 @@ public class ShaderSystem : Singleton<ShaderSystem>
     void SpellCastPreReaction(SpellCastGA spellCastGA)
     {
         StartCoroutine(PlaySpellCastVfx(spellCastGA.spellIndex, spellCastGA.isPlayer));
-    } 
+    }
+
+    void StartRoundPreReaction(StartRoundGA startRoundGA)
+    {
+        if (fullScreenPassFeature == null || fullScreenPassFeature.passMaterial == null
+            || !fullScreenPassFeature.passMaterial.HasProperty(TotalDistortionPropertyId))
+            return;
+
+        savedTotalDistortion = fullScreenPassFeature.passMaterial.GetFloat(TotalDistortionPropertyId);
+        DistortionIn();
+    }
+
+    void DistortionIn()
+    {
+        if (fullScreenPassFeature == null || fullScreenPassFeature.passMaterial == null
+            || !fullScreenPassFeature.passMaterial.HasProperty(TotalDistortionPropertyId))
+            return;
+
+        Material material = fullScreenPassFeature.passMaterial;
+        DOTween.Kill(this, false);
+        DOTween.To(
+            () => material.GetFloat(TotalDistortionPropertyId),
+            x => material.SetFloat(TotalDistortionPropertyId, x),
+            0f,
+            TotalDistortionTweenDuration
+        ).SetEase(Ease.InOutSine).SetTarget(this);
+    }
+
+    void DistortionOut()
+    {
+        if (fullScreenPassFeature == null || fullScreenPassFeature.passMaterial == null
+            || !fullScreenPassFeature.passMaterial.HasProperty(TotalDistortionPropertyId))
+            return;
+
+        Material material = fullScreenPassFeature.passMaterial;
+        DOTween.Kill(this, false);
+        DOTween.To(
+            () => material.GetFloat(TotalDistortionPropertyId),
+            x => material.SetFloat(TotalDistortionPropertyId, x),
+            savedTotalDistortion,
+            TotalDistortionTweenDuration
+        ).SetEase(Ease.InOutSine).SetTarget(this);
+    }
+
+    void KillEnemyPostReaction(KillEnemyGA killEnemyGA)
+    {
+        DistortionOut();
+    }
     IEnumerator SpawnPositionRandomizer(VisualEffect visualEffect){   
         Vector3 originalSpawnPosition = visualEffect.GetVector3("SpawnPosition");
         Vector3 SpawnPosition = visualEffect.GetVector3("SpawnPosition");  

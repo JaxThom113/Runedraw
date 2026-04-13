@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
-using DG.Tweening;
 
 public class MatchSetupSystem : MonoBehaviour
 {
@@ -13,8 +12,8 @@ public class MatchSetupSystem : MonoBehaviour
 
     public void SetupMatch(OverworldEnemy overworldEnemy)
     {
-        FogSystem.Instance.TweenFogHideDistanceToUpper();
-      
+        // FogSystem.Instance.TweenFogHideDistanceToUpper();
+
         foreach (OverworldEnemy oe in FindObjectsByType<OverworldEnemy>(FindObjectsInactive.Include, FindObjectsSortMode.None))
             oe.SetBleedVisualEnabled(false);
 

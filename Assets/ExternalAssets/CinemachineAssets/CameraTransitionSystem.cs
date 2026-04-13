@@ -2,21 +2,26 @@ using UnityEngine;
 using Cinemachine;
 using UnityEngine.UI;
 using DG.Tweening;
-using System.Collections;
+using System.Collections; 
+
 public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
 { 
-    [SerializeField] GameObject GameViewContainer;  
+    [SerializeField] public GameObject GameViewContainer;  
     [SerializeField] MatchSetupSystem matchSetupSystem;
     [SerializeField] GameObject playerSprite;  
     [SerializeField] GameObject EnemyContainer;
     [SerializeField] GameObject OverworldHUD;
-    [SerializeField] CinemachineVirtualCamera gameViewCamera; 
+    [SerializeField] CinemachineVirtualCamera gameViewCamera;  
+    [SerializeField] float overworldNoise = 1.0f; 
+    [SerializeField] float gameNoise = 0.3f; 
+
     [SerializeField] CinemachineVirtualCamera overworldViewCamera;   
     [SerializeField] int gameOverVirtualCameraPriority;
     [SerializeField] float rotationTweenDuration = 1f; 
 
  
 
+    private CinemachineBasicMultiChannelPerlin gameNoisePerlin;
     public bool inBattleScene = false;
     void Start()
     { 
@@ -24,7 +29,10 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
     } 
     void OnEnable()
     {
-        ActionSystem.AttachPerformer<LootCardPickupGA>(LootCardPickupPerformer);
+        ActionSystem.AttachPerformer<LootCardPickupGA>(LootCardPickupPerformer); 
+        gameNoisePerlin = gameViewCamera.GetComponentInChildren<CinemachineBasicMultiChannelPerlin>(); 
+        gameNoisePerlin.m_AmplitudeGain = overworldNoise;
+        gameNoisePerlin.m_FrequencyGain = overworldNoise;
     }
     void OnDisable()
     {
@@ -36,7 +44,10 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
     public void startGame(OverworldEnemy overworldEnemy) {
         inBattleScene = true;
         AudioSystem.Instance.PlayMusic("battle");
-        OverworldHUD.SetActive(false);
+        OverworldHUD.SetActive(false);  
+        
+         gameNoisePerlin.m_AmplitudeGain = gameNoise;
+         gameNoisePerlin.m_FrequencyGain = gameNoise;
          StartCoroutine(showGameView(overworldEnemy));  
          GameObject EnemyContainer = GameObject.Find("EnemyContainer");
         string EnemySprite = overworldEnemy.gameObject.name; 
@@ -77,14 +88,16 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
     }
 
     private IEnumerator LootCardPickupPerformer(LootCardPickupGA lootCardPickupGA)
-    {
+    { 
+        
         if (!lootCardPickupGA.fromEnemy)
             yield break;
 
-        FogSystem.Instance.BeginFogHideDistanceTweenToLower();
+        // FogSystem.Instance.BeginFogHideDistanceTweenToLower();
 
         EnemySystem.Instance.overworldEnemy.ClearStatusVisuals();
-
+        gameNoisePerlin.m_AmplitudeGain = overworldNoise;
+        gameNoisePerlin.m_FrequencyGain = overworldNoise;
         inBattleScene = false;
         AudioSystem.Instance.PlayMusic("overworld", true);
         playerSprite.SetActive(true);
@@ -93,7 +106,8 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
         GameViewContainer.SetActive(false);
         matchSetupSystem.enemyCanvas.SetActive(false);
         yield return null;
-    }
+    } 
+
 
     
 }

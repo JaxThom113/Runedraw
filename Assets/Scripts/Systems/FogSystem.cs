@@ -1,27 +1,25 @@
-using System.Collections;
+// using System.Collections;
 using UnityEngine;
-using UnityEngine.VFX;
-using DG.Tweening;
+// using UnityEngine.VFX;
+// using DG.Tweening;
 
 public class FogSystem : Singleton<FogSystem>
 {
+    /*
     const string FogHideDistanceProperty = "HideDistance";
-    const string PlayerPositionProperty = "PlayerPosition"; 
+    const string PlayerPositionProperty = "PlayerPosition";
 
-    [Header("Debug")] 
+    [Header("Debug")]
     public bool DisableFog = true;
 
     [Header("Fog VFX (one active by area type)")]
     public VisualEffect[] Fog;
-    /* 
-     0: Normal
-     1: Fire
-     2: Wind
-     3: Water
-     4: Earth
-     5: Final Boss
-     
-    */
+    // 0: Normal
+    // 1: Fire
+    // 2: Wind
+    // 3: Water
+    // 4: Earth
+    // 5: Final Boss
     [Header("Hide distance tween")]
     public float hideDistanceLowerBound = 0.3f;
     public float hideDistanceUpperBound = 5.0f;
@@ -35,25 +33,29 @@ public class FogSystem : Singleton<FogSystem>
     Tween fogHideDistanceTween;
 
     void Update()
-    {  
-        if(DisableFog){ 
-            foreach(VisualEffect fog in Fog){
-                if(fog == null)
+    {
+        if (DisableFog)
+        {
+            foreach (VisualEffect fog in Fog)
+            {
+                if (fog == null)
                     continue;
                 fog.gameObject.SetActive(false);
-            } 
+            }
             return;
-        } 
-        else{  
-            foreach(VisualEffect fog in Fog){
-                if(fog == null)
+        }
+        else
+        {
+            foreach (VisualEffect fog in Fog)
+            {
+                if (fog == null)
                     continue;
                 fog.gameObject.SetActive(true);
             }
         }
-        SyncFogToAreaType(); 
-        
-       
+        SyncFogToAreaType();
+
+
         if (currentFog == null)
             return;
 
@@ -90,7 +92,7 @@ public class FogSystem : Singleton<FogSystem>
     void ApplyAreaTypeFog(int areaType)
     {
         VisualEffect selected;
-        selected = Fog[areaType]; 
+        selected = Fog[areaType];
         selected.gameObject.SetActive(true);
 
         if (selected == null)
@@ -159,4 +161,5 @@ public class FogSystem : Singleton<FogSystem>
     {
         KillFogHideDistanceTween();
     }
+    */
 }

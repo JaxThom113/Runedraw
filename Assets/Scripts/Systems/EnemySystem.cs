@@ -156,7 +156,8 @@ public class EnemySystem : Singleton<EnemySystem>
                 yield return fadeOutTween.WaitForCompletion();
 
             overworldEnemy.ClearStatusVisuals();
-            overworldEnemy.gameObject.SetActive(false);
+            overworldEnemy.SetIsDeadOnInstanceMaterial(true);
+            // overworldEnemy.gameObject.SetActive(false);
         } 
         yield return new WaitForSeconds(1f);
     }
