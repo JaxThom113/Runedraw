@@ -32,10 +32,12 @@ MonoBehaviour:
     - rid: 3988028971208409091
       type: {class: ApplyShieldEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         shieldAmount: 2
     - rid: 5118776516904747011
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         damageAmount: 4

@@ -31,5 +31,6 @@ MonoBehaviour:
     - rid: 5118776926820106240
       type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 1
         drawAmount: 3

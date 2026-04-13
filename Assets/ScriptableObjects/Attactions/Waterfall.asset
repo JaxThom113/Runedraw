@@ -31,5 +31,6 @@ MonoBehaviour:
     - rid: 5118776516904747009
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         damageAmount: 3

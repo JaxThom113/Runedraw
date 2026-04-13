@@ -9,6 +9,7 @@ public class OverworldEnemy : MonoBehaviour
     private static readonly int SpritePropertyId = Shader.PropertyToID("_Sprite");
     private static readonly int BaseColorPropertyId = Shader.PropertyToID("_BaseColor");
     private static readonly int ColorPropertyId = Shader.PropertyToID("_Color");
+    private static readonly int IsDeadPropertyId = Shader.PropertyToID("_isDead");
     [SerializeField] private Renderer targetRenderer;
     [SerializeField] private Transform visualRoot;
     public GameObject bleedParticles;
@@ -88,6 +89,19 @@ public class OverworldEnemy : MonoBehaviour
         targetRenderer.sharedMaterial = runtimeMaterial;
         CacheMaterialDefaults();
         ApplyStatusVisualState();
+    }
+
+    /// <summary>
+    /// Sets Shader Graph boolean <c>_isDead</c> on this enemy's <b>instance</b> material only
+    /// (<see cref="runtimeMaterial"/> from <see cref="ApplyMaterial"/>), not the shared asset.
+    /// </summary>
+    public void SetIsDeadOnInstanceMaterial(bool isDead)
+    {
+        Material instance = runtimeMaterial != null ? runtimeMaterial : material;
+        if (instance == null || !instance.HasProperty(IsDeadPropertyId))
+            return;
+        // Shader Graph Bool is a float 0/1 in the material property block.
+        instance.SetFloat(IsDeadPropertyId, isDead ? 1f : 0f);
     }
 
     public void FadeIn() 

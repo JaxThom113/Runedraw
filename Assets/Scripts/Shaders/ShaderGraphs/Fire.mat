@@ -43,7 +43,7 @@ Material:
     - _ScrolFreq: 1.5
     - _Smooth: 1
     - _TintStrength: 0.625
-    - _TotalDistortion: 0.73
+    - _TotalDistortion: 0.7
     m_Colors:
     - _WaterTint: {r: 1, g: 0.43867922, b: 0.52503633, a: 0}
   m_BuildTextureStacks: []

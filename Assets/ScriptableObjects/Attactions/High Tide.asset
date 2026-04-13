@@ -31,5 +31,6 @@ MonoBehaviour:
     - rid: 5118777032282996768
       type: {class: DealDamageFromTrackedElementEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         element: 2

@@ -31,6 +31,7 @@ MonoBehaviour:
     - rid: 5118776996086677509
       type: {class: VunerableStatusEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         duration: 3
         turnPhase: 1

@@ -10,7 +10,10 @@ public class LevelSystem: Singleton<LevelSystem>
 {
     [Header("Debug")]
     public bool enemies = true;
-    public bool interactables = true;
+    public bool interactables = true; 
+    public bool chooseLevel = true; 
+    public int level = 0; 
+    public bool isConvergence = true;
 
     [Header("Areas")]
     public GameObject earthArea;
@@ -75,7 +78,11 @@ public class LevelSystem: Singleton<LevelSystem>
     private CreateLevel createLevel;
 
     void Start()
-    {
+    { 
+        if(chooseLevel) { 
+            currentAreaType = level;   
+            currentArea = level;
+        }
         if (GameData.IsSeededRun)
         {
             // get the seed that was selected on the menu
@@ -89,15 +96,34 @@ public class LevelSystem: Singleton<LevelSystem>
         }
 
         // set the active area GameObject in ---- Overworld ----
-        // this could be tutorial or a random level, depending on what button was clicked in CharacterMenu
+        // this could be tutorial or a random level, depending on what button was clicked in CharacterMenu 
+        
         if (!GameData.StartedFromTutorial)
-        {
-            GameData.SelectedAreaType = UnityEngine.Random.Range(1, 6);
-            GameData.Area1 = GameData.SelectedAreaType; 
+        { 
+            if(chooseLevel) { 
+                currentAreaType = level;   
+                currentArea = level; 
+                GameData.SelectedAreaType = level; 
+                GameData.Area1 = GameData.SelectedAreaType; 
+            } 
+            else{ 
+                GameData.SelectedAreaType = UnityEngine.Random.Range(1, 6);
+                GameData.Area1 = GameData.SelectedAreaType; 
+            }
+            
         }
         currentAreaType = GameData.SelectedAreaType;
-        SetActiveArea();
-        SetActiveEnemyBank();
+
+        if (chooseLevel && level == 6)
+        {
+            GameData.SelectedAreaType = 6;
+            GameData.Area1 = 6;
+            currentAreaType = 6;
+            currentArea = 3;
+            currentLevel = 3;
+        }
+
+        SetActiveArea(currentAreaType);
 
         // get reference to the CreateLevel script in the currently active area GameObject (in Board)
         createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
@@ -108,6 +134,12 @@ public class LevelSystem: Singleton<LevelSystem>
             TextAsset lvlFile = Resources.Load<TextAsset>("Levels/Tutorial");
             createLevel.DrawLevel(lvlFile);
         }
+        else if (chooseLevel && level == 6)
+        {
+            TextAsset finalBossFile = Resources.Load<TextAsset>("Levels/FinalBoss");
+            
+        }
+
 
         StartCoroutine(ShowAreaIntro(currentAreaType));
 
@@ -157,7 +189,8 @@ public class LevelSystem: Singleton<LevelSystem>
     */
 
     public void NextLevel()
-    {
+    { 
+      
         if (currentAreaType == 0)
         {
             currentAreaType = 1;
@@ -165,9 +198,9 @@ public class LevelSystem: Singleton<LevelSystem>
             // start the actual game once completing tutorial level
             StartCoroutine(StartTransition(true));
         }
-        else if (currentLevel == 1)
+        else if (currentLevel == 3 || isConvergence)
         {
-            if (currentArea == 3)
+            if (currentArea == 3 || isConvergence)
             {
                 // transition to the final boss level 
                 currentAreaType = 6;
@@ -198,7 +231,7 @@ public class LevelSystem: Singleton<LevelSystem>
 
             StartCoroutine(StartTransition());
         }
-
+        
         UpdateUI();
     }
 
@@ -214,8 +247,7 @@ public class LevelSystem: Singleton<LevelSystem>
 
         if (areaTransition)
         {
-            SetActiveArea();
-            SetActiveEnemyBank();
+            SetActiveArea(currentAreaType);
         
             createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
         }
@@ -380,7 +412,7 @@ public class LevelSystem: Singleton<LevelSystem>
         Helper functions
     */
 
-    private void SetActiveArea()
+    private void SetActiveArea(int areaIndex)
     {
         tutorialLevel.SetActive(false);
         neutralArea.SetActive(false); 
@@ -391,7 +423,7 @@ public class LevelSystem: Singleton<LevelSystem>
         finalBossLevel.SetActive(false);
 
         // transition to level 1 of the next area
-        switch (currentAreaType)
+        switch (areaIndex)
         {
             case 0: tutorialLevel.SetActive(true); break;
             case 1: neutralArea.SetActive(true); break;
@@ -403,33 +435,8 @@ public class LevelSystem: Singleton<LevelSystem>
         }
     }
 
-    private void SetActiveEnemyBank()
+    public void SetCurrentAreaType(int areaIndex)
     {
-        GameObject enemyBank;
-
-        // get the enemy bank of the currently active area
-        switch (currentAreaType)
-        {
-            case 1: enemyBank = neutralArea.transform.Find("Enemy Bank").gameObject; break;
-            case 2: enemyBank = fireArea.transform.Find("Enemy Bank").gameObject; break;
-            case 3: enemyBank = windArea.transform.Find("Enemy Bank").gameObject; break;
-            case 4: enemyBank = waterArea.transform.Find("Enemy Bank").gameObject; break;
-            case 5: enemyBank = earthArea.transform.Find("Enemy Bank").gameObject; break;
-            default: return;
-        }
-
-        enemyBank.transform.GetChild(0).gameObject.SetActive(false); // A1 enemy bank
-        enemyBank.transform.GetChild(1).gameObject.SetActive(false); // A2 enemy bank
-        enemyBank.transform.GetChild(2).gameObject.SetActive(false); // A3 enemy bank
-
-        // activate the correct area enemy bank for enemy difficulty scaling
-        switch (currentArea)
-        {
-            case 1: enemyBank.transform.GetChild(0).gameObject.SetActive(true); break;
-            case 2: enemyBank.transform.GetChild(1).gameObject.SetActive(true); break;
-            case 3: enemyBank.transform.GetChild(2).gameObject.SetActive(true); break;
-            default: return;
-        }
+        currentAreaType = areaIndex;
     }
-
 }

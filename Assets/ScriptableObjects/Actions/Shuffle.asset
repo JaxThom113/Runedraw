@@ -31,5 +31,6 @@ MonoBehaviour:
     - rid: 5118776945593810944
       type: {class: ShuffleEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         shuffleAmount: 0

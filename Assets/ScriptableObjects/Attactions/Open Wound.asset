@@ -32,11 +32,13 @@ MonoBehaviour:
     - rid: 3501866668757090310
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         damageAmount: 1
     - rid: 3988028971208409092
       type: {class: BleedStatusEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         duration: 3
         turnPhase: 0

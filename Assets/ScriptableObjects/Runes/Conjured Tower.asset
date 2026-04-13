@@ -32,6 +32,7 @@ MonoBehaviour:
     - rid: 5118777032282996754
       type: {class: RuneStatusEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 1
         duration: 3
         turnPhase: 0
@@ -41,5 +42,6 @@ MonoBehaviour:
     - rid: 5118777032282996756
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         damageAmount: 2

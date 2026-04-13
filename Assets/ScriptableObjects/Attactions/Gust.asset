@@ -32,10 +32,12 @@ MonoBehaviour:
     - rid: 3988028971208409089
       type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         drawAmount: 1
     - rid: 5118776516904747010
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         damageAmount: 2

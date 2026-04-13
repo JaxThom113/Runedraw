@@ -32,11 +32,13 @@ MonoBehaviour:
     - rid: 474873739107368960
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         damageAmount: 2
     - rid: 5118776945593810945
       type: {class: PoisonStatusEffect, ns: , asm: Assembly-CSharp}
       data:
+        effectSelf: 0
         playWhenDrawnByEnemy: 0
         duration: 3
         turnPhase: 0

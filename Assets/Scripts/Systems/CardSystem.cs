@@ -61,7 +61,7 @@ public class CardSystem : Singleton<CardSystem>
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE); //same thing as above, but if prereaction or postreaction we call subscribe reaction instead of attach perfomer
         ActionSystem.SubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST); 
         ActionSystem.SubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
-        ActionSystem.SubscribeReaction<KillEnemyGA>(DiscardEnemyCardPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<KillEnemyGA>(DiscardEnemyCardPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<KillEnemyGA>(RefillDeckPostReaction, ReactionTiming.POST);
      } 
     private void OnDisable() 
@@ -89,7 +89,7 @@ public class CardSystem : Singleton<CardSystem>
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPreReaction, ReactionTiming.PRE); 
         ActionSystem.UnsubscribeReaction<EnemyTurnGA>(EnemyTurnPostReaction, ReactionTiming.POST); 
         ActionSystem.UnsubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
-        ActionSystem.UnsubscribeReaction<KillEnemyGA>(DiscardEnemyCardPostReaction, ReactionTiming.POST);
+        ActionSystem.UnsubscribeReaction<KillEnemyGA>(DiscardEnemyCardPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<KillEnemyGA>(RefillDeckPostReaction, ReactionTiming.POST); 
         //Remove from dictionary so we wont get an error when unsubscribing reaction
     }  
@@ -119,14 +119,18 @@ public class CardSystem : Singleton<CardSystem>
             Card card = new Card(cardSO);
             enemyDeck.Add(card);
         }
-    }
+    } 
+  
 
     //Performers 
     private IEnumerator PlayCardPerformer(PlayCardGA playCardGA)
     { 
         StartCoroutine(DisableCardCanvasForPlay());
         // Status effects first and before discard tween so stacks/performers are not delayed by animation
-        // or by other effects listed later on the card (e.g. draw before stun on the same CardSO).
+        // or by other effects listed later on the card (e.g. draw before stun on the same CardSO). 
+         
+        if (playCardGA.card.data is AttactionSO)
+            ActionSystem.Instance.AddReaction(new SpellCastGA(playCardGA.card.GetElementIndex(), true));
         foreach (var effect in playCardGA.card.effects)
         {
             if (effect is StatusEffect statusEffect)
@@ -224,14 +228,10 @@ public class CardSystem : Singleton<CardSystem>
         ActionSystem.Instance.AddReaction(applyStatusEffectGA);
         yield return null;
     }
-    private void DiscardEnemyCardPostReaction(KillEnemyGA killEnemyGA)
-    { 
+    private void DiscardEnemyCardPreReaction(KillEnemyGA killEnemyGA)
+    {
         ShieldSystem.Instance.ClearAllShields();
-        foreach(var card in enemyDeck) { 
-            
-           EnemyHandView.Instance.ClearEnemyHand(); 
-            
-        }
+        EnemyHandView.Instance.ClearEnemyHand();
         enemyDeck.Clear();
     } 
 
@@ -288,8 +288,7 @@ public class CardSystem : Singleton<CardSystem>
         Transform playerDraw = playerDrawPileTransform != null ? playerDrawPileTransform : playerHandContainer;
         Vector3 spawnPos = playerDraw != null ? playerDraw.position : Vector3.zero;
         Quaternion spawnRot = playerDraw != null ? playerDraw.rotation : Quaternion.identity;
-        ApplyCard applyCard = CardCreator.Instance.CreateCard(card, spawnPos, spawnRot, false);
-        ParentCardToHand(applyCard.transform, playerHandContainer);
+        ApplyCard applyCard = CardCreator.Instance.CreateCard(card, spawnPos, spawnRot, false, playerHandContainer);
         yield return StartCoroutine(HandView.Instance.AddCard(applyCard));
     } 
     private void CreateLootCardsPostReaction(LootCardGA lootCardGA)  
@@ -359,8 +358,12 @@ public class CardSystem : Singleton<CardSystem>
         if (enemyDrawPile == null)
             yield break;
 
-        ApplyCard applyCard = CardCreator.Instance.CreateCard(card, enemyDrawPile.position, enemyDrawPile.rotation, true);
-        ParentCardToHand(applyCard.transform, enemyHandContainer);
+        ApplyCard applyCard = CardCreator.Instance.CreateCard(
+            card,
+            enemyDrawPile.position,
+            enemyDrawPile.rotation,
+            true,
+            enemyHandContainer);
         yield return StartCoroutine(EnemyHandView.Instance.AddCard(applyCard));
         bool playWhenDrawn = card.effects != null && card.effects.Exists(e => e.playWhenDrawnByEnemy);
         if (playWhenDrawn)
@@ -389,14 +392,6 @@ public class CardSystem : Singleton<CardSystem>
         RefillDeck();
         LootCardGA lootCardGA = new LootCardGA(3, true);
         ActionSystem.Instance.AddReaction(lootCardGA);
-    }
-
-    private static void ParentCardToHand(Transform cardTransform, Transform handContainer)
-    {
-        if (cardTransform == null || handContainer == null)
-            return;
-
-        cardTransform.SetParent(handContainer, true);
     }
 
     private IEnumerator DiscardCard(ApplyCard applyCard) 

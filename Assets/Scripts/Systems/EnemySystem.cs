@@ -79,9 +79,17 @@ public class EnemySystem : Singleton<EnemySystem>
 
     private IEnumerator EnemyTurnPerformer(EnemyTurnGA enemyTurnGA) 
     {  
-   
-        foreach (var card in EnemyHandView.Instance.GetShownCards())
+    
+        
+        List<Card> shownCards = EnemyHandView.Instance.GetShownCards();
+        for (int i = 0; i < shownCards.Count; i++)
         {
+         
+
+            Card card = shownCards[i];
+            if (card.data is AttactionSO)
+                 ShaderSystem.Instance.StartCoroutine(ShaderSystem.Instance.PlaySpellCastVfx(card.GetElementIndex(), false));
+
             foreach (var effect in card.effects)
             {
                 if (effect is StatusEffect statusEffect)
@@ -148,7 +156,8 @@ public class EnemySystem : Singleton<EnemySystem>
                 yield return fadeOutTween.WaitForCompletion();
 
             overworldEnemy.ClearStatusVisuals();
-            overworldEnemy.gameObject.SetActive(false);
+            overworldEnemy.SetIsDeadOnInstanceMaterial(true);
+            // overworldEnemy.gameObject.SetActive(false);
         } 
         yield return new WaitForSeconds(1f);
     }
