@@ -249,12 +249,33 @@ public class CreateLevel : MonoBehaviour
         }
         enemyContainer = new GameObject("EnemyContainer"); // recreate container
 
-        // get the currently active enemy bank for the current area (A1, A2, A3)
-        enemyBank = FindFirstObjectByType<EnemyBank>(FindObjectsInactive.Exclude);
+        enemyBank = null;
+        GameObject bankRoot = GameObject.Find("Enemy Bank");
+        if (bankRoot != null)
+        {
+            for (int i = 0; i < bankRoot.transform.childCount; i++)
+            {
+                Transform child = bankRoot.transform.GetChild(i);
+                if (!child.gameObject.activeInHierarchy)
+                    continue;
+                enemyBank = child.GetComponent<EnemyBank>();
+                if (enemyBank != null)
+                    break;
+            }
+            if (enemyBank == null)
+                enemyBank = bankRoot.GetComponent<EnemyBank>();
+        }
+
+        if (enemyBank == null)
+        {
+            Debug.LogError("CreateLevel: No active Enemy Bank child found under \"Enemy Bank\".");
+            return;
+        }
 
         // set up spawn weights for enemies like Wizard Lizard
-        enemyBank.SetupSpawnWeights();
-
+        enemyBank.SetupSpawnWeights(); 
+        Debug.Log("Area: " + LevelSystem.Instance.currentArea);
+        Debug.Log("Enemy bank: " + enemyBank.name);
         for (int y = 0; y < gridSize; y++)
         {
             for (int x = 0; x < gridSize; x++)

@@ -56,7 +56,7 @@ public class LevelSystem: Singleton<LevelSystem>
 
     // current level and area
     private int currentLevel = 1;
-    private int currentArea = 1;
+    public int currentArea = 1;
 
     /*
         Current area type
