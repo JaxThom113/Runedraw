@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityName: Baseball Bat
   entityIcon: {fileID: 21300000, guid: 0f8f25f5f5abc454194588d8863c5ee3, type: 3}
-  entityHealth: 4
-  entityDialogue: {fileID: 11400000, guid: 72906ec9d4d97e04d9358838b8e12bdd, type: 2}
+  entityHealth: 6
+  entityDialogue: {fileID: 11400000, guid: 2698b003abdfb54478c1234e98abcd50, type: 2}
   enemyDeck:
   - enemyHand:
     - {fileID: 11400000, guid: 1c84116bc6771824f9a66347efc42561, type: 2}

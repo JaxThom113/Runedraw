@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1451131da94bbf4db8fb5aa74d1f7ce, type: 3}
+  m_Name: D_IRS
+  m_EditorClassIdentifier: 
+  Intro:
+  - "Can\u2019t wait to collect what is due."
+  TurnStart:
+  - Pay up.
+  LowHealthTurnStart:
+  - Agh... You still gotta pay.
+  Attack:
+  - Sign your name here!
+  - Surprise tax deduction!
+  UltimateAttack:
+  - Prepare for your credit score to get wrecked!
+  TakeDamage:
+  - Gnarly!
+  - Ugnh!
+  EndTurn:
+  - "Chances of you winning\u2026 Slim."
+  LowHealthEndTurn:
+  - "Chances of me winning\u2026 Slim."
+  Lose:
+  - Death and taxes...
+  Win:
+  - The government will get you for tax evasion!

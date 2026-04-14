@@ -17,7 +17,7 @@ MonoBehaviour:
   TurnStart:
   - My turn.
   LowHealthTurnStart:
-  - This looks like a sticky situation...
+  - Ha... My turn.
   Attack:
   - Ora!
   - Ora Ora Ora Ora!
@@ -30,6 +30,6 @@ MonoBehaviour:
   LowHealthEndTurn:
   - I'm gooped out.
   Lose:
-  - "\u304F\u305D\u3063!\u4ECA\u5EA6\u306F\u3053\u306E\u8CA0\u3051\u72AC\u306B\u6700\u5F37\u306E\u30AB\u30FC\u30C9\u3092\u5DEE\u3057\u51FA\u3055\u306A\u304D\u3083!"
+  - "\u304F\u305D\u3063!\u8CA0\u3051\u305F!"
   Win:
   - Loser! (Points at you)

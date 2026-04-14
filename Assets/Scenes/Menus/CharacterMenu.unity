@@ -518,14 +518,10 @@ MonoBehaviour:
   m_text: 'Once the hero of Cardtopia, back to claim his title as Master of Runes.
 
 
-    Pummels
-    his enemies with strong melee attacks and lots of defense.
+    -
+    32 HP
 
-
-    - 44 starting
-    HP
-
-    - [other skills TBD]'
+    - Pummels his enemies with strong melee attacks and defense'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1051,8 +1047,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_text: "A lone cutthroat from the streets, here to settle a score with the Card
-    Devil. \n\nWears down his foes with quick attacks and poison.\n\n- 28 starting
-    HP\n- [other skills TBD]"
+    Devil. \n\n- 24 HP\n- Wears down his foes with poison and status effects"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1569,14 +1564,10 @@ MonoBehaviour:
   m_text: 'Famed witch and scholar, seeking to uncover the secrets of the Runes.
 
 
-    Bombards
-    her oppponents with elemental magic attacks.
+    -
+    18 HP
 
-
-    - 18 starting HP
-
-    - [other
-    skills TBD]'
+    - Bombards her oppponents with elemental magic attacks'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

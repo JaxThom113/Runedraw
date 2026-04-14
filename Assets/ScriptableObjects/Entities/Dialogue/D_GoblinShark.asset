@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1451131da94bbf4db8fb5aa74d1f7ce, type: 3}
+  m_Name: D_GoblinShark
+  m_EditorClassIdentifier: 
+  Intro:
+  - Time to hit the waves, dude!
+  TurnStart:
+  - "It\u2019s like my turn, dude - I draw!"
+  - "Getting seasick, dude\u2026 I draw!"
+  LowHealthTurnStart:
+  - Like, attack shark-dude!
+  - "Like, don\u2019t drown, broski!"
+  Attack:
+  - You shall not pass!
+  - Dark Cheese Attack!
+  UltimateAttack:
+  - Prepare to Goblin on this, dude!
+  TakeDamage:
+  - Gnarly!
+  - Not cool, dude!
+  EndTurn:
+  - I, like, pass my turn to you, dude.
+  LowHealthEndTurn:
+  - "Oooh\u2026 I feel like I\u2019m about to wipe out."
+  Lose:
+  - "Aw, dude, totally not cool\u2026"
+  Win:
+  - "Hehe, don\u2019t feel bad, dude. Not many people can handle the Goblin style."

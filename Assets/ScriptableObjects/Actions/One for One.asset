@@ -25,19 +25,19 @@ MonoBehaviour:
   IsUltimate: 1
   effects:
   - rid: 5118777032282996759
-  - rid: 5118777032282996760
+  - rid: 3988029065039183872
   references:
     version: 2
     RefIds:
+    - rid: 3988029065039183872
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        effectSelf: 0
+        playWhenDrawnByEnemy: 1
+        damageAmount: 1
     - rid: 5118777032282996759
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
         damageAmount: 1
-    - rid: 5118777032282996760
-      type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
-      data:
-        effectSelf: 0
-        playWhenDrawnByEnemy: 1
-        drawAmount: 1

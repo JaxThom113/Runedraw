@@ -15,9 +15,9 @@ MonoBehaviour:
   Intro:
   - "It\u2019s time to D-D-D-D-Duel!"
   TurnStart:
-  - "It\u2019s my turn to draw!!!"
+  - "It\u2019s my turn to draw!"
   LowHealthTurnStart:
-  - "I still\u2026 I still believe in the heart of the cheese - I DRAW!"
+  - "I still\u2026 I still believe in the heart of the cheese!"
   Attack:
   - Take This!
   - Hiyah!
@@ -33,6 +33,6 @@ MonoBehaviour:
   - "I\u2026 I\u2026 I end my turn!"
   Lose:
   - "I-I Lose\u2026. "
-  - I guess this ending is a bit... cheesy
+  - I guess this ending is a bit cheesy..
   Win:
   - You are no match for my cheese!

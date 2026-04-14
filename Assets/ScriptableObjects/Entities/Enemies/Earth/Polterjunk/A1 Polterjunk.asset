@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityName: Polterjunk
   entityIcon: {fileID: 21300000, guid: bbfaa11c5530c0543a9ad604a859c9ae, type: 3}
-  entityHealth: 5
-  entityDialogue: {fileID: 11400000, guid: 72906ec9d4d97e04d9358838b8e12bdd, type: 2}
+  entityHealth: 7
+  entityDialogue: {fileID: 11400000, guid: 39edf75a8a7ac4f4180277de366d700c, type: 2}
   enemyDeck:
   - enemyHand:
     - {fileID: 11400000, guid: e2bef04634a2a3745bd1f92b78fb1850, type: 2}

@@ -29,6 +29,12 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
+    - rid: 3988029065039183875
+      type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
+      data:
+        effectSelf: 0
+        playWhenDrawnByEnemy: 0
+        drawAmount: 1
     - rid: 5118777032282996754
       type: {class: RuneStatusEffect, ns: , asm: Assembly-CSharp}
       data:
@@ -37,11 +43,5 @@ MonoBehaviour:
         duration: 3
         turnPhase: 0
         effect:
-          rid: 5118777032282996756
+          rid: 3988029065039183875
         ApplyToEnemy: 1
-    - rid: 5118777032282996756
-      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
-      data:
-        effectSelf: 0
-        playWhenDrawnByEnemy: 0
-        damageAmount: 2
