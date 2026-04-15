@@ -390,6 +390,8 @@ public class CardSystem : Singleton<CardSystem>
     private void RefillDeckPostReaction(KillEnemyGA killEnemyGA)
     {
         RefillDeck();
+        ActionSystem.Instance.AddReaction(new ManaRefreshGA());
+        ActionSystem.Instance.AddReaction(new EndBattleViewGA());
         LootCardGA lootCardGA = new LootCardGA(3, true);
         ActionSystem.Instance.AddReaction(lootCardGA);
     }

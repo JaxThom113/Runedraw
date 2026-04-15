@@ -86,9 +86,10 @@ Flow is the MAIN METHOD of the action system that orchestrates the execution of 
 // Child GameActions that run at each phase. Define WHAT runs and WHEN (pre / perform / post).
 // Each reaction is executed via Flow; used to chain or compose actions (e.g. status effects).
 //---------------------------------------------------- 
-   public void Perform(GameAction action, System.Action OnPerformFinished = null) 
+   /// <returns>False if another action is already running (call was ignored).</returns>
+   public bool Perform(GameAction action, System.Action OnPerformFinished = null) 
    { 
-        if(IsPerforming) return;  // makes sure we dont perform the same action twice
+        if(IsPerforming) return false;  // makes sure we dont perform the same action twice
         IsPerforming = true;  
         StartCoroutine(Flow(action, () =>  
         {  
@@ -96,6 +97,7 @@ Flow is the MAIN METHOD of the action system that orchestrates the execution of 
             IsPerforming = false;  
             OnPerformFinished?.Invoke(); //if we want to have our own callback, we can add it here, perform
         }));
+        return true;
    } 
    public void AddReaction(GameAction gameAction) 
    { 

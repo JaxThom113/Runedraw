@@ -46,6 +46,7 @@ public class MatchSetupSystem : MonoBehaviour
 
         GameData.EnemiesFought++;
         StartRoundGA startRoundGA = new(5, EnemySystem.Instance.GetDrawAmount());
+        ManaSystem.Instance.SuppressNextApplyStatusManaRamp();
         ActionSystem.Instance.Perform(startRoundGA, () => ManaSystem.Instance.InitializeMana());
     }
 }

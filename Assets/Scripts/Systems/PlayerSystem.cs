@@ -108,14 +108,22 @@ public class PlayerSystem : Singleton<PlayerSystem>
         yield return null;
     }
 
-    // gank health function (why don't we have one variable for health lol)
     public void AddHealth(int amount)
     {
-        if (!(storedHealth + amount > maxHealth))
-        {
-            storedHealth += amount;
-            playerView.currentHealth = storedHealth;
-            playerView.UpdateHealthDisplay();
-        }
+        if (amount <= 0 || playerView == null)
+            return;
+
+        if (maxHealth <= 0)
+            maxHealth = playerView.maxHealth;
+        if (maxHealth <= 0 && currentPlayerData != null)
+            maxHealth = currentPlayerData.entityHealth;
+
+        int newHealth = playerView.currentHealth + amount;
+        if (newHealth > maxHealth)
+            newHealth = maxHealth;
+
+        storedHealth = newHealth;
+        playerView.currentHealth = storedHealth;
+        playerView.UpdateHealthDisplay();
     }
 }

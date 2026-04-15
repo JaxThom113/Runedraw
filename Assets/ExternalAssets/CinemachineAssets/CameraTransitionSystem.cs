@@ -29,7 +29,8 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
     } 
     void OnEnable()
     {
-        ActionSystem.AttachPerformer<LootCardPickupGA>(LootCardPickupPerformer); 
+        ActionSystem.AttachPerformer<LootCardPickupGA>(LootCardPickupPerformer);
+        ActionSystem.AttachPerformer<EndBattleViewGA>(EndBattleViewPerformer);
         gameNoisePerlin = gameViewCamera.GetComponentInChildren<CinemachineBasicMultiChannelPerlin>(); 
         gameNoisePerlin.m_AmplitudeGain = overworldNoise;
         gameNoisePerlin.m_FrequencyGain = overworldNoise;
@@ -37,12 +38,14 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
     void OnDisable()
     {
         ActionSystem.DetachPerformer<LootCardPickupGA>();
+        ActionSystem.DetachPerformer<EndBattleViewGA>();
     }
 
    
    
     public void startGame(OverworldEnemy overworldEnemy) {
         inBattleScene = true;
+        ManaSystem.Instance?.RefreshManaUiNodes();
         AudioSystem.Instance.PlayMusic("battle");
         OverworldHUD.SetActive(false);  
         
@@ -87,6 +90,15 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
         
     }
 
+    private IEnumerator EndBattleViewPerformer(EndBattleViewGA _)
+    {
+        if (GameViewContainer != null)
+            GameViewContainer.SetActive(false);
+        if (matchSetupSystem != null && matchSetupSystem.enemyCanvas != null)
+            matchSetupSystem.enemyCanvas.SetActive(false);
+        yield return null;
+    }
+
     private IEnumerator LootCardPickupPerformer(LootCardPickupGA lootCardPickupGA)
     { 
         
@@ -95,7 +107,7 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
 
         // FogSystem.Instance.BeginFogHideDistanceTweenToLower();
 
-        EnemySystem.Instance.overworldEnemy.ClearStatusVisuals();
+        EnemySystem.Instance?.overworldEnemy?.ClearStatusVisuals();
         gameNoisePerlin.m_AmplitudeGain = overworldNoise;
         gameNoisePerlin.m_FrequencyGain = overworldNoise;
         inBattleScene = false;
@@ -103,8 +115,10 @@ public class CameraTransitionSystem : Singleton<CameraTransitionSystem>
         playerSprite.SetActive(true);
         PlayerSystem.Instance.ViewTweenToDefaultLocal();
         OverworldHUD.SetActive(true);
-        GameViewContainer.SetActive(false);
-        matchSetupSystem.enemyCanvas.SetActive(false);
+        if (GameViewContainer != null)
+            GameViewContainer.SetActive(false);
+        if (matchSetupSystem != null && matchSetupSystem.enemyCanvas != null)
+            matchSetupSystem.enemyCanvas.SetActive(false);
         yield return null;
     } 
 
