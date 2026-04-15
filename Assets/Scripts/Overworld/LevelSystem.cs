@@ -90,7 +90,7 @@ public class LevelSystem: Singleton<LevelSystem>
         if (GameData.IsSeededRun)
         {
             // get the seed that was selected on the menu
-            UnityEngine.Random.InitStat e(GameData.SelectedSeed);
+            UnityEngine.Random.InitState(GameData.SelectedSeed);
         }
         else
         {
