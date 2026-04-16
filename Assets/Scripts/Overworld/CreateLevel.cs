@@ -274,8 +274,8 @@ public class CreateLevel : MonoBehaviour
 
         // set up spawn weights for enemies like Wizard Lizard
         enemyBank.SetupSpawnWeights(); 
-        Debug.Log("Area: " + LevelSystem.Instance.currentArea);
-        Debug.Log("Enemy bank: " + enemyBank.name);
+        //Debug.Log("Area: " + LevelSystem.Instance.currentArea);
+        //Debug.Log("Enemy bank: " + enemyBank.name);
         for (int y = 0; y < gridSize; y++)
         {
             for (int x = 0; x < gridSize; x++)

@@ -13,8 +13,15 @@ public class CardSystem : Singleton<CardSystem>
     DrawCardGA -> DrawCardPerformer -> DrawCard() -> AddCard() -> ApplyCard()
     DiscardCardGA -> DiscardCardPerformer -> DiscardCard() -> RemoveCard() -> ApplyCard()
     PlayCardGA -> PlayCardPerformer -> PlayCard() -> RemoveCard() -> ApplyCard()
-    EnemyTurnGA -> EnemyTurnPreReaction -> DiscardCardGA -> AddReaction()
-    EnemyTurnGA -> EnemyTurnPostReaction -> DrawCardGA -> AddReaction()
+
+    Turn flow (not in PlayerSystem — lives here + EnemySystem):
+    - Player ends turn -> Perform(EnemyTurnGA)
+      PRE:  EnemyTurnPreReaction -> queues DiscardCardGA (discard player hand)
+      PERFORM: EnemyTurnPerformer (EnemySystem) -> play each card in enemy hand, then EnemyTurnHandler() bumps enemyTurnCount
+      POST: EnemyTurnPostReaction -> queues StartRoundGA (NOT DrawCardGA directly; comment was stale)
+    - StartRoundGA PERFORM: SetupEnemyDeck (fills enemyDeck from GetCurrentEnemyHand for new enemyTurnCount),
+      then queues player DrawCardGA, DrawEnemyCardGA, status follow-ups.
+    - enemyTurnCount advances in EnemyTurnHandler at end of enemy play phase (and KillEnemy reset). Enemy DrawCardsEffect uses DrawEnemyCardGA(AdvanceToNextHandBeforeDraw) so advance + SetupEnemyDeck run in the performer, not when the effect is queued.
     */     
 
     public Canvas cardCanvas; 
@@ -196,10 +203,20 @@ public class CardSystem : Singleton<CardSystem>
             yield break;
         }
 
-        int cardAmount = Mathf.Min(drawEnemyCardGA.Amount, EnemySystem.Instance.GetDrawAmount());  
-        
-        int notDrawnAmount = drawEnemyCardGA.Amount - cardAmount; 
-        for(int i = 0; i < cardAmount; i++) { 
+        if (drawEnemyCardGA.AdvanceToNextHandBeforeDraw)
+        {
+            EnemySystem.Instance.EnemyTurnHandler();
+            SetupEnemyDeck(EnemySystem.Instance.enemy.enemyDeck);
+        }
+
+        // Requested amount (inspector / StartRoundGA), data hand size, and cards in pile (after optional SetupEnemyDeck).
+        // DrawEnemyCard() uses DrawFront then Add — the list never shrinks, so looping past enemyDeck.Count repeats the same rotation.
+        int cardAmount = Mathf.Min(
+            drawEnemyCardGA.Amount,
+            EnemySystem.Instance.GetDrawAmount(),
+            enemyDeck.Count);
+        for (int i = 0; i < cardAmount; i++)
+        {
             yield return DrawEnemyCard();
         }
     } 

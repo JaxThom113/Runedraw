@@ -14,9 +14,11 @@ public class DrawCardsEffect : Effect
              DrawCardGA drawCardGA = new(drawAmount);
             return drawCardGA;
         } 
-        else{  
-            EnemySystem.Instance.EnemyTurnHandler();
-            DrawEnemyCardGA drawEnemyCardGA = new(drawAmount);
+        else
+        {
+            // Advance + deck rebuild happen in DrawEnemyCardPerformer when the action runs (not here),
+            // so enemyDeck matches the "next hand" data before any DrawFront/Add cycles.
+            DrawEnemyCardGA drawEnemyCardGA = new(drawAmount, advanceToNextHandBeforeDraw: true);
             return drawEnemyCardGA;
         }
        

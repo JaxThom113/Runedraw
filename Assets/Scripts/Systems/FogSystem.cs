@@ -1,13 +1,13 @@
-// using System.Collections;
+using System.Collections;
 using UnityEngine;
-// using UnityEngine.VFX;
-// using DG.Tweening;
+using UnityEngine.VFX;
+using DG.Tweening;
 
 public class FogSystem : Singleton<FogSystem>
 {
-    /*
     const string FogHideDistanceProperty = "HideDistance";
-    const string PlayerPositionProperty = "PlayerPosition";
+    const string transform_Local = "transform_Local";
+    const string transform_World = "transform_World";
 
     [Header("Debug")]
     public bool DisableFog = true;
@@ -28,32 +28,32 @@ public class FogSystem : Singleton<FogSystem>
     [Header("Fallback if LevelSystem has no playerMovement.viewTarget")]
     public Transform viewPoint;
 
-    private VisualEffect currentFog;
+    [SerializeField] private VisualEffect currentFog;
     private int lastSyncedAreaType = int.MinValue;
     Tween fogHideDistanceTween;
 
     void Update()
     {
-        if (DisableFog)
-        {
-            foreach (VisualEffect fog in Fog)
-            {
-                if (fog == null)
-                    continue;
-                fog.gameObject.SetActive(false);
-            }
-            return;
-        }
-        else
-        {
-            foreach (VisualEffect fog in Fog)
-            {
-                if (fog == null)
-                    continue;
-                fog.gameObject.SetActive(true);
-            }
-        }
-        SyncFogToAreaType();
+        // if (DisableFog)
+        // {
+        //     foreach (VisualEffect fog in Fog)
+        //     {
+        //         if (fog == null)
+        //             continue;
+        //         fog.gameObject.SetActive(false);
+        //     }
+        //     return;
+        // }
+        // else
+        // {
+        //     foreach (VisualEffect fog in Fog)
+        //     {
+        //         if (fog == null)
+        //             continue;
+        //         fog.gameObject.SetActive(true);
+        //     }
+        // }
+       // SyncFogToAreaType();
 
 
         if (currentFog == null)
@@ -63,8 +63,14 @@ public class FogSystem : Singleton<FogSystem>
             return;
 
         Transform view = ResolveViewTransform();
-        if (view != null)
-            currentFog.SetVector3(PlayerPositionProperty, view.position);
+        if (view != null){    
+            currentFog.SetVector3(transform_World, view.position);
+             //Getting out of local space
+             Vector3 worldPos = view.position; 
+             Vector3 value = currentFog.transform.InverseTransformPoint(worldPos);
+             currentFog.SetVector3(transform_Local, value);
+        }
+           
     }
 
     Transform ResolveViewTransform()
@@ -161,5 +167,5 @@ public class FogSystem : Singleton<FogSystem>
     {
         KillFogHideDistanceTween();
     }
-    */
+    
 }
