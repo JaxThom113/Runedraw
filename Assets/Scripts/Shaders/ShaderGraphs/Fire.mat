@@ -44,6 +44,8 @@ Material:
     - _Smooth: 1
     - _TintStrength: 0.625
     - _TotalDistortion: 0.7
+    - _Transition: 1
+    - _TwirlStep: 0
     m_Colors:
     - _WaterTint: {r: 1, g: 0.43867922, b: 0.52503633, a: 0}
   m_BuildTextureStacks: []
