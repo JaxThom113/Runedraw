@@ -45,8 +45,8 @@ Material:
     - _ScrolFreq: 0.5
     - _ScrollSpeed: 0.84
     - _Smooth: 1
-    - _TintStrength: 0.1
-    - _TotalDistortion: 0.7
+    - _TintStrength: 0.967
+    - _TotalDistortion: 0
     - _Transition: 0
     - _TwirlStep: 0
     m_Colors:

@@ -103,7 +103,7 @@ public class FogSystem : Singleton<FogSystem>
     IEnumerator PostReactionRoutine(){ 
         firstUpdate = true;
         SyncFogToAreaType();
-        yield return new WaitForSeconds(4f);
+        yield return new WaitForSeconds(3f);
         RestartFogSimulation();
     }
     // Cheapest reset path: restart simulation on the same VFX component (no instantiate/destroy).
