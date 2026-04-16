@@ -56,7 +56,7 @@ Material:
     - _WaveHeight: 0.1
     - _WaveNoiseScale: 10
     m_Colors:
-    - _Color: {r: 2.482063, g: 2.4844034, b: 2.4938264, a: 0}
+    - _Color: {r: 4.964126, g: 4.9688067, b: 4.987653, a: 0}
     - _Speed1: {r: 0.05, g: 0.05, b: 0, a: 0}
     - _Speed2: {r: -0.03, g: 0.04, b: 0, a: 0}
     - _Tiling: {r: 5, g: 5, b: 0, a: 0}

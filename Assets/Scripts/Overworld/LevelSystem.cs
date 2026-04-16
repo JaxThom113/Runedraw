@@ -159,6 +159,10 @@ public class LevelSystem: Singleton<LevelSystem>
         StartCoroutine(ShowAreaIntro(currentAreaType));
 
         UpdateUI();
+
+        // Emit one startup area event so reactive systems (fog/shader) sync the initial area.
+        if (ActionSystem.Instance != null)
+            ActionSystem.Instance.Perform(new NextAreaGA(currentLevel, applyLevelTransition: false));
     }
 
     void OnEnable()
@@ -447,7 +451,8 @@ public class LevelSystem: Singleton<LevelSystem>
 
     public IEnumerator NextAreaPerformer(NextAreaGA nextAreaGA)
     {
-        NextLevel(nextAreaGA.nextLevel);
+        if (nextAreaGA.applyLevelTransition)
+            NextLevel(nextAreaGA.nextLevel);
         yield return null;
     }
 

@@ -24,7 +24,7 @@ public class FogPreset : ScriptableObject
     [Range(0f, 1f)] public float gradientStrength = 0.266f;
     [Range(0f, 1f)] public float simpleStrength = 0f;
     [Range(0f, 1f)] public float voronoiStrength = 1f;
-    public Color fogTint = Color.white;
+    [ColorUsage(true, true)] public Color fogTint = Color.white;
     [Range(0f, 1f)] public float tintIntensity = 1f;
 
     [Header("Texture Displacement")]

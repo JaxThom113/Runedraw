@@ -14,20 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnSize: 120
   particleSize: 5
-  killRadius: 10
+  killRadius: 8
   singleBurstAmount: 20000
-  smoothStepEdges: {x: 4, y: 5}
-  outRemap: {x: 0, y: 0}
-  noiseScale: 10
-  noiseStrength: 4.52
-  noiseSpeed: 1
-  noiseTiling: {x: 1, y: -0.2}
-  noiseSmoothing: 0.73
+  smoothStepEdges: {x: 3, y: 6}
+  outRemap: {x: -0.7, y: 0.7}
+  noiseScale: 1
+  noiseStrength: 2
+  noiseSpeed: 2.5
+  noiseTiling: {x: 1, y: -0.5}
+  noiseSmoothing: 0.55
   gradientStrength: 0.266
-  simpleStrength: 0
-  voronoiStrength: 1
+  simpleStrength: 0.189
+  voronoiStrength: 0.74
+  fogTint: {r: 2.828427, g: 0, b: 0, a: 1}
+  tintIntensity: 1
   fogTexture: {fileID: 2800000, guid: 0f20064e95700a643b0006a02a9ab34c, type: 3}
-  textureTiling: {x: -0.5, y: 0.5}
+  textureTiling: {x: 1, y: 0.5}
   textureSpeed1: -0.05
   textureSpeed2: 0.1
   gridSize: 25

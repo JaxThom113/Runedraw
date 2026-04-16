@@ -89,7 +89,7 @@ MonoBehaviour:
     serializedVersion: 2
     x: -788
     y: 930
-    width: 1995
+    width: 1720
     height: 308
 --- !u!114 &114350483966674978
 MonoBehaviour:
@@ -2006,7 +2006,7 @@ MonoBehaviour:
   m_OutputSlots: []
   m_ExposedName: New Position
   m_Exposed: 0
-  m_Order: 2
+  m_Order: 1
   m_Category: 
   m_Min:
     m_Type:

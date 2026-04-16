@@ -28,10 +28,12 @@ public class FogSystem : Singleton<FogSystem>
     [SerializeField] private FogPreset currentPreset;
     private int lastSyncedAreaType = int.MinValue;
     private bool firstUpdate = true;
+    private bool loggedMissingVfxError = false;
 
     private void OnEnable()
     {
         ActionSystem.SubscribeReaction<NextAreaGA>(NextAreaPostReaction, ReactionTiming.POST);
+        EnsureVfxReference();
         SyncFogToAreaType();
     }
 
@@ -42,7 +44,7 @@ public class FogSystem : Singleton<FogSystem>
 
     private void Update()
     {
-        if (vfx == null)
+        if (!EnsureVfxReference())
             return;
 
         if (DisableFog)
@@ -96,7 +98,22 @@ public class FogSystem : Singleton<FogSystem>
 
     private void NextAreaPostReaction(NextAreaGA nextAreaGA)
     {
+        StartCoroutine(PostReactionRoutine());
+    }
+    IEnumerator PostReactionRoutine(){ 
+        firstUpdate = true;
         SyncFogToAreaType();
+        yield return new WaitForSeconds(4f);
+        RestartFogSimulation();
+    }
+    // Cheapest reset path: restart simulation on the same VFX component (no instantiate/destroy).
+    private void RestartFogSimulation()
+    {
+        if (!EnsureVfxReference() || DisableFog)
+            return;
+
+        vfx.Reinit();
+        vfx.Play();
     }
 
     private void SyncFogToAreaType()
@@ -126,10 +143,11 @@ public class FogSystem : Singleton<FogSystem>
 
     public void ApplyPreset(FogPreset preset)
     {
-        if (vfx == null || preset == null)
+        if (!EnsureVfxReference() || preset == null)
             return;
 
         currentPreset = preset;
+        Debug.Log($"FogSystem: Loaded FogPreset '{preset.name}' for area type {lastSyncedAreaType}.", this);
 
         // Spawn Settings
         vfx.SetFloat("SpawnSize", preset.spawnSize);
@@ -166,6 +184,29 @@ public class FogSystem : Singleton<FogSystem>
 
         firstUpdate = true;
         currentVelocity = Vector3.zero;
+    }
+
+    private bool EnsureVfxReference()
+    {
+        if (vfx == null)
+            vfx = GetComponent<VisualEffect>();
+
+        if (vfx == null)
+            vfx = GetComponentInChildren<VisualEffect>(true);
+
+        if (vfx != null)
+        {
+            loggedMissingVfxError = false;
+            return true;
+        }
+
+        if (!loggedMissingVfxError)
+        {
+            Debug.LogError("FogSystem: No VisualEffect found. Assign 'vfx' in inspector or place a VisualEffect on this object/child.", this);
+            loggedMissingVfxError = true;
+        }
+
+        return false;
     }
 
 }

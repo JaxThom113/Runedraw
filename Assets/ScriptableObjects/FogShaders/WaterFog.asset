@@ -17,17 +17,19 @@ MonoBehaviour:
   killRadius: 10
   singleBurstAmount: 20000
   smoothStepEdges: {x: 4, y: 5}
-  outRemap: {x: 0, y: 0}
-  noiseScale: 10
+  outRemap: {x: -1, y: 1}
+  noiseScale: 0.5
   noiseStrength: 4.52
   noiseSpeed: 1
   noiseTiling: {x: 1, y: -0.2}
-  noiseSmoothing: 0.73
+  noiseSmoothing: 0.78
   gradientStrength: 0.266
   simpleStrength: 0
   voronoiStrength: 1
+  fogTint: {r: 4, g: 4, b: 4, a: 1}
+  tintIntensity: 1
   fogTexture: {fileID: 2800000, guid: a2fd50de3f65ba945bb9699441bd2803, type: 3}
-  textureTiling: {x: -0.5, y: 0.5}
-  textureSpeed1: -0.05
-  textureSpeed2: 0.1
+  textureTiling: {x: -0.05, y: 0.01}
+  textureSpeed1: 0.01
+  textureSpeed2: 0.05
   gridSize: 25
