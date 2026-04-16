@@ -39,12 +39,15 @@ public class ShaderSystem : Singleton<ShaderSystem>
         ActionSystem.SubscribeReaction<SpellCastGA>(SpellCastPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<KillEnemyGA>(KillEnemyPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<NextAreaGA>(NextAreaPostReaction, ReactionTiming.POST);
+        SyncPassMaterialToAreaType();
     }
     void OnDisable()
     {
         ActionSystem.UnsubscribeReaction<SpellCastGA>(SpellCastPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<KillEnemyGA>(KillEnemyPostReaction, ReactionTiming.POST);
+        ActionSystem.UnsubscribeReaction<NextAreaGA>(NextAreaPostReaction, ReactionTiming.POST);
 
         DOTween.Kill(this, false);
         if (fullScreenPassFeature != null
@@ -73,11 +76,6 @@ public class ShaderSystem : Singleton<ShaderSystem>
             Debug.LogWarning($"{nameof(ShaderSystem)}: No {nameof(FullScreenPassRendererFeature)} found. Assign {nameof(forwardRendererData)} or {nameof(fullScreenPassFeature)}.", this);
     }
 
-    void Update()
-    {
-        SyncPassMaterialToAreaType();
-    }
-
     void SyncPassMaterialToAreaType()
     {
         if (fullScreenPassFeature == null || LevelSystem.Instance == null)
@@ -91,9 +89,18 @@ public class ShaderSystem : Singleton<ShaderSystem>
         if (selected == null)
             return;
 
+        if (areaType == lastSyncedAreaType && fullScreenPassFeature.passMaterial == selected)
+            return;
+
         lastSyncedAreaType = areaType;
         fullScreenPassFeature.passMaterial = selected;
-    } 
+    }
+
+    void NextAreaPostReaction(NextAreaGA nextAreaGA)
+    {
+        SyncPassMaterialToAreaType();
+    }
+
     public IEnumerator PlaySpellCastVfx(int spellIndex, bool isPlayer)
     {
         if (isPlayer)

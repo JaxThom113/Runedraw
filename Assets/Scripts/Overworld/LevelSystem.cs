@@ -57,6 +57,7 @@ public class LevelSystem: Singleton<LevelSystem>
 
     // current level and area
     private int currentLevel = 1;
+    public int CurrentLevel => currentLevel;
     public int currentArea = 1;
 
     /*
@@ -164,6 +165,7 @@ public class LevelSystem: Singleton<LevelSystem>
     {
         ActionSystem.AttachPerformer<LootCardGA>(LootBoxPerformer);
         ActionSystem.AttachPerformer<CampfireGA>(CampfirePerformer);
+        ActionSystem.AttachPerformer<NextAreaGA>(NextAreaPerformer);
         ActionSystem.SubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
     }
 
@@ -171,6 +173,7 @@ public class LevelSystem: Singleton<LevelSystem>
     {
         ActionSystem.DetachPerformer<LootCardGA>();
         ActionSystem.DetachPerformer<CampfireGA>();
+        ActionSystem.DetachPerformer<NextAreaGA>();
         ActionSystem.UnsubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
     }
 
@@ -202,9 +205,11 @@ public class LevelSystem: Singleton<LevelSystem>
         Level transition/coroutine
     */
 
-    public void NextLevel()
+    public void NextLevel(int requestedNextLevel = -1)
     { 
-      
+        if (requestedNextLevel > 0)
+            currentLevel = requestedNextLevel - 1;
+
         if (currentAreaType == 0)
         {
             currentAreaType = 1;
@@ -438,6 +443,12 @@ public class LevelSystem: Singleton<LevelSystem>
         AudioSystem.Instance.PlayMusic("overworld", true);
         campfireView.SetActive(false);
         CampfireInteractCompleted = true;
+    }
+
+    public IEnumerator NextAreaPerformer(NextAreaGA nextAreaGA)
+    {
+        NextLevel(nextAreaGA.nextLevel);
+        yield return null;
     }
 
     /*

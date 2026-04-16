@@ -1,171 +1,171 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.VFX;
-using DG.Tweening;
 
 public class FogSystem : Singleton<FogSystem>
 {
-    const string FogHideDistanceProperty = "HideDistance";
-    const string transform_Local = "transform_Local";
-    const string transform_World = "transform_World";
+    const string TransformLocalProperty = "transform_Local";
+    const string TransformWorldProperty = "transform_World";
 
     [Header("Debug")]
     public bool DisableFog = true;
 
-    [Header("Fog VFX (one active by area type)")]
-    public VisualEffect[] Fog;
-    // 0: Normal
-    // 1: Fire
-    // 2: Wind
-    // 3: Water
-    // 4: Earth
-    // 5: Final Boss
-    [Header("Hide distance tween")]
-    public float hideDistanceLowerBound = 0.3f;
-    public float hideDistanceUpperBound = 5.0f;
-    public float hideDistanceTweenDuration = 1f;
+    [Header("Fog VFX")]
+    [SerializeField] private VisualEffect vfx;
+
+    [Header("Fog Presets by Area Type")]
+    [Tooltip("Index guide: 0 Tutorial, 1 Neutral, 2 Fire, 3 Wind, 4 Water, 5 Earth, 6 Final Boss")]
+    public FogPreset[] FogPresets = new FogPreset[7];
 
     [Header("Fallback if LevelSystem has no playerMovement.viewTarget")]
     public Transform viewPoint;
 
-    [SerializeField] private VisualEffect currentFog;
+    // Mimics camera damping for smoother fog motion.
+    public float fogSmoothing = 0.2f;
+    private Vector3 currentFogPosition;
+    private Vector3 currentVelocity;
+
+    [SerializeField] private FogPreset currentPreset;
     private int lastSyncedAreaType = int.MinValue;
-    Tween fogHideDistanceTween;
+    private bool firstUpdate = true;
 
-    void Update()
+    private void OnEnable()
     {
-        // if (DisableFog)
-        // {
-        //     foreach (VisualEffect fog in Fog)
-        //     {
-        //         if (fog == null)
-        //             continue;
-        //         fog.gameObject.SetActive(false);
-        //     }
-        //     return;
-        // }
-        // else
-        // {
-        //     foreach (VisualEffect fog in Fog)
-        //     {
-        //         if (fog == null)
-        //             continue;
-        //         fog.gameObject.SetActive(true);
-        //     }
-        // }
-       // SyncFogToAreaType();
+        ActionSystem.SubscribeReaction<NextAreaGA>(NextAreaPostReaction, ReactionTiming.POST);
+        SyncFogToAreaType();
+    }
 
+    private void OnDisable()
+    {
+        ActionSystem.UnsubscribeReaction<NextAreaGA>(NextAreaPostReaction, ReactionTiming.POST);
+    }
 
-        if (currentFog == null)
+    private void Update()
+    {
+        if (vfx == null)
             return;
+
+        if (DisableFog)
+        {
+            if (vfx.gameObject.activeSelf)
+                vfx.gameObject.SetActive(false);
+            return;
+        }
+
+        if (!vfx.gameObject.activeSelf)
+            vfx.gameObject.SetActive(true);
 
         if (CameraTransitionSystem.Instance != null && CameraTransitionSystem.Instance.inBattleScene)
             return;
 
         Transform view = ResolveViewTransform();
-        if (view != null){    
-            currentFog.SetVector3(transform_World, view.position);
-             //Getting out of local space
-             Vector3 worldPos = view.position; 
-             Vector3 value = currentFog.transform.InverseTransformPoint(worldPos);
-             currentFog.SetVector3(transform_Local, value);
-        }
-           
+        if (view != null)
+            UpdateFogPosition(view);
     }
 
-    Transform ResolveViewTransform()
+    private void UpdateFogPosition(Transform view)
+    {
+        if (firstUpdate)
+        {
+            currentFogPosition = view.position;
+            vfx.SetVector3(TransformWorldProperty, currentFogPosition);
+            Vector3 localPos = vfx.transform.InverseTransformPoint(currentFogPosition);
+            vfx.SetVector3(TransformLocalProperty, localPos);
+            firstUpdate = false;
+            return;
+        }
+
+        Vector3 target = view.position;
+        currentFogPosition = Vector3.SmoothDamp(currentFogPosition, target, ref currentVelocity, fogSmoothing);
+        vfx.SetVector3(TransformWorldProperty, currentFogPosition);
+        Vector3 smoothedLocalPos = vfx.transform.InverseTransformPoint(currentFogPosition);
+        vfx.SetVector3(TransformLocalProperty, smoothedLocalPos);
+    }
+
+    private Transform ResolveViewTransform()
     {
         if (LevelSystem.Instance != null &&
             LevelSystem.Instance.playerMovement != null &&
             LevelSystem.Instance.playerMovement.viewTarget != null)
+        {
             return LevelSystem.Instance.playerMovement.viewTarget;
+        }
+
         return viewPoint;
     }
 
-    void SyncFogToAreaType()
+    private void NextAreaPostReaction(NextAreaGA nextAreaGA)
+    {
+        SyncFogToAreaType();
+    }
+
+    private void SyncFogToAreaType()
     {
         if (LevelSystem.Instance == null)
             return;
 
         int areaType = LevelSystem.Instance.CurrentAreaType;
-        if (areaType == lastSyncedAreaType && currentFog != null)
+        if (areaType == lastSyncedAreaType && currentPreset != null)
             return;
 
-        lastSyncedAreaType = areaType;
         ApplyAreaTypeFog(areaType);
     }
 
-    void ApplyAreaTypeFog(int areaType)
+    private void ApplyAreaTypeFog(int areaType)
     {
-        VisualEffect selected;
-        selected = Fog[areaType];
-        selected.gameObject.SetActive(true);
+        if (FogPresets == null || areaType < 0 || areaType >= FogPresets.Length)
+            return;
 
+        FogPreset selected = FogPresets[areaType];
         if (selected == null)
             return;
 
-        VisualEffect[] all = Fog;
-        foreach (VisualEffect fx in all)
-        {
-            if (fx == null)
-                continue;
-            bool on = fx == selected;
-            if (fx.gameObject.activeSelf != on)
-                fx.gameObject.SetActive(on);
-        }
-
-        currentFog = selected;
+        lastSyncedAreaType = areaType;
+        ApplyPreset(selected);
     }
 
-    void KillFogHideDistanceTween()
+    public void ApplyPreset(FogPreset preset)
     {
-        fogHideDistanceTween?.Kill();
-        fogHideDistanceTween = null;
-    }
-
-    public void TweenFogHideDistanceToUpper()
-    {
-        SyncFogToAreaType();
-        if (currentFog == null)
+        if (vfx == null || preset == null)
             return;
 
-        KillFogHideDistanceTween();
-        currentFog.SetFloat(FogHideDistanceProperty, hideDistanceLowerBound);
-        fogHideDistanceTween = DOTween.To(
-            () => currentFog.GetFloat(FogHideDistanceProperty),
-            x => currentFog.SetFloat(FogHideDistanceProperty, x),
-            hideDistanceUpperBound,
-            hideDistanceTweenDuration
-        ).SetTarget(this);
+        currentPreset = preset;
+
+        // Spawn Settings
+        vfx.SetFloat("SpawnSize", preset.spawnSize);
+        vfx.SetFloat("ParticleSize", preset.particleSize);
+        vfx.SetFloat("KillRadius", preset.killRadius);
+        vfx.SetFloat("SingleBurstAmount", preset.singleBurstAmount);
+
+        // Distance & Edges
+        vfx.SetVector2("SmoothStepEdges", preset.smoothStepEdges);
+        vfx.SetVector2("OutRemap", preset.outRemap);
+
+        // Procedural Noise
+        vfx.SetFloat("NoiseScale", preset.noiseScale);
+        vfx.SetFloat("NoiseStrength", preset.noiseStrength);
+        vfx.SetFloat("NoiseSpeed", preset.noiseSpeed);
+        vfx.SetVector2("NoiseTiling", preset.noiseTiling);
+        vfx.SetFloat("NoiseSmoothing", preset.noiseSmoothing);
+
+        // Elemental Weights
+        vfx.SetFloat("GradientStrength", preset.gradientStrength);
+        vfx.SetFloat("SimpleStrength", preset.simpleStrength);
+        vfx.SetFloat("VoronoiStrength", preset.voronoiStrength);
+        vfx.SetVector4("FogColor", preset.fogColor);
+        vfx.SetFloat("TintIntensity", preset.tintIntensity);
+
+        // Texture Displacement
+        if (preset.fogTexture != null)
+            vfx.SetTexture("FogTexture", preset.fogTexture);
+
+        vfx.SetVector2("TextureTiling", preset.textureTiling);
+        vfx.SetFloat("TextureSpeed1", preset.textureSpeed1);
+        vfx.SetFloat("TextureSpeed2", preset.textureSpeed2);
+        vfx.SetFloat("GridSize", preset.gridSize);
+
+        firstUpdate = true;
+        currentVelocity = Vector3.zero;
     }
 
-    public void BeginFogHideDistanceTweenToLower()
-    {
-        SyncFogToAreaType();
-        if (currentFog == null)
-            return;
-
-        KillFogHideDistanceTween();
-        fogHideDistanceTween = DOTween.To(
-            () => currentFog.GetFloat(FogHideDistanceProperty),
-            x => currentFog.SetFloat(FogHideDistanceProperty, x),
-            hideDistanceLowerBound,
-            hideDistanceTweenDuration
-        ).SetTarget(this);
-    }
-
-    public IEnumerator FogHideDistanceTweenToLowerRoutine()
-    {
-        BeginFogHideDistanceTweenToLower();
-        if (fogHideDistanceTween == null)
-            yield break;
-        yield return fogHideDistanceTween.WaitForCompletion();
-        fogHideDistanceTween = null;
-    }
-
-    void OnDestroy()
-    {
-        KillFogHideDistanceTween();
-    }
-    
 }
