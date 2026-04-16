@@ -152,7 +152,7 @@ public class FogSystem : Singleton<FogSystem>
         vfx.SetFloat("GradientStrength", preset.gradientStrength);
         vfx.SetFloat("SimpleStrength", preset.simpleStrength);
         vfx.SetFloat("VoronoiStrength", preset.voronoiStrength);
-        vfx.SetVector4("FogColor", preset.fogColor);
+        vfx.SetVector4("FogTint", preset.fogTint);
         vfx.SetFloat("TintIntensity", preset.tintIntensity);
 
         // Texture Displacement
