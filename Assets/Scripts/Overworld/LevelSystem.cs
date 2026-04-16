@@ -151,7 +151,8 @@ public class LevelSystem: Singleton<LevelSystem>
         }
         else if (chooseLevel && level == 6)
         {
-            TextAsset finalBossFile = Resources.Load<TextAsset>("Levels/FinalBoss");
+            TextAsset finalBossFile = Resources.Load<TextAsset>("Levels/FinalBoss"); 
+            createLevel.DrawLevel(finalBossFile);
             
         }
 
