@@ -20,8 +20,8 @@ MonoBehaviour:
   outRemap: {x: -1, y: 1}
   noiseScale: 0.5
   noiseStrength: 4.52
-  noiseSpeed: 1
-  noiseTiling: {x: 1, y: -0.2}
+  noiseSpeed: 2
+  noiseTiling: {x: -1, y: -0.2}
   noiseSmoothing: 0.78
   gradientStrength: 0.266
   simpleStrength: 0
@@ -29,7 +29,7 @@ MonoBehaviour:
   fogTint: {r: 4, g: 4, b: 4, a: 1}
   tintIntensity: 1
   fogTexture: {fileID: 2800000, guid: a2fd50de3f65ba945bb9699441bd2803, type: 3}
-  textureTiling: {x: -0.05, y: 0.01}
+  textureTiling: {x: 0.1, y: 0.1}
   textureSpeed1: 0.01
   textureSpeed2: 0.05
   gridSize: 25
