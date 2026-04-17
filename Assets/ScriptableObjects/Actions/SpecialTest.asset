@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ac92f85d5c46e74283afb23a91a686b, type: 3}
+  m_Name: SpecialTest
+  m_EditorClassIdentifier: 
+  cardName: Shuffle
+  cardCost: 1
+  cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
+  cardIcon: {fileID: 21300000, guid: 9f2d0082fe2ddfa458711b53e1582226, type: 3}
+  cardDescription: 
+  KeepBaseDescription: 0
+  cardElement: 0
+  cardElementIcon: {fileID: 21300000, guid: 7b6c5390240409445a46abfb97e084ec, type: 3}
+  cardType: 1
+  cardTypeIcon: {fileID: 21300000, guid: 2b2c7ca0be02a0c458126decde0e8f41, type: 3}
+  sound: {fileID: 8300000, guid: 6f48c24495cc4dc41bc3728706620384, type: 3}
+  IsUltimate: 0
+  effects:
+  - rid: 474873958242451456
+  references:
+    version: 2
+    RefIds:
+    - rid: 474873958242451456
+      type: {class: SpecialEffect, ns: , asm: Assembly-CSharp}
+      data:
+        effectSelf: 0
+        playWhenDrawnByEnemy: 0
+        specialSpriteMaterial: {fileID: 2100000, guid: 586fec4d0774a7c4cb2e1b7c782b0861, type: 2}
+        domainExpansionMaterial: {fileID: 2100000, guid: 2710845b3af5b4140a9f23d302b6ad91, type: 2}

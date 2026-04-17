@@ -27,6 +27,11 @@ public class CreateLevel : MonoBehaviour
     public GameObject wallCube; 
     public GameObject torch;
 
+    [Header("Environment References")]
+    public GameObject gridContainer;
+    public GameObject skybox;
+    public GameObject ground;
+
     // grid parameters
     private int gridSize;
     private List<List<int>> grid;
@@ -34,10 +39,10 @@ public class CreateLevel : MonoBehaviour
     private List<int> bottomEdge;
 
     // containers for different prefabs
-    private GameObject wallsContainer; 
+    public GameObject wallsContainer;
     private GameObject enemyContainer;
     private GameObject interactableContainer;
-    private GameObject torchContainer;
+    public GameObject torchContainer;
 
     // enemy bank
     private EnemyBank enemyBank;
@@ -255,12 +260,16 @@ public class CreateLevel : MonoBehaviour
         {
             for (int i = 0; i < bankRoot.transform.childCount; i++)
             {
-                Transform child = bankRoot.transform.GetChild(i);
+                Transform child = bankRoot.transform.GetChild(i);  
+                
+                
                 if (!child.gameObject.activeInHierarchy)
                     continue;
-                enemyBank = child.GetComponent<EnemyBank>();
+                enemyBank = child.GetComponent<EnemyBank>(); 
+  
                 if (enemyBank != null)
-                    break;
+                    break; 
+                
             }
             if (enemyBank == null)
                 enemyBank = bankRoot.GetComponent<EnemyBank>();
@@ -273,9 +282,10 @@ public class CreateLevel : MonoBehaviour
         }
 
         // set up spawn weights for enemies like Wizard Lizard
-        enemyBank.SetupSpawnWeights(); 
-        Debug.Log("Area: " + LevelSystem.Instance.currentArea);
-        Debug.Log("Enemy bank: " + enemyBank.name);
+        enemyBank.SetupSpawnWeights();  
+        Debug.Log("Enemy Bank: " + enemyBank.GetRandomEnemy().name);
+        //Debug.Log("Area: " + LevelSystem.Instance.currentArea);
+        //Debug.Log("Enemy bank: " + enemyBank.name);
         for (int y = 0; y < gridSize; y++)
         {
             for (int x = 0; x < gridSize; x++)
@@ -285,7 +295,7 @@ public class CreateLevel : MonoBehaviour
                     int flippedY = (gridSize - 1) - y; // convert from 4th quadrant -> 1st quadrant
                     Vector3Int gridPos = new Vector3Int(x, flippedY, 0);
                     Vector3 pos = floorTilemap.GetCellCenterWorld(gridPos);
-
+        
                     GameObject enemyObject = Instantiate(enemy, pos, Quaternion.identity, enemyContainer.transform);
                     enemyObject.GetComponent<OverworldEnemy>().UpdateEnemy(enemyBank.GetRandomEnemy());
                 }

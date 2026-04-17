@@ -13,6 +13,7 @@ public class LevelSystem: Singleton<LevelSystem>
     public bool interactables = true; 
     public bool chooseLevel = true; 
     public int level = 0; 
+    /// <summary>If true, clearing one floor in an area advances to the next area (same pacing as clearing floor 3). If false, play three floors per area.</summary>
     public bool isConvergence = true;
 
     [Header("Areas")]
@@ -50,12 +51,13 @@ public class LevelSystem: Singleton<LevelSystem>
     public TextMeshProUGUI windAreaNumber;
 
     [Header("Script References")]
-    public PlayerMovement playerMovement; 
+    public PlayerMovement playerMovement;
 
 
 
     // current level and area
     private int currentLevel = 1;
+    public int CurrentLevel => currentLevel;
     public int currentArea = 1;
 
     /*
@@ -70,6 +72,27 @@ public class LevelSystem: Singleton<LevelSystem>
     */
     private int currentAreaType;
     public int CurrentAreaType => currentAreaType;
+
+    public GameObject ActiveArea
+    {
+        get
+        {
+            switch (currentAreaType)
+            {
+                case 0: return tutorialLevel;
+                case 1: return neutralArea;
+                case 2: return fireArea;
+                case 3: return windArea;
+                case 4: return waterArea;
+                case 5: return earthArea;
+                case 6: return finalBossLevel;
+                default: return null;
+            }
+        }
+    }
+
+
+    [SerializeField] private List<int> overworldMap = new List<int>();
 
     // interactable view variables
     public bool LootSelectionCompleted { get; private set; } = false;
@@ -123,6 +146,16 @@ public class LevelSystem: Singleton<LevelSystem>
             currentLevel = 3;
         }
 
+        overworldMap.Clear();
+        overworldMap.AddRange(new[] { 1, 2, 3, 4, 5 });
+        for (int i = 4; i > 0; i--)
+        {
+            int j = UnityEngine.Random.Range(0, i + 1);
+            (overworldMap[i], overworldMap[j]) = (overworldMap[j], overworldMap[i]);
+        }
+        if (currentAreaType >= 1 && currentAreaType <= 5)
+            overworldMap.Remove(currentAreaType);
+
         SetActiveArea();
         SetActiveEnemyBank();
         // get reference to the CreateLevel script in the currently active area GameObject (in Board)
@@ -136,7 +169,8 @@ public class LevelSystem: Singleton<LevelSystem>
         }
         else if (chooseLevel && level == 6)
         {
-            TextAsset finalBossFile = Resources.Load<TextAsset>("Levels/FinalBoss");
+            TextAsset finalBossFile = Resources.Load<TextAsset>("Levels/FinalBoss"); 
+            createLevel.DrawLevel(finalBossFile);
             
         }
 
@@ -144,12 +178,17 @@ public class LevelSystem: Singleton<LevelSystem>
         StartCoroutine(ShowAreaIntro(currentAreaType));
 
         UpdateUI();
+
+        // Emit one startup area event so reactive systems (fog/shader) sync the initial area.
+        if (ActionSystem.Instance != null)
+            ActionSystem.Instance.Perform(new NextAreaGA(currentLevel, applyLevelTransition: false));
     }
 
     void OnEnable()
     {
         ActionSystem.AttachPerformer<LootCardGA>(LootBoxPerformer);
         ActionSystem.AttachPerformer<CampfireGA>(CampfirePerformer);
+        ActionSystem.AttachPerformer<NextAreaGA>(NextAreaPerformer);
         ActionSystem.SubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
     }
 
@@ -157,6 +196,7 @@ public class LevelSystem: Singleton<LevelSystem>
     {
         ActionSystem.DetachPerformer<LootCardGA>();
         ActionSystem.DetachPerformer<CampfireGA>();
+        ActionSystem.DetachPerformer<NextAreaGA>();
         ActionSystem.UnsubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
     }
 
@@ -188,19 +228,24 @@ public class LevelSystem: Singleton<LevelSystem>
         Level transition/coroutine
     */
 
-    public void NextLevel()
+    public void NextLevel(int requestedNextLevel = -1)
     { 
-      
+        if (requestedNextLevel > 0)
+            currentLevel = requestedNextLevel - 1;
+
         if (currentAreaType == 0)
         {
             currentAreaType = 1;
+            overworldMap.Remove(1);
 
             // start the actual game once completing tutorial level
             StartCoroutine(StartTransition(true));
         }
-        else if (currentLevel == 3 || isConvergence)
+        // Area "segment" complete: either finished floor 3, or Convergence mode (one floor per area then move on).
+        else if (currentLevel == 3 || (isConvergence))
         {
-            if (currentArea == 3 || isConvergence)
+            // Final boss only after the third overworld area — do NOT key this on isConvergence (that skipped areas incorrectly).
+            if (currentArea == 3)
             {
                 // transition to the final boss level 
                 currentAreaType = 6;
@@ -213,8 +258,16 @@ public class LevelSystem: Singleton<LevelSystem>
                 currentArea++;
                 currentLevel = 1;
 
-                // randomly select area type for next area
-                currentAreaType = UnityEngine.Random.Range(1, 6); 
+                if (overworldMap.Count == 0)
+                {
+                    Debug.LogError("LevelSystem: overworld map exhausted (no area types left).");
+                    currentAreaType = 1;
+                }
+                else
+                {
+                    currentAreaType = overworldMap[0];
+                    overworldMap.RemoveAt(0);
+                }
 
                 if (currentArea == 2)
                     GameData.Area2 = currentAreaType;
@@ -252,7 +305,14 @@ public class LevelSystem: Singleton<LevelSystem>
             createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
         }
 
-        if (file != null)
+        // Same-area transitions never refreshed createLevel; inactive boards also fail Exclude searches.
+        if (createLevel == null)
+            createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Include);
+        if (createLevel == null)
+        {
+            Debug.LogError("LevelSystem: CreateLevel not found in scene — assign a CreateLevel or ensure the active area's board is enabled.");
+        }
+        else if (file != null)
         {
             // transition to a custome level from a file
             createLevel.DrawLevel(file);
@@ -408,6 +468,13 @@ public class LevelSystem: Singleton<LevelSystem>
         CampfireInteractCompleted = true;
     }
 
+    public IEnumerator NextAreaPerformer(NextAreaGA nextAreaGA)
+    {
+        if (nextAreaGA.applyLevelTransition)
+            NextLevel(nextAreaGA.nextLevel);
+        yield return null;
+    }
+
     /*
         Helper functions
     */
@@ -437,17 +504,35 @@ public class LevelSystem: Singleton<LevelSystem>
 
     private void SetActiveEnemyBank()
     {
-        GameObject enemyBank;
-
-        // get the enemy bank of the currently active area
+        GameObject areaRoot = null;
         switch (currentAreaType)
         {
-            case 1: enemyBank = neutralArea.transform.Find("Enemy Bank").gameObject; break;
-            case 2: enemyBank = fireArea.transform.Find("Enemy Bank").gameObject; break;
-            case 3: enemyBank = windArea.transform.Find("Enemy Bank").gameObject; break;
-            case 4: enemyBank = waterArea.transform.Find("Enemy Bank").gameObject; break;
-            case 5: enemyBank = earthArea.transform.Find("Enemy Bank").gameObject; break;
+            case 1: areaRoot = neutralArea; break;
+            case 2: areaRoot = fireArea; break;
+            case 3: areaRoot = windArea; break;
+            case 4: areaRoot = waterArea; break;
+            case 5: areaRoot = earthArea; break;
             default: return;
+        }
+
+        if (areaRoot == null)
+        {
+            Debug.LogWarning("LevelSystem.SetActiveEnemyBank: area root is null for currentAreaType " + currentAreaType);
+            return;
+        }
+
+        Transform bankTransform = areaRoot.transform.Find("Enemy Bank");
+        if (bankTransform == null)
+        {
+            Debug.LogWarning("LevelSystem.SetActiveEnemyBank: no child named \"Enemy Bank\" under " + areaRoot.name + ". Check hierarchy spelling.");
+            return;
+        }
+
+        GameObject enemyBank = bankTransform.gameObject;
+        if (enemyBank.transform.childCount < 3)
+        {
+            Debug.LogWarning("LevelSystem.SetActiveEnemyBank: Enemy Bank needs 3 children (A1–A3). Found " + enemyBank.transform.childCount + ".");
+            return;
         }
 
         enemyBank.transform.GetChild(0).gameObject.SetActive(false); // A1 enemy bank

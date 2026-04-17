@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 084c4bf2fefa3f34ea0cac25882fbc97, type: 3}
+  m_Name: FireFog
+  m_EditorClassIdentifier: 
+  spawnSize: 120
+  particleSize: 5
+  killRadius: 8
+  singleBurstAmount: 20000
+  smoothStepEdges: {x: 3, y: 6}
+  outRemap: {x: -0.7, y: 0.7}
+  noiseScale: 1
+  noiseStrength: 2
+  noiseSpeed: 2.5
+  noiseTiling: {x: 1, y: -0.5}
+  noiseSmoothing: 0.55
+  gradientStrength: 0.266
+  simpleStrength: 0.189
+  voronoiStrength: 0.74
+  fogTint: {r: 2.828427, g: 0, b: 0, a: 1}
+  tintIntensity: 1
+  fogTexture: {fileID: 2800000, guid: 0f20064e95700a643b0006a02a9ab34c, type: 3}
+  textureTiling: {x: 1, y: 0.5}
+  textureSpeed1: -0.05
+  textureSpeed2: 0.1
+  gridSize: 25

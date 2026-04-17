@@ -117,7 +117,16 @@ public class InteractableCollision : MonoBehaviour
     public IEnumerator CampfireInteract()
     {
         yield return new WaitForSeconds(fadeInDuration);
-        ActionSystem.Instance.Perform(new CampfireGA(10)); // heal the player 10 HP
+
+        // Perform returns false while IsPerforming (see ActionSystem.Perform) — wait until Perform actually runs.
+        const float timeoutSec = 15f;
+        float deadline = Time.realtimeSinceStartup + timeoutSec;
+        while (ActionSystem.Instance != null && Time.realtimeSinceStartup < deadline)
+        {
+            if (!ActionSystem.Instance.IsPerforming && ActionSystem.Instance.Perform(new CampfireGA(10)))
+                break;
+            yield return null;
+        }
 
         yield return new WaitUntil(() => LevelSystem.Instance.CampfireInteractCompleted);
 

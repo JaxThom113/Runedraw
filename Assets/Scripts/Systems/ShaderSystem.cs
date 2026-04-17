@@ -7,15 +7,31 @@ using DG.Tweening;
 public class ShaderSystem : Singleton<ShaderSystem>
 {
     static readonly int TotalDistortionPropertyId = Shader.PropertyToID("_TotalDistortion");
-    const float TotalDistortionTweenDuration = 2f;
-    const float DistortionOutTarget = 0.7f;
+    static readonly int RangePropertyId = Shader.PropertyToID("_Range");
+    static readonly int TwirlStepPropertyId = Shader.PropertyToID("_TwirlStep");
+
+    [Header("Selected Material Distortion")]
+    [SerializeField] float selectedMaterialDistortionDuration = 2f;
+    [SerializeField] float selectedMaterialDistortionTarget = 0.7f;
+
+    [Header("Transition Material Distortion")]
+    [SerializeField] float transitionTweenDuration = 2f;
+    [SerializeField] float transitionMidDelay = 1f;
+    [SerializeField] float preTransitionDistortionClearDuration = 0.15f;
+    const float TransitionTotalDistortionForwardTarget = 1f;
+    const float TransitionTotalDistortionReverseTarget = 0f;
+    const float TransitionRangeForwardTarget = 0f;
+    const float TransitionRangeReverseTarget = 1f;
+    const float TransitionTwirlForwardTarget = 50f;
+    const float TransitionTwirlReverseTarget = 0f;
 
     [Tooltip("Forward Renderer Data asset that contains your Full Screen Pass Renderer Feature (e.g. Ultra_PipelineAsset_ForwardRenderer).")]
     [SerializeField] UniversalRendererData forwardRendererData;
 
     private FullScreenPassRendererFeature fullScreenPassFeature;
 
-    [SerializeField] Material[] screenSpaceMaterials = new Material[7]; 
+    [SerializeField] Material[] screenSpaceMaterials = new Material[7];
+    [SerializeField] Material transitionScreenSpaceMaterial;
 
     [SerializeField] VisualEffect playerSpellCast; 
     [SerializeField] VisualEffect enemySpellCast; 
@@ -34,24 +50,33 @@ public class ShaderSystem : Singleton<ShaderSystem>
     */
 
     int lastSyncedAreaType = int.MinValue;
+    Coroutine areaTransitionRoutine;
+    bool isAreaTransitionTweenRunning;
     void OnEnable()
     {
         ActionSystem.SubscribeReaction<SpellCastGA>(SpellCastPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
-        ActionSystem.SubscribeReaction<KillEnemyGA>(KillEnemyPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<LootCardGA>(LootCardPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<NextAreaGA>(NextAreaPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<NextAreaGA>(NextAreaPostReaction, ReactionTiming.POST);
+        SyncPassMaterialToAreaType();
     }
     void OnDisable()
     {
         ActionSystem.UnsubscribeReaction<SpellCastGA>(SpellCastPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
-        ActionSystem.UnsubscribeReaction<KillEnemyGA>(KillEnemyPostReaction, ReactionTiming.POST);
+        ActionSystem.UnsubscribeReaction<LootCardGA>(LootCardPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
+        ActionSystem.UnsubscribeReaction<NextAreaGA>(NextAreaPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<NextAreaGA>(NextAreaPostReaction, ReactionTiming.POST);
 
         DOTween.Kill(this, false);
         if (fullScreenPassFeature != null
             && fullScreenPassFeature.passMaterial != null
             && fullScreenPassFeature.passMaterial.HasProperty(TotalDistortionPropertyId))
         {
-            fullScreenPassFeature.passMaterial.SetFloat(TotalDistortionPropertyId, DistortionOutTarget);
+            fullScreenPassFeature.passMaterial.SetFloat(TotalDistortionPropertyId, selectedMaterialDistortionTarget);
         }
     }
     protected override void Awake()
@@ -73,11 +98,6 @@ public class ShaderSystem : Singleton<ShaderSystem>
             Debug.LogWarning($"{nameof(ShaderSystem)}: No {nameof(FullScreenPassRendererFeature)} found. Assign {nameof(forwardRendererData)} or {nameof(fullScreenPassFeature)}.", this);
     }
 
-    void Update()
-    {
-        SyncPassMaterialToAreaType();
-    }
-
     void SyncPassMaterialToAreaType()
     {
         if (fullScreenPassFeature == null || LevelSystem.Instance == null)
@@ -91,9 +111,134 @@ public class ShaderSystem : Singleton<ShaderSystem>
         if (selected == null)
             return;
 
+        if (areaType == lastSyncedAreaType && fullScreenPassFeature.passMaterial == selected)
+            return;
+
         lastSyncedAreaType = areaType;
         fullScreenPassFeature.passMaterial = selected;
-    } 
+    }
+
+    void NextAreaPostReaction(NextAreaGA nextAreaGA)
+    {
+        if (isAreaTransitionTweenRunning)
+            return;
+
+        SyncPassMaterialToAreaType();
+        TweenSelectedMaterialTotalDistortionIn();
+    }
+
+    void NextAreaPreReaction(NextAreaGA nextAreaGA)
+    {
+        if (areaTransitionRoutine != null)
+            StopCoroutine(areaTransitionRoutine);
+
+        areaTransitionRoutine = StartCoroutine(PlayAreaTransitionDistortion());
+    }
+
+    IEnumerator PlayAreaTransitionDistortion()
+    {
+        if (fullScreenPassFeature == null || transitionScreenSpaceMaterial == null)
+            yield break;
+
+        isAreaTransitionTweenRunning = true;
+        Material currentMaterial = fullScreenPassFeature.passMaterial;
+        if (currentMaterial != null && currentMaterial.HasProperty(TotalDistortionPropertyId))
+        {
+            DOTween.Kill(currentMaterial, false);
+            Tween preClearTween = DOTween.To(
+                () => currentMaterial.GetFloat(TotalDistortionPropertyId),
+                x => currentMaterial.SetFloat(TotalDistortionPropertyId, x),
+                0f,
+                preTransitionDistortionClearDuration
+            ).SetEase(Ease.OutSine).SetTarget(currentMaterial);
+            yield return preClearTween.WaitForCompletion();
+        }
+
+        DOTween.Kill(transitionScreenSpaceMaterial, false);
+        fullScreenPassFeature.passMaterial = transitionScreenSpaceMaterial;
+
+        transitionScreenSpaceMaterial.SetFloat(TotalDistortionPropertyId, TransitionTotalDistortionReverseTarget);
+        transitionScreenSpaceMaterial.SetFloat(RangePropertyId, TransitionRangeReverseTarget);
+        transitionScreenSpaceMaterial.SetFloat(TwirlStepPropertyId, TransitionTwirlReverseTarget);
+        //Distortion In
+        Sequence forward = DOTween.Sequence().SetTarget(transitionScreenSpaceMaterial);
+        forward.Join(DOTween.To(
+            () => transitionScreenSpaceMaterial.GetFloat(TotalDistortionPropertyId),
+            x => transitionScreenSpaceMaterial.SetFloat(TotalDistortionPropertyId, x),
+            TransitionTotalDistortionForwardTarget,
+            transitionTweenDuration
+        )); 
+        //Range In
+        forward.Join(DOTween.To(
+            () => transitionScreenSpaceMaterial.GetFloat(RangePropertyId),
+            x => transitionScreenSpaceMaterial.SetFloat(RangePropertyId, x),
+            TransitionRangeForwardTarget,
+            transitionTweenDuration
+        )); 
+        //Twirl Step In
+        forward.Join(DOTween.To(
+            () => transitionScreenSpaceMaterial.GetFloat(TwirlStepPropertyId),
+            x => transitionScreenSpaceMaterial.SetFloat(TwirlStepPropertyId, x),
+            TransitionTwirlForwardTarget,
+            transitionTweenDuration
+        )); 
+
+        //Step 1 complete
+        yield return forward.WaitForCompletion();
+
+        yield return new WaitForSeconds(transitionMidDelay);
+        //Distortion Out
+        Sequence reverse = DOTween.Sequence().SetTarget(transitionScreenSpaceMaterial);
+        reverse.Join(DOTween.To(
+            () => transitionScreenSpaceMaterial.GetFloat(TotalDistortionPropertyId),
+            x => transitionScreenSpaceMaterial.SetFloat(TotalDistortionPropertyId, x),
+            TransitionTotalDistortionReverseTarget,
+            transitionTweenDuration
+        )); 
+        //Range Out
+        reverse.Join(DOTween.To(
+            () => transitionScreenSpaceMaterial.GetFloat(RangePropertyId),
+            x => transitionScreenSpaceMaterial.SetFloat(RangePropertyId, x),
+            TransitionRangeReverseTarget,
+            transitionTweenDuration
+        )); 
+        //Twirl Step Out
+        reverse.Join(DOTween.To(
+            () => transitionScreenSpaceMaterial.GetFloat(TwirlStepPropertyId),
+            x => transitionScreenSpaceMaterial.SetFloat(TwirlStepPropertyId, x),
+            TransitionTwirlReverseTarget,
+            transitionTweenDuration
+        ));
+        //Step 2 complete
+        yield return reverse.WaitForCompletion();
+
+        isAreaTransitionTweenRunning = false;
+        areaTransitionRoutine = null; 
+        //Sync the material to the area type
+        SyncPassMaterialToAreaType();
+        //Tween the selected material total distortion in 
+        TweenSelectedMaterialTotalDistortionIn();
+    }
+
+    void TweenSelectedMaterialTotalDistortionIn()
+    {
+        if (fullScreenPassFeature == null || fullScreenPassFeature.passMaterial == null)
+            return;
+
+        Material selectedMaterial = fullScreenPassFeature.passMaterial;
+        if (!selectedMaterial.HasProperty(TotalDistortionPropertyId))
+            return;
+
+        DOTween.Kill(selectedMaterial, false);
+        selectedMaterial.SetFloat(TotalDistortionPropertyId, 0f);
+        DOTween.To(
+            () => selectedMaterial.GetFloat(TotalDistortionPropertyId),
+            x => selectedMaterial.SetFloat(TotalDistortionPropertyId, x),
+            selectedMaterialDistortionTarget,
+            selectedMaterialDistortionDuration
+        ).SetEase(Ease.InOutSine).SetTarget(selectedMaterial);
+    }
+
     public IEnumerator PlaySpellCastVfx(int spellIndex, bool isPlayer)
     {
         if (isPlayer)
@@ -140,13 +285,13 @@ public class ShaderSystem : Singleton<ShaderSystem>
             return;
 
         Material material = fullScreenPassFeature.passMaterial;
-        DOTween.Kill(this, false);
+        DOTween.Kill(material, false);
         DOTween.To(
             () => material.GetFloat(TotalDistortionPropertyId),
             x => material.SetFloat(TotalDistortionPropertyId, x),
             0f,
-            TotalDistortionTweenDuration
-        ).SetEase(Ease.InOutSine).SetTarget(this);
+            selectedMaterialDistortionDuration
+        ).SetEase(Ease.InOutSine).SetTarget(material);
     }
 
     void DistortionOut()
@@ -161,16 +306,19 @@ public class ShaderSystem : Singleton<ShaderSystem>
             return;
 
         Material material = fullScreenPassFeature.passMaterial;
-        DOTween.Kill(this, false);
+        DOTween.Kill(material, false);
         DOTween.To(
             () => material.GetFloat(TotalDistortionPropertyId),
             x => material.SetFloat(TotalDistortionPropertyId, x),
-            DistortionOutTarget,
-            TotalDistortionTweenDuration
-        ).SetEase(Ease.InOutSine).SetTarget(this);
+            selectedMaterialDistortionTarget,
+            selectedMaterialDistortionDuration
+        ).SetEase(Ease.InOutSine).SetTarget(material);
     }
-
-    void KillEnemyPostReaction(KillEnemyGA killEnemyGA)
+    void LootCardPreReaction(LootCardGA lootCardGA)
+    {
+        DistortionIn();
+    }
+    void LootCardPickupPostReaction(LootCardPickupGA lootCardPickupGA)
     {
         DistortionOut();
     }

@@ -25,7 +25,8 @@ public class CardSO : ScriptableObject
     [SerializeField] public int cardCost; 
     [SerializeField] public Sprite cardBorder; 
     [SerializeField] public Sprite cardIcon; 
-    [SerializeField] public string cardDescription;  
+    [SerializeField] public string cardDescription;
+    [SerializeField] public bool KeepBaseDescription;
     [SerializeField] public Element cardElement;  
     [SerializeField] public Sprite cardElementIcon;  
     [SerializeField] public CardType cardType; 

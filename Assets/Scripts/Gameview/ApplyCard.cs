@@ -40,6 +40,8 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public bool LootCard = false;
     public bool PickedUpCard = false;
     public bool InventoryCard = false;
+
+    Coroutine lootPickupWaitRoutine;
     public bool IsEnemyCard = false;
     public bool LootFromEnemy = false;
     //ALL TYPES MUST BE THE SAME
@@ -108,12 +110,14 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public void RefreshDescriptionText(int playerVunerableBonus, int enemyVunerableBonus)
     {
         if (card == null || cardDescriptionText == null) return;
-        string description = card.data != null ? card.data.cardDescription : "";
         int displayAdditionalDamage = IsEnemyCard ? playerVunerableBonus : enemyVunerableBonus;
+        string description = card.data != null ? card.data.cardDescription : "";
         foreach (Effect effect in card.effects)
         {
             effect.isPlayer = !IsEnemyCard;
             effect.displayAdditionalDamage = displayAdditionalDamage;
+            if (card.KeepBaseDescription)
+                continue;
             if (!string.IsNullOrWhiteSpace(description))
                 description += "\n";
             description += effect.GetDescription();
@@ -129,6 +133,42 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     {
         yield return new WaitForSeconds(0.5f);
         //tweening = false;
+    }
+
+    /// Loot pickup calls Perform while the action system may still be busy (no error if ignored — see ActionSystem.Perform).
+    /// Wait until idle, then run the same deck add + pickup flow 
+
+    private IEnumerator WaitAndPerformLootPickup()
+    {
+        try
+        {
+            const float timeoutSec = 15f;
+            float deadline = Time.realtimeSinceStartup + timeoutSec;
+            while (ActionSystem.Instance != null && ActionSystem.Instance.IsPerforming && Time.realtimeSinceStartup < deadline)
+                yield return null;
+
+            if (ActionSystem.Instance == null)
+                yield break;
+
+            if (ActionSystem.Instance.IsPerforming)
+            {
+                Debug.LogWarning("Loot pickup: action system stayed busy past timeout; try again.");
+                yield break;
+            }
+
+            AudioSystem.Instance.PlaySFX("click");
+            PlayerSystem.Instance.player.AddCardToDeck(card.data);
+            PickedUpCard = true;
+            if (!ActionSystem.Instance.Perform(new LootCardPickupGA(LootFromEnemy)))
+            {
+                PickedUpCard = false;
+                Debug.LogWarning("Loot pickup: Perform was skipped (action system became busy between wait and Perform). Loot UI may stay open; try again.");
+            }
+        }
+        finally
+        {
+            lootPickupWaitRoutine = null;
+        }
     }
     void Start()
     {
@@ -154,11 +194,13 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     } 
     public void OnPointerDown(PointerEventData eventData)
     { 
-        if(LootCard && !PickedUpCard){
-            PickedUpCard = true;
-            AudioSystem.Instance.PlaySFX("click");
-            PlayerSystem.Instance.player.AddCardToDeck(card.data); 
-            ActionSystem.Instance.Perform(new LootCardPickupGA(LootFromEnemy));
+      
+        if (LootCard && !PickedUpCard)
+        {
+            if (lootPickupWaitRoutine != null)
+                return; 
+            //Adds delay so action system completes before getting into lootcardpickuptiming
+            lootPickupWaitRoutine = StartCoroutine(WaitAndPerformLootPickup());
             return;
         }
         if(InventoryCard) return; 

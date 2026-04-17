@@ -45,7 +45,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Alpha: 2.1
+    - _Alpha: 0.88
     - _QueueControl: 0
     - _QueueOffset: 0
     - _TornadoPower: 1.5
@@ -57,8 +57,8 @@ Material:
     - _WaveNoiseScale: 106.26
     m_Colors:
     - _Color: {r: 0.65837497, g: 0.33716366, b: 0.0047769533, a: 1}
-    - _Speed1: {r: 0.05, g: -0.05, b: 0, a: 0}
-    - _Speed2: {r: -0.05, g: 0.05, b: 0, a: 0}
+    - _Speed1: {r: 0.1, g: 0.05, b: 0, a: 0}
+    - _Speed2: {r: 0.5, g: 0.6, b: 0, a: 0}
     - _Tiling: {r: 20, g: 10, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &2656403806396626817

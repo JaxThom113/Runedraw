@@ -11,8 +11,13 @@ public class LoadingSplash : MonoBehaviour
     // assign this variable before switching scenes to Splash
     public static string targetScene;
 
+    [Header("UI Elements")]
     public Slider progressBar;
-    public TextMeshProUGUI progressText;
+    public TextMeshProUGUI progressText;   
+  
+
+    [Header("Optimization")] 
+    public ShaderVariantCollection shaderVariants;
 
     void Start()
     {
@@ -36,13 +41,18 @@ public class LoadingSplash : MonoBehaviour
                 progressBar.value = progress;
 
             if (progressText != null)
-                progressText.text = $"{(progress * 100f):0}%";
+                progressText.text = $"Loading Scene... {(progress * 100f):0}%";
 
             // once fully loaded, activate the scene
             if (operation.progress >= 0.9f)
-            {
+            { 
+                if (progressText != null)
+                    progressText.text = $"Optimizing Shaders... {(progress * 100f):0}%"; 
+                if (shaderVariants != null)
+                    shaderVariants.WarmUp();
                 // have a small delay so player sees 100%
-                yield return new WaitForSeconds(0.5f);
+                yield return new WaitForSeconds(0.8f); 
+                Camera.main.gameObject.SetActive(false); 
                 operation.allowSceneActivation = true;
             }
 

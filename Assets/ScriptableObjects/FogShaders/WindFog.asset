@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 084c4bf2fefa3f34ea0cac25882fbc97, type: 3}
+  m_Name: WindFog
+  m_EditorClassIdentifier: 
+  spawnSize: 120
+  particleSize: 5
+  killRadius: 5
+  singleBurstAmount: 20000
+  smoothStepEdges: {x: 3, y: 6}
+  outRemap: {x: -1, y: 0.3}
+  noiseScale: 0.2
+  noiseStrength: 6.79
+  noiseSpeed: 3
+  noiseTiling: {x: 1, y: -0.2}
+  noiseSmoothing: 0.5
+  gradientStrength: 0
+  simpleStrength: 0
+  voronoiStrength: 1
+  fogTint: {r: 0.4125427, g: 0.92158204, b: 0.4341537, a: 1}
+  tintIntensity: 1
+  fogTexture: {fileID: 2800000, guid: 2516c42ca8f57c34093d2ca602f3166c, type: 3}
+  textureTiling: {x: 0.15, y: 0.15}
+  textureSpeed1: 0.1
+  textureSpeed2: -0.2
+  gridSize: 25

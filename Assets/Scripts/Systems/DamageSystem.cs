@@ -40,8 +40,7 @@ public class DamageSystem : Singleton<DamageSystem>
             if(enemyView.currentHealth <= 0) {   
                
                 killQueued = true;
-                KillEnemyGA killEnemyGA = new(enemyView);  
-                CameraTransitionSystem.Instance.GameViewContainer.SetActive(false);
+                KillEnemyGA killEnemyGA = new(enemyView);
                 ActionSystem.Instance.AddReaction(killEnemyGA);
             }
         } else { 

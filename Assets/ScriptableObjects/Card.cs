@@ -16,6 +16,7 @@ public class Card
     public List<Effect> effects => data.effects;
     public AudioClip sound => data.sound;
     public bool IsUltimate => data != null && data.IsUltimate;
+    public bool KeepBaseDescription => data != null && data.KeepBaseDescription;
     //public Sprite cardTypeIcon => data.cardTypeIcon;
     //public Sprite cardElementIcon => data.cardElementIcon;
     public string cardDescription {get; private set; } 
@@ -34,6 +35,12 @@ public class Card
 
     void DescribeCard()
     { 
+        if (data != null && data.KeepBaseDescription)
+        {
+            cardDescription = data.cardDescription ?? "";
+            return;
+        }
+
         cardDescription = "";
 
         if(effects != null)
