@@ -18,11 +18,27 @@ MonoBehaviour:
   entityDialogue: {fileID: 11400000, guid: e916a363ec892884898533dcd663f000, type: 2}
   enemyDeck:
   - enemyHand:
-    - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
-    - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
+    - {fileID: 11400000, guid: b889d83e178372e44b4f8d02f14da4e7, type: 2}
+  - enemyHand:
     - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
     - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
   - enemyHand:
-    - {fileID: 11400000, guid: b889d83e178372e44b4f8d02f14da4e7, type: 2}
-  ultimateCard: {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
+    - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
+    - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
+  - enemyHand:
+    - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
+    - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
+  - enemyHand:
+    - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
+    - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
+  - enemyHand:
+    - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
+    - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
+  - enemyHand:
+    - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
+    - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
+  - enemyHand:
+    - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
+    - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
+  ultimateCard: {fileID: 11400000, guid: b889d83e178372e44b4f8d02f14da4e7, type: 2}
   enemyMaterial: {fileID: 2100000, guid: ed273731ef2e98942a0eb4f44882819d, type: 2}

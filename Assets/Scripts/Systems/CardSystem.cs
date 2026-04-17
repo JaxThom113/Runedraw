@@ -135,9 +135,12 @@ public class CardSystem : Singleton<CardSystem>
         StartCoroutine(DisableCardCanvasForPlay());
         // Status effects first and before discard tween so stacks/performers are not delayed by animation
         // or by other effects listed later on the card (e.g. draw before stun on the same CardSO). 
-         
+
         if (playCardGA.card.data is AttactionSO)
-            ActionSystem.Instance.AddReaction(new SpellCastGA(playCardGA.card.GetElementIndex(), true));
+        {
+            bool hasSpecial = playCardGA.card.effects != null && playCardGA.card.effects.Exists(e => e is SpecialEffect);
+            ActionSystem.Instance.AddReaction(new SpellCastGA(playCardGA.card.GetElementIndex(), true, hasSpecial));
+        }
         foreach (var effect in playCardGA.card.effects)
         {
             if (effect is StatusEffect statusEffect)

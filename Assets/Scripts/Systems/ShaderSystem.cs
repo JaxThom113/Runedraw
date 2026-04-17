@@ -39,6 +39,8 @@ public class ShaderSystem : Singleton<ShaderSystem>
     [SerializeField] float spawnRandom = 0.5f;
 
     public float spellCastDelay = 0.2f;
+    [Tooltip("Extra delay added before the spellcast VFX when the card has a SpecialEffect, giving the domain expansion time to land.")]
+    public float specialEffectSpellCastExtraDelay = 1f;
     /*
             0 = Tutorial level
             1 = neutral
@@ -239,8 +241,11 @@ public class ShaderSystem : Singleton<ShaderSystem>
         ).SetEase(Ease.InOutSine).SetTarget(selectedMaterial);
     }
 
-    public IEnumerator PlaySpellCastVfx(int spellIndex, bool isPlayer)
+    public IEnumerator PlaySpellCastVfx(int spellIndex, bool isPlayer, bool hasSpecialEffect = false)
     {
+        if (hasSpecialEffect && specialEffectSpellCastExtraDelay > 0f)
+            yield return new WaitForSeconds(specialEffectSpellCastExtraDelay);
+
         if (isPlayer)
         { 
             StartCoroutine(SpawnPositionRandomizer(playerSpellCast));
@@ -265,7 +270,7 @@ public class ShaderSystem : Singleton<ShaderSystem>
 
     void SpellCastPreReaction(SpellCastGA spellCastGA)
     {
-        StartCoroutine(PlaySpellCastVfx(spellCastGA.spellIndex, spellCastGA.isPlayer));
+        StartCoroutine(PlaySpellCastVfx(spellCastGA.spellIndex, spellCastGA.isPlayer, spellCastGA.hasSpecialEffect));
     }
 
     void StartRoundPreReaction(StartRoundGA startRoundGA)

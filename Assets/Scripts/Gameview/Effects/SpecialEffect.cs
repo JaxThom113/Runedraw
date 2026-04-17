@@ -6,10 +6,11 @@ public class SpecialEffect : Effect
 {
     [SerializeField] public Material specialSpriteMaterial;
     [SerializeField] public Material domainExpansionMaterial;
+    [SerializeField] public bool Boss = false;
 
     public override GameAction GetGameAction()
     {
-        return new SpecialGA(specialSpriteMaterial, domainExpansionMaterial);
+        return new SpecialGA(specialSpriteMaterial, domainExpansionMaterial, isPlayer, Boss);
     }
 
     public override string GetDescription()

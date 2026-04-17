@@ -18,7 +18,9 @@ MonoBehaviour:
   entityDialogue: {fileID: 11400000, guid: c4c7ee15bad95d9408942327885ab73e, type: 2}
   enemyDeck:
   - enemyHand:
-    - {fileID: 11400000, guid: 9cc4d4477c433a44ab3881e9f6e69c66, type: 2}
+    - {fileID: 11400000, guid: 99b0a958da40c4045a1aed9a97d28af4, type: 2}
+    - {fileID: 11400000, guid: 99b0a958da40c4045a1aed9a97d28af4, type: 2}
+    - {fileID: 11400000, guid: 99b0a958da40c4045a1aed9a97d28af4, type: 2}
   - enemyHand:
     - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
     - {fileID: 11400000, guid: 49ced29c338d02c4480d7a93ff94cdd3, type: 2}
@@ -27,6 +29,8 @@ MonoBehaviour:
   - enemyHand:
     - {fileID: 11400000, guid: d2a9fdd0102bf71479ded96d4b5213ac, type: 2}
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
+  - enemyHand:
+    - {fileID: 11400000, guid: c963ea54bccacc24db84f016fe62b95d, type: 2}
   - enemyHand:
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}

@@ -34,6 +34,10 @@ public class SpecialSystem : Singleton<SpecialSystem>
     private Material domainExpansionRuntimeMaterial;
     private Tween domainExpansionScaleTween;
 
+    // Remember who cast the last special so the reverse on KillEnemyGA skips the sprite work
+    // when the player cast it (the enemy's own sprite, if any, must stay untouched).
+    private bool lastSpecialCastByPlayer;
+
     private GameObject cachedGridContainer;
     private GameObject cachedSkybox;
     private GameObject cachedGround;
@@ -54,25 +58,11 @@ public class SpecialSystem : Singleton<SpecialSystem>
 
     IEnumerator SpecialEffectPerformer(SpecialGA specialGA)
     {
-        CreateLevel activeCreateLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
-        cachedGridContainer = activeCreateLevel != null ? activeCreateLevel.gridContainer : null;
-        cachedSkybox = activeCreateLevel != null ? activeCreateLevel.skybox : null;
-        cachedGround = activeCreateLevel != null ? activeCreateLevel.ground : null;
-        cachedWallsContainer = activeCreateLevel != null ? activeCreateLevel.wallsContainer : null;
-        cachedTorchContainer = activeCreateLevel != null ? activeCreateLevel.torchContainer : null;
-
         OverworldEnemy overworldEnemy = EnemySystem.Instance != null ? EnemySystem.Instance.overworldEnemy : null;
         if (overworldEnemy == null)
             yield break;
 
-        GameObject specialSprite = overworldEnemy.SpecialSprite;
-        if (specialSprite != null)
-        {
-            specialSprite.SetActive(true);
-            specialSpriteRuntimeMaterial = ApplyMaterialInstance(specialSprite, specialGA.specialSpriteMaterial, specialSpriteRuntimeMaterial);
-            FadeInMaterial(specialSpriteRuntimeMaterial, specialSpriteFadeInDuration);
-            TweenSpeed(specialSpriteRuntimeMaterial, specialSpriteTargetSpeed, specialSpriteSpeedTweenDuration);
-        }
+        lastSpecialCastByPlayer = specialGA.isPlayer;
 
         GameObject domainExpansion = overworldEnemy.DomainExpansion;
         if (domainExpansion != null)
@@ -84,6 +74,34 @@ public class SpecialSystem : Singleton<SpecialSystem>
             TweenSpeed(domainExpansionRuntimeMaterial, domainExpansionTargetSpeed, domainExpansionSpeedTweenDuration);
         }
 
+        // Enemy specials always tween the SpecialSprite in. Player specials deliberately leave
+        // the enemy's SpecialSprite alone (its existing material/state must stay intact).
+        if (!specialGA.isPlayer)
+        {
+            GameObject specialSprite = overworldEnemy.SpecialSprite;
+            if (specialSprite != null)
+            {
+                specialSprite.SetActive(true);
+                specialSpriteRuntimeMaterial = ApplyMaterialInstance(specialSprite, specialGA.specialSpriteMaterial, specialSpriteRuntimeMaterial);
+                FadeInMaterial(specialSpriteRuntimeMaterial, specialSpriteFadeInDuration);
+                TweenSpeed(specialSpriteRuntimeMaterial, specialSpriteTargetSpeed, specialSpriteSpeedTweenDuration);
+            }
+
+            // Boss specials additionally fade the regular enemy sprite out and fully restore health.
+            if (specialGA.isBoss)
+            {
+                overworldEnemy.FadeOut();
+                RestoreEnemyHealthToMax();
+            }
+        }
+
+        CreateLevel activeCreateLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
+        cachedGridContainer = activeCreateLevel != null ? activeCreateLevel.gridContainer : null;
+        cachedSkybox = activeCreateLevel != null ? activeCreateLevel.skybox : null;
+        cachedGround = activeCreateLevel != null ? activeCreateLevel.ground : null;
+        cachedWallsContainer = activeCreateLevel != null ? activeCreateLevel.wallsContainer : null;
+        cachedTorchContainer = activeCreateLevel != null ? activeCreateLevel.torchContainer : null;
+
         yield return new WaitForSeconds(environmentDeactivateDelay);
 
         if (cachedGridContainer != null) cachedGridContainer.SetActive(false);
@@ -91,6 +109,12 @@ public class SpecialSystem : Singleton<SpecialSystem>
         if (cachedGround != null) cachedGround.SetActive(false);
         if (cachedWallsContainer != null) cachedWallsContainer.SetActive(false);
         if (cachedTorchContainer != null) cachedTorchContainer.SetActive(false);
+
+        // Block subsequent effects (damage, status, etc.) until the special's tweens have settled.
+        float totalSpecialDuration = Mathf.Max(domainExpansionScaleInDuration, specialSpriteFadeInDuration);
+        float remainingWait = totalSpecialDuration - environmentDeactivateDelay;
+        if (remainingWait > 0f)
+            yield return new WaitForSeconds(remainingWait);
     }
 
     public void FadeOutSpecial()
@@ -105,7 +129,9 @@ public class SpecialSystem : Singleton<SpecialSystem>
         if (overworldEnemy == null)
             return;
 
-        if (specialSpriteRuntimeMaterial != null)
+        // Mirror the performer: skip sprite teardown when the player was the caster so the
+        // enemy's own sprite state is not disturbed.
+        if (!lastSpecialCastByPlayer && specialSpriteRuntimeMaterial != null)
         {
             FadeOutMaterial(specialSpriteRuntimeMaterial, specialSpriteFadeOutDuration, overworldEnemy.SpecialSprite);
             TweenSpeed(specialSpriteRuntimeMaterial, 0f, specialSpriteSpeedTweenDuration);
@@ -184,6 +210,16 @@ public class SpecialSystem : Singleton<SpecialSystem>
         domainExpansionScaleTween = target.transform.DOScale(targetScale, duration).SetEase(Ease.InOutSine);
         if (deactivateOnComplete)
             domainExpansionScaleTween.OnComplete(() => target.SetActive(false));
+    }
+
+    private void RestoreEnemyHealthToMax()
+    {
+        EnemyView enemyView = DamageSystem.Instance != null ? DamageSystem.Instance.enemyView : null;
+        if (enemyView == null || enemyView.maxHealth <= 0)
+            return;
+
+        enemyView.currentHealth = enemyView.maxHealth;
+        enemyView.UpdateHealthDisplay();
     }
 
     private void TweenSpeed(Material material, float targetSpeed, float duration)

@@ -88,7 +88,10 @@ public class EnemySystem : Singleton<EnemySystem>
 
             Card card = shownCards[i];
             if (card.data is AttactionSO)
-                 ShaderSystem.Instance.StartCoroutine(ShaderSystem.Instance.PlaySpellCastVfx(card.GetElementIndex(), false));
+            {
+                bool hasSpecial = card.effects != null && card.effects.Exists(e => e is SpecialEffect);
+                ShaderSystem.Instance.StartCoroutine(ShaderSystem.Instance.PlaySpellCastVfx(card.GetElementIndex(), false, hasSpecial));
+            }
 
             foreach (var effect in card.effects)
             {
