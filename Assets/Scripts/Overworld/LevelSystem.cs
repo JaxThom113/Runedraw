@@ -51,7 +51,7 @@ public class LevelSystem: Singleton<LevelSystem>
     public TextMeshProUGUI windAreaNumber;
 
     [Header("Script References")]
-    public PlayerMovement playerMovement; 
+    public PlayerMovement playerMovement;
 
 
 
@@ -72,6 +72,24 @@ public class LevelSystem: Singleton<LevelSystem>
     */
     private int currentAreaType;
     public int CurrentAreaType => currentAreaType;
+
+    public GameObject ActiveArea
+    {
+        get
+        {
+            switch (currentAreaType)
+            {
+                case 0: return tutorialLevel;
+                case 1: return neutralArea;
+                case 2: return fireArea;
+                case 3: return windArea;
+                case 4: return waterArea;
+                case 5: return earthArea;
+                case 6: return finalBossLevel;
+                default: return null;
+            }
+        }
+    }
 
 
     [SerializeField] private List<int> overworldMap = new List<int>();

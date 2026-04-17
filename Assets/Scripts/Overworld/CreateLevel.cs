@@ -27,6 +27,11 @@ public class CreateLevel : MonoBehaviour
     public GameObject wallCube; 
     public GameObject torch;
 
+    [Header("Environment References")]
+    public GameObject gridContainer;
+    public GameObject skybox;
+    public GameObject ground;
+
     // grid parameters
     private int gridSize;
     private List<List<int>> grid;
@@ -34,10 +39,10 @@ public class CreateLevel : MonoBehaviour
     private List<int> bottomEdge;
 
     // containers for different prefabs
-    private GameObject wallsContainer; 
+    public GameObject wallsContainer;
     private GameObject enemyContainer;
     private GameObject interactableContainer;
-    private GameObject torchContainer;
+    public GameObject torchContainer;
 
     // enemy bank
     private EnemyBank enemyBank;

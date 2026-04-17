@@ -56,7 +56,8 @@ public class ShaderSystem : Singleton<ShaderSystem>
     {
         ActionSystem.SubscribeReaction<SpellCastGA>(SpellCastPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
-        ActionSystem.SubscribeReaction<KillEnemyGA>(KillEnemyPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<LootCardGA>(LootCardPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
         ActionSystem.SubscribeReaction<NextAreaGA>(NextAreaPreReaction, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<NextAreaGA>(NextAreaPostReaction, ReactionTiming.POST);
         SyncPassMaterialToAreaType();
@@ -65,7 +66,8 @@ public class ShaderSystem : Singleton<ShaderSystem>
     {
         ActionSystem.UnsubscribeReaction<SpellCastGA>(SpellCastPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
-        ActionSystem.UnsubscribeReaction<KillEnemyGA>(KillEnemyPostReaction, ReactionTiming.POST);
+        ActionSystem.UnsubscribeReaction<LootCardGA>(LootCardPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
         ActionSystem.UnsubscribeReaction<NextAreaGA>(NextAreaPreReaction, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<NextAreaGA>(NextAreaPostReaction, ReactionTiming.POST);
 
@@ -312,8 +314,11 @@ public class ShaderSystem : Singleton<ShaderSystem>
             selectedMaterialDistortionDuration
         ).SetEase(Ease.InOutSine).SetTarget(material);
     }
-
-    void KillEnemyPostReaction(KillEnemyGA killEnemyGA)
+    void LootCardPreReaction(LootCardGA lootCardGA)
+    {
+        DistortionIn();
+    }
+    void LootCardPickupPostReaction(LootCardPickupGA lootCardPickupGA)
     {
         DistortionOut();
     }

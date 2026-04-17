@@ -18,13 +18,15 @@ public class OverworldEnemy : MonoBehaviour
     public GameObject poisonParticles;
     [SerializeField] private float fadeInDuration = 3f;
     [SerializeField] private float fadeOutDuration = 3f;
+    
     [Header("Status Visuals")]
     public string poisonMaterialProperty = "_PoisonAmount";
     [SerializeField] private float poisonTweenDuration = 0.35f;
     [SerializeField, Range(0f, 1f)] private float maxPoisonAmount = 0.3f;
     [SerializeField, Range(0.05f, 1f)] private float stunMinAlpha = 0.25f;
     [SerializeField] private float stunPulseDuration = 0.35f;
-    [SerializeField] private float vulnerableScaleMultiplier = 0.5f;
+    [SerializeField] private float vulnerableScaleMultiplier = 0.5f; 
+
     public Material material;  
     public EnemySO enemyData;    
     private Material runtimeMaterial;
@@ -36,7 +38,11 @@ public class OverworldEnemy : MonoBehaviour
     private float currentPoisonAmount;
     private int colorPropertyId = -1;
     private Tween stunTween;
-    private Tween poisonTween;
+    private Tween poisonTween; 
+
+    [Header("Special Visuals")]     
+    public GameObject SpecialSprite; 
+    public GameObject DomainExpansion;
 
     public void UpdateEnemy(EnemySO enemyData)
     { 
@@ -91,10 +97,7 @@ public class OverworldEnemy : MonoBehaviour
         ApplyStatusVisualState();
     }
 
-    /// <summary>
-    /// Sets Shader Graph boolean <c>_isDead</c> on this enemy's <b>instance</b> material only
-    /// (<see cref="runtimeMaterial"/> from <see cref="ApplyMaterial"/>), not the shared asset.
-    /// </summary>
+ 
     public void SetIsDeadOnInstanceMaterial(bool isDead)
     {
         Material instance = runtimeMaterial != null ? runtimeMaterial : material;

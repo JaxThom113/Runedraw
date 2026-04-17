@@ -110,12 +110,14 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
     public void RefreshDescriptionText(int playerVunerableBonus, int enemyVunerableBonus)
     {
         if (card == null || cardDescriptionText == null) return;
-        string description = card.data != null ? card.data.cardDescription : "";
         int displayAdditionalDamage = IsEnemyCard ? playerVunerableBonus : enemyVunerableBonus;
+        string description = card.data != null ? card.data.cardDescription : "";
         foreach (Effect effect in card.effects)
         {
             effect.isPlayer = !IsEnemyCard;
             effect.displayAdditionalDamage = displayAdditionalDamage;
+            if (card.KeepBaseDescription)
+                continue;
             if (!string.IsNullOrWhiteSpace(description))
                 description += "\n";
             description += effect.GetDescription();
