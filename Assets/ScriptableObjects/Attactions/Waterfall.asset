@@ -33,4 +33,4 @@ MonoBehaviour:
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
-        damageAmount: 3
+        damageAmount: 2

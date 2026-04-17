@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b1451131da94bbf4db8fb5aa74d1f7ce, type: 3}
+  m_Name: D_ChesterChill
+  m_EditorClassIdentifier: 
+  Intro:
+  - Sup.
+  TurnStart:
+  - "Ladies, ladies. Calm down. It\u2019s my turn."
+  LowHealthTurnStart:
+  - "It\u2019s my turn. I draw."
+  Attack:
+  - I guess I should attack.
+  - Gonna deal damage to you now.
+  UltimateAttack:
+  - Mhm.
+  TakeDamage:
+  - Chill out!
+  - Relax man!
+  EndTurn:
+  - Your turn boss.
+  LowHealthEndTurn:
+  - "Oh\u2026 I\u2019m gonna hurl\u2026"
+  Lose:
+  - I guess I lose or whatever.
+  Win:
+  - I guess I won. Whatever.

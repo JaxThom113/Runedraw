@@ -25,7 +25,7 @@ MonoBehaviour:
   IsUltimate: 0
   effects:
   - rid: 3501866668757090310
-  - rid: 5118777032282996766
+  - rid: 3988029111534354441
   references:
     version: 2
     RefIds:
@@ -35,7 +35,7 @@ MonoBehaviour:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
         damageAmount: 1
-    - rid: 5118777032282996766
+    - rid: 3988029111534354441
       type: {class: PoisonStatusEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0

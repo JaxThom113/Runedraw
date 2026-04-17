@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityName: I.R.S.
   entityIcon: {fileID: 21300000, guid: d949f22ef90b17b46a07cb42dc8e5718, type: 3}
-  entityHealth: 8
-  entityDialogue: {fileID: 11400000, guid: 72906ec9d4d97e04d9358838b8e12bdd, type: 2}
+  entityHealth: 10
+  entityDialogue: {fileID: 11400000, guid: ece96fbbccac9de48b9f876e87a0924c, type: 2}
   enemyDeck:
   - enemyHand:
     - {fileID: 11400000, guid: 01f8cb83a57da0846bbcd434cc506764, type: 2}
     - {fileID: 11400000, guid: 01f8cb83a57da0846bbcd434cc506764, type: 2}
+    - {fileID: 11400000, guid: 2c3d79989beade44eb6be39278bb9373, type: 2}
     - {fileID: 11400000, guid: 2c3d79989beade44eb6be39278bb9373, type: 2}
   - enemyHand:
     - {fileID: 11400000, guid: 6d59212212b3f5a408ce9e704e8620bd, type: 2}

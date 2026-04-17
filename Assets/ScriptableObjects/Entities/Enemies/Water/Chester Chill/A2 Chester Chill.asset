@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityName: Chester Chill
   entityIcon: {fileID: 21300000, guid: 80e8877feb3bf4942a1885ae3ffdde7f, type: 3}
-  entityHealth: 6
-  entityDialogue: {fileID: 11400000, guid: 72906ec9d4d97e04d9358838b8e12bdd, type: 2}
+  entityHealth: 8
+  entityDialogue: {fileID: 11400000, guid: 845b9794aa50b8948ba0238bfbc2b68b, type: 2}
   enemyDeck:
   - enemyHand:
     - {fileID: 11400000, guid: 49ced29c338d02c4480d7a93ff94cdd3, type: 2}
@@ -24,5 +24,5 @@ MonoBehaviour:
   - enemyHand:
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
-  ultimateCard: {fileID: 11400000, guid: 49ced29c338d02c4480d7a93ff94cdd3, type: 2}
+  ultimateCard: {fileID: 11400000, guid: f79dca31ec16d6044bca19a2ce40b022, type: 2}
   enemyMaterial: {fileID: 2100000, guid: 3df59f165db63a94e9262adbd4cf3f90, type: 2}

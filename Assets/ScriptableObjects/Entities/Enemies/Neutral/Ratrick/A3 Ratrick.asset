@@ -14,19 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityName: Ratrick
   entityIcon: {fileID: 21300000, guid: fc2e51acacce66243aa7fc723fdbcbc4, type: 3}
-  entityHealth: 7
+  entityHealth: 10
   entityDialogue: {fileID: 11400000, guid: 6c853c200cf625149b1d56650e81db6a, type: 2}
   enemyDeck:
   - enemyHand:
+    - {fileID: 11400000, guid: 99b0a958da40c4045a1aed9a97d28af4, type: 2}
     - {fileID: 11400000, guid: e1e5e027eebb24142a795f29730252e8, type: 2}
+    - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
+  - enemyHand:
     - {fileID: 11400000, guid: e1e5e027eebb24142a795f29730252e8, type: 2}
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
-  - enemyHand:
-    - {fileID: 11400000, guid: 098ff1a47372b8e43989fca01f99249f, type: 2}
-  - enemyHand:
-    - {fileID: 11400000, guid: e1e5e027eebb24142a795f29730252e8, type: 2}
-    - {fileID: 11400000, guid: e1e5e027eebb24142a795f29730252e8, type: 2}
-    - {fileID: 11400000, guid: e1e5e027eebb24142a795f29730252e8, type: 2}
   ultimateCard: {fileID: 11400000, guid: 098ff1a47372b8e43989fca01f99249f, type: 2}
   enemyMaterial: {fileID: 2100000, guid: d4daf1018145d4b4ea5c24f5c00cce94, type: 2}

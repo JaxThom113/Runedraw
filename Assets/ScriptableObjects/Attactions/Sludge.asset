@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cardName: Sludge
   cardCost: 2
-  cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
-  cardIcon: {fileID: 21300000, guid: 55caf7e599ac0b2409425ed2bf069a2a, type: 3}
+  cardBorder: {fileID: 21300000, guid: 88d2aab404442694ab4fce3c32c7370c, type: 3}
+  cardIcon: {fileID: 21300000, guid: 1c66918f1c2a5b045b168511ed39d464, type: 3}
   cardDescription: 
   cardElement: 3
   cardElementIcon: {fileID: 21300000, guid: 0ad7c8a63d1b7184b9944b0e7a08a71d, type: 3}

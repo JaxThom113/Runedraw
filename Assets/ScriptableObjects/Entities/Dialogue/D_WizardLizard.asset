@@ -13,14 +13,16 @@ MonoBehaviour:
   m_Name: D_WizardLizard
   m_EditorClassIdentifier: 
   Intro:
-  - Who dares doth disturb the dastardly WIZARD LIZARD!?
+  - Who dares disturb the dastardly Wizard Lizard!?
+  - I am the Wizard Lizard, and you shall not pass!
   TurnStart:
   - Mwehehehe I draw!
   LowHealthTurnStart:
   - "Huff... Heh heh\u2026 I draw!"
   Attack:
-  - You shall not pass!
-  - Dark Cheese Attack!
+  - Wingardium Cardiosa!
+  - Expelicardmus!
+  - Cardify!
   UltimateAttack:
   - "Humonculizard! Seize him! Don\u2019t make me get the hose again!"
   TakeDamage:
@@ -33,4 +35,4 @@ MonoBehaviour:
   Lose:
   - AGGHHH!
   Win:
-  - AHAHAHAHAHAHAHA! This is just like that one time *insert cutaway gag*
+  - AHAHAHA! Victory!

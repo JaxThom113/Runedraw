@@ -25,18 +25,9 @@ MonoBehaviour:
   IsUltimate: 0
   effects:
   - rid: 3501866668757090310
-  - rid: 474873876735328257
   references:
     version: 2
     RefIds:
-    - rid: 474873876735328257
-      type: {class: BleedStatusEffect, ns: , asm: Assembly-CSharp}
-      data:
-        effectSelf: 0
-        playWhenDrawnByEnemy: 0
-        duration: 3
-        turnPhase: 0
-        damage: 1
     - rid: 3501866668757090310
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:

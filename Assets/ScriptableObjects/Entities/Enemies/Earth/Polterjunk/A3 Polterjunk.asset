@@ -14,13 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityName: Polterjunk
   entityIcon: {fileID: 21300000, guid: bbfaa11c5530c0543a9ad604a859c9ae, type: 3}
-  entityHealth: 9
-  entityDialogue: {fileID: 11400000, guid: 72906ec9d4d97e04d9358838b8e12bdd, type: 2}
+  entityHealth: 11
+  entityDialogue: {fileID: 11400000, guid: 39edf75a8a7ac4f4180277de366d700c, type: 2}
   enemyDeck:
   - enemyHand:
+    - {fileID: 11400000, guid: 3081545fb87611047928679a6ccb8248, type: 2}
     - {fileID: 11400000, guid: e2bef04634a2a3745bd1f92b78fb1850, type: 2}
     - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
   - enemyHand:
     - {fileID: 11400000, guid: 990923c63cd448142827dbcc53eeb495, type: 2}
-  ultimateCard: {fileID: 11400000, guid: e2bef04634a2a3745bd1f92b78fb1850, type: 2}
+  ultimateCard: {fileID: 11400000, guid: 3081545fb87611047928679a6ccb8248, type: 2}
   enemyMaterial: {fileID: 2100000, guid: 24477f0eb087dc24987c6b6d65f37e8b, type: 2}
