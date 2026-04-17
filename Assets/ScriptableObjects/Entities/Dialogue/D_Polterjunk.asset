@@ -28,9 +28,8 @@ MonoBehaviour:
   - TSSSS!
   EndTurn:
   - VA!
-  - MMM...
   LowHealthEndTurn:
-  - "Oh\u2026 I\u2019m gonna hurl\u2026"
+  - MMM...
   Lose:
   - "Beep beep\u2026"
   Win:

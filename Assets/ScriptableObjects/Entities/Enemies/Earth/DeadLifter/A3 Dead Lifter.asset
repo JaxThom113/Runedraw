@@ -18,7 +18,9 @@ MonoBehaviour:
   entityDialogue: {fileID: 11400000, guid: 470c388493599f24381d962fb59491f5, type: 2}
   enemyDeck:
   - enemyHand:
+    - {fileID: 11400000, guid: b8bb50b692c9ab2428239e89ff095adc, type: 2}
+  - enemyHand:
     - {fileID: 11400000, guid: 990923c63cd448142827dbcc53eeb495, type: 2}
     - {fileID: 11400000, guid: 266fd6d7184f613428643540193b1ef5, type: 2}
-  ultimateCard: {fileID: 11400000, guid: 990923c63cd448142827dbcc53eeb495, type: 2}
+  ultimateCard: {fileID: 11400000, guid: b8bb50b692c9ab2428239e89ff095adc, type: 2}
   enemyMaterial: {fileID: 2100000, guid: 0e38536815fdbb445881971c233f4989, type: 2}

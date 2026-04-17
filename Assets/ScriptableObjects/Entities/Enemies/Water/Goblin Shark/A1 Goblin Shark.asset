@@ -20,5 +20,6 @@ MonoBehaviour:
   - enemyHand:
     - {fileID: 11400000, guid: 49ced29c338d02c4480d7a93ff94cdd3, type: 2}
     - {fileID: 11400000, guid: 49ced29c338d02c4480d7a93ff94cdd3, type: 2}
+    - {fileID: 11400000, guid: 698240f82eb500c4b967a94db73c8b39, type: 2}
   ultimateCard: {fileID: 11400000, guid: 49ced29c338d02c4480d7a93ff94cdd3, type: 2}
   enemyMaterial: {fileID: 2100000, guid: 7e04d9a5ffb339f49a0279a5aa08e33e, type: 2}
