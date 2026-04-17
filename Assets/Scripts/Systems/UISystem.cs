@@ -61,6 +61,13 @@ public class UISystem : Singleton<UISystem>
         pauseMenuCanvas.SetActive(false);
         Time.timeScale = 1;
 
+        // Wipe static ActionSystem bookkeeping so no performers/subscribers
+        // from this (about-to-be-destroyed) scene survive into the next
+        // gameplay session. Without this, stale callbacks targeting destroyed
+        // MonoBehaviours accumulate and throw MissingReferenceException on
+        // the second play-through.
+        ActionSystem.ResetAll();
+
         LoadingSplash.targetScene = "MainMenu";
         SceneManager.LoadScene("Splash");
     }

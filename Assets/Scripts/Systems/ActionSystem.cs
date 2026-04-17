@@ -10,12 +10,18 @@ public class ActionSystem : Singleton<ActionSystem>
 
    public bool IsPerforming { get; private set;} = false; 
 
-   private static Dictionary<Type, List<Action<GameAction>>> preSubs = new();  
+   // Store the ORIGINAL delegate alongside the wrapped one so Unsubscribe can
+   // find and remove the exact subscription by the caller's own Action<T>.
+   // (A previous version created a new local function in both Subscribe and
+   // Unsubscribe — those are distinct delegate instances, so Remove never
+   // matched and stale subscribers from destroyed scene objects accumulated
+   // across scene loads.)
+   private static Dictionary<Type, List<(Delegate original, Action<GameAction> wrapped)>> preSubs = new();
    //When you draw a card, you can have a reaction to the card before being drawn
 
     //Action<T> is a delegate that returns void 
     //List that stores methods that take a GameAction as an argument and return void
-   private static Dictionary<Type, List<Action<GameAction>>> postSubs = new(); 
+   private static Dictionary<Type, List<(Delegate original, Action<GameAction> wrapped)>> postSubs = new();
    //When you draw a card, you can have a reaction to the card after being drawn
 
     //NO LIST, one function per type
@@ -140,15 +146,17 @@ Flow is the MAIN METHOD of the action system that orchestrates the execution of 
             yield return performers[type](action);
           }
    } 
-   private void PerformSubscribers(GameAction action, Dictionary<Type, List<Action<GameAction>>> subs) 
+   private void PerformSubscribers(GameAction action, Dictionary<Type, List<(Delegate original, Action<GameAction> wrapped)>> subs) 
    {  
     //tells all pre subscribers of this action type that we are performing this action type
         Type type = action.GetType(); 
-        if (subs.ContainsKey(type)) 
+        if (subs.TryGetValue(type, out var list)) 
         { 
-            foreach(var sub in subs[type]) 
+            // snapshot: a subscriber may (un)subscribe as a side-effect during invocation
+            var snapshot = list.ToArray();
+            foreach(var sub in snapshot) 
             { 
-                sub(action);
+                sub.wrapped(action);
             }
         }
    } 
@@ -181,27 +189,39 @@ Flow is the MAIN METHOD of the action system that orchestrates the execution of 
    public static void SubscribeReaction<T>(Action<T> reaction, ReactionTiming timing) where T : GameAction 
    {  
         //simple function, adds a reaction to the dictionary based on the timing (before or after the action is performed)
-        Dictionary<Type, List<Action<GameAction>>> subs = timing == ReactionTiming.PRE ? preSubs : postSubs;  //subscribes based on the timing inputted
-        void wrappedReaction(GameAction action) => reaction((T)action);  
-        //Defining the function, so reaction((T)action) IE: EnemyTurnPreReaction(EnemyTurnGA) is not being called
-        if (subs.ContainsKey(typeof(T))) 
+        var subs = timing == ReactionTiming.PRE ? preSubs : postSubs;  //subscribes based on the timing inputted
+        if (!subs.TryGetValue(typeof(T), out var list)) 
         { 
-            subs[typeof(T)].Add(wrappedReaction);
+            list = new List<(Delegate, Action<GameAction>)>();
+            subs.Add(typeof(T), list);
         } 
-        else 
-        { 
-            subs.Add(typeof(T), new()); 
-            subs[typeof(T)].Add(wrappedReaction);
-        }
+        // guard against duplicate subscriptions (same method+target) leaking in across scene reloads
+        if (list.Exists(entry => entry.original.Equals((Delegate)reaction)))
+            return;
+        Action<GameAction> wrapped = action => reaction((T)action);
+        list.Add(((Delegate)reaction, wrapped));
    } 
    public static void UnsubscribeReaction<T>(Action<T> reaction, ReactionTiming timing) where T : GameAction  
    {  
         //simple function, removes a reaction from the dictionary based on the timing (before or after the action is performed)
-        Dictionary<Type, List<Action<GameAction>>> subs = timing == ReactionTiming.PRE ? preSubs : postSubs;  //creats a subscription dictionary based on the timing (before or after the action is performed)
-        if (subs.ContainsKey(typeof(T))) 
+        var subs = timing == ReactionTiming.PRE ? preSubs : postSubs;  //creats a subscription dictionary based on the timing (before or after the action is performed)
+        if (subs.TryGetValue(typeof(T), out var list)) 
         { 
-            void wrappedReaction(GameAction action) => reaction((T)action);  //creates a function that wraps the reaction function so it can be removed from the dictionary
-            subs[typeof(T)].Remove(wrappedReaction);
+            int idx = list.FindIndex(entry => entry.original.Equals((Delegate)reaction));
+            if (idx >= 0) list.RemoveAt(idx);
         }
+   }
+
+   /// <summary>
+   /// Clear all registered performers and subscribers. Call this when tearing
+   /// down a gameplay session (e.g. returning to the main menu) so that the
+   /// static dictionaries don't hold onto delegates that target destroyed
+   /// MonoBehaviours from the previous scene.
+   /// </summary>
+   public static void ResetAll()
+   {
+       performers.Clear();
+       preSubs.Clear();
+       postSubs.Clear();
    } 
 }

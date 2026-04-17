@@ -43,7 +43,7 @@ Material:
     m_Floats:
     - _CameraThreshold: 300
     - _EdgeThickness: 0.15
-    - _FadeIn: 0.38
+    - _FadeIn: 1.5
     - _FadeInScale: 15
     - _FadeInScrollSpeed: 0.5
     - _GameviewScale: 1

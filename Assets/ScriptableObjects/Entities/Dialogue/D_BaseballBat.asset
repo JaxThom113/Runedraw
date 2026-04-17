@@ -13,24 +13,23 @@ MonoBehaviour:
   m_Name: D_BaseballBat
   m_EditorClassIdentifier: 
   Intro:
-  - Batter up!
+  - I no bat I dominican papi!
   TurnStart:
-  - Play ball!
+  - "\xA1Bueno Dia Mama Huevo!"
   LowHealthTurnStart:
-  - Ugnh... Play ball!
+  - ' Que vaina'
   Attack:
-  - Hiyah!
-  - Yah!
+  - Que lo Que
+  - "\xA1Qu\xE9 lo que mama huevo!"
   UltimateAttack:
-  - Are you ready for this?!
+  - "\xA1AYE Plakata! "
   TakeDamage:
-  - Ack!
-  - Squeek!
+  - Wepaaaa
   EndTurn:
-  - Back to the dugout!
+  - De lo mio
   LowHealthEndTurn:
-  - Agh... Back to the dugout.
+  - De lo mio
   Lose:
-  - Aw, strike out!
+  - '*Salsa Off*'
   Win:
-  - Home run!
+  - Tranquilo Bobby

@@ -17,17 +17,27 @@ MonoBehaviour:
   cardBorder: {fileID: 21300000, guid: a259d248a8de13f4ab4ee295b30f072e, type: 3}
   cardIcon: {fileID: 21300000, guid: b897a8c53c20a5c41a1f7d1edc16fc47, type: 3}
   cardDescription: 
+  KeepBaseDescription: 0
   cardElement: 2
   cardElementIcon: {fileID: 21300000, guid: 82142cada99b54e4f86147d06c158e36, type: 3}
   cardType: 1
   cardTypeIcon: {fileID: 21300000, guid: 2b2c7ca0be02a0c458126decde0e8f41, type: 3}
-  sound: {fileID: 8300000, guid: f571f980df210904aa7977aa3e139d51, type: 3}
+  sound: {fileID: 8300000, guid: 751d5fbf2f970524f9619824858631ce, type: 3}
   IsUltimate: 1
   effects:
   - rid: 5118776926820106240
+  - rid: 474873963249139712
   references:
     version: 2
     RefIds:
+    - rid: 474873963249139712
+      type: {class: VunerableStatusEffect, ns: , asm: Assembly-CSharp}
+      data:
+        effectSelf: 0
+        playWhenDrawnByEnemy: 0
+        duration: 2
+        turnPhase: 0
+        damage: 3
     - rid: 5118776926820106240
       type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
       data:

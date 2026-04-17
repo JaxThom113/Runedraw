@@ -240,7 +240,7 @@ public class ApplyCard : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
             Interactions.Instance.PlayerIsDragging = false;
             return;
         }
-        if( transform.localPosition.y > 200f && ManaSystem.Instance.HasEnoughMana(card.cardCost)) 
+        if( transform.localPosition.y > 150f && ManaSystem.Instance.HasEnoughMana(card.cardCost)) 
         {   
             Interactions.Instance.PlayerIsDragging = false;
             if (card.IsUltimate)

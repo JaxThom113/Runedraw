@@ -17,11 +17,12 @@ MonoBehaviour:
   cardBorder: {fileID: 21300000, guid: 88d2aab404442694ab4fce3c32c7370c, type: 3}
   cardIcon: {fileID: 21300000, guid: e5398e8c4ed723e45a940a3d2f182d21, type: 3}
   cardDescription: 
+  KeepBaseDescription: 0
   cardElement: 3
   cardElementIcon: {fileID: 21300000, guid: 0ad7c8a63d1b7184b9944b0e7a08a71d, type: 3}
   cardType: 0
   cardTypeIcon: {fileID: 21300000, guid: e9991a45ec777704292b3ff19c127d84, type: 3}
-  sound: {fileID: 8300000, guid: 6f48c24495cc4dc41bc3728706620384, type: 3}
+  sound: {fileID: 8300000, guid: 4613b4b2ec79e65489353c3972539bf5, type: 3}
   IsUltimate: 0
   effects:
   - rid: 5118776516904747011

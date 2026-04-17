@@ -43,7 +43,7 @@ Material:
     m_Floats:
     - _CameraThreshold: 300
     - _EdgeThickness: 0.15
-    - _FadeIn: 0.38
+    - _FadeIn: 1.5
     - _FadeInScale: 15
     - _FadeInScrollSpeed: 0.5
     - _GameviewScale: 1.5
@@ -54,7 +54,7 @@ Material:
     - _isDead: 0
     m_Colors:
     - _EdgeColor: {r: 2.832, g: 2.832, b: 2.832, a: 0}
-    - _GameviewOffset: {r: 0, g: 1, b: 0, a: 0}
+    - _GameviewOffset: {r: 0, g: 0.8, b: 0, a: 0}
     - _OverworldOffset: {r: 0, g: 0, b: 0, a: 0}
     - _PoisonColor: {r: 0.29170778, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []

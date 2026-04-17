@@ -13,6 +13,12 @@ public class MainMenuManager : MonoBehaviour
         // reset data when main menu is loaded
         // Pause > Back to Menu and the Death both take you back here
         GameData.InitializeData();
+
+        // Clear any ActionSystem performers/subscribers that were registered
+        // in the previous gameplay scene. Their static dictionaries survive
+        // scene loads, so without this the next playthrough inherits stale
+        // callbacks pointing at destroyed MonoBehaviours.
+        ActionSystem.ResetAll();
     }
 
     public void OnStartGameClicked()

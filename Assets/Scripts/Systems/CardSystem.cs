@@ -419,7 +419,6 @@ public class CardSystem : Singleton<CardSystem>
     private IEnumerator DiscardCard(ApplyCard applyCard) 
     {
         if(applyCard == null || !applyCard.gameObject.activeInHierarchy) yield break;
-        AudioSystem.Instance.PlaySFX("cardDiscard");
         applyCard.transform.DOScale(Vector3.zero, 0.15f);
         Transform pile = playerDiscardPileTransform != null ? playerDiscardPileTransform : playerDrawPileTransform;
         Vector3 discardWorld = pile != null ? pile.position : applyCard.transform.position;

@@ -81,8 +81,13 @@ public class SpecialSystem : Singleton<SpecialSystem>
             GameObject specialSprite = overworldEnemy.SpecialSprite;
             if (specialSprite != null)
             {
-                specialSprite.SetActive(true);
+                // Swap material BEFORE activating the GameObject and prime _FadeIn to the invisible
+                // start value so we don't get a 1-frame flash of the sprite rendering visible before
+                // FadeInMaterial's SetFloat takes effect.
                 specialSpriteRuntimeMaterial = ApplyMaterialInstance(specialSprite, specialGA.specialSpriteMaterial, specialSpriteRuntimeMaterial);
+                if (specialSpriteRuntimeMaterial != null)
+                    specialSpriteRuntimeMaterial.SetFloat(fadeInPropertyName, fadeInStartValue);
+                specialSprite.SetActive(true);
                 FadeInMaterial(specialSpriteRuntimeMaterial, specialSpriteFadeInDuration);
                 TweenSpeed(specialSpriteRuntimeMaterial, specialSpriteTargetSpeed, specialSpriteSpeedTweenDuration);
             }
@@ -166,12 +171,13 @@ public class SpecialSystem : Singleton<SpecialSystem>
         return instance;
     }
 
-    // Copy-paste of OverworldEnemy.FadeIn, scoped to the provided material with a tweakable duration.
+    // Mirror of OverworldEnemy.FadeIn, scoped to the provided material with a tweakable duration.
     private void FadeInMaterial(Material material, float duration)
     {
-        if (material == null || !material.HasProperty(fadeInPropertyName))
+        if (material == null)
             return;
 
+        DOTween.Kill(material);
         material.SetFloat(fadeInPropertyName, fadeInStartValue);
 
         DOTween.To(
@@ -179,22 +185,23 @@ public class SpecialSystem : Singleton<SpecialSystem>
             (float x) => material.SetFloat(fadeInPropertyName, x),
             fadeInEndValue,
             duration
-        ).SetEase(Ease.InOutSine);
+        ).SetEase(Ease.InOutSine).SetTarget(material);
     }
 
-    // Copy-paste of OverworldEnemy.FadeOut, scoped to the provided material with a tweakable duration.
+    // Mirror of OverworldEnemy.FadeOut, scoped to the provided material with a tweakable duration.
     private Tween FadeOutMaterial(Material material, float duration, GameObject target)
     {
-        if (material == null || !material.HasProperty(fadeInPropertyName))
+        if (material == null)
             return null;
 
+        DOTween.Kill(material);
         material.SetFloat(fadeInPropertyName, fadeInEndValue);
         Tween t = DOTween.To(
             () => material.GetFloat(fadeInPropertyName),
             (float x) => material.SetFloat(fadeInPropertyName, x),
             fadeInStartValue,
             duration
-        ).SetEase(Ease.InSine);
+        ).SetEase(Ease.InSine).SetTarget(material);
 
         if (target != null)
             t.OnComplete(() => target.SetActive(false));

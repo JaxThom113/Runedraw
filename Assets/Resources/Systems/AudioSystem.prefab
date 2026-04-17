@@ -49,14 +49,60 @@ MonoBehaviour:
   musicSource: {fileID: 7834406767661041338}
   sfxSource: {fileID: 1962772227732065479}
   menuTheme: {fileID: 8300000, guid: 9a4c3a3833b43a24eaa343578fe2c57f, type: 3}
-  overworldTheme: {fileID: 8300000, guid: af437950c3b10b549b62466ad84eb38b, type: 3}
+  menuThemeVolume: 1
+  overworldTheme: {fileID: 0}
+  overworldThemeVolume: 1
   battleTheme: {fileID: 8300000, guid: dbde6fb35ae7cb2468da158606be8303, type: 3}
+  battleThemeVolume: 1
   victoryTheme: {fileID: 8300000, guid: 227f77bfc21aef2419877b154c344e68, type: 3}
+  victoryThemeVolume: 1
   defeatTheme: {fileID: 8300000, guid: 227f77bfc21aef2419877b154c344e68, type: 3}
+  defeatThemeVolume: 1
+  portalWhirlTheme: {fileID: 8300000, guid: 6bc412d8b1dde2d4d917d6e611e7ed79, type: 3}
+  portalWhirlThemeVolume: 1
+  tutorialThemes:
+    overworld: {fileID: 8300000, guid: 9a4c3a3833b43a24eaa343578fe2c57f, type: 3}
+    overworldVolume: 1
+    battle: {fileID: 8300000, guid: af437950c3b10b549b62466ad84eb38b, type: 3}
+    battleVolume: 0.5
+  neutralThemes:
+    overworld: {fileID: 8300000, guid: 665588b07f8a833439f3b5c664dc6ebb, type: 3}
+    overworldVolume: 1
+    battle: {fileID: 8300000, guid: 8211cd390d90c534d81771d008b318a8, type: 3}
+    battleVolume: 0.5
+  fireThemes:
+    overworld: {fileID: 8300000, guid: fcc114328d1b8234d8a0ddd80bd4d892, type: 3}
+    overworldVolume: 1
+    battle: {fileID: 8300000, guid: 03433f162930c804e8a82697cb13c6f3, type: 3}
+    battleVolume: 0.5
+  windThemes:
+    overworld: {fileID: 8300000, guid: 587c285769f2f8342b84ae8a48ab9985, type: 3}
+    overworldVolume: 1
+    battle: {fileID: 8300000, guid: 0fc8ffb21eb4be94f97d70ee704c675c, type: 3}
+    battleVolume: 0.5
+  waterThemes:
+    overworld: {fileID: 8300000, guid: a88c9c35ba0f41440b6e3041f0a5ba56, type: 3}
+    overworldVolume: 1
+    battle: {fileID: 8300000, guid: 83a52055e7ea8c94b96243179fe7401b, type: 3}
+    battleVolume: 0.5
+  earthThemes:
+    overworld: {fileID: 8300000, guid: 6de54f8a23ab6a4498e202ef9ba3e395, type: 3}
+    overworldVolume: 1
+    battle: {fileID: 8300000, guid: 98b2893154b1c6b45883150a3d91691f, type: 3}
+    battleVolume: 0.5
+  finalBossThemes:
+    overworld: {fileID: 8300000, guid: 6d37eaa1c420c1f4fb75258d2d0586bd, type: 3}
+    overworldVolume: 1
+    battle: {fileID: 8300000, guid: 03d741c321605e94c87312ed35a7c8c5, type: 3}
+    battleVolume: 0.5
   clickSound: {fileID: 8300000, guid: 3790a0d055c615541be014a32186a9ec, type: 3}
+  clickVolume: 1
   walkSound: {fileID: 8300000, guid: a12ab7e4666b0be4091807cbe9ae022a, type: 3}
+  walkVolume: 1
   cardDrawSound: {fileID: 8300000, guid: 21c966efc254566409f7a3d9d1c8d13b, type: 3}
-  cardDiscardSound: {fileID: 8300000, guid: 21c966efc254566409f7a3d9d1c8d13b, type: 3}
+  cardDrawVolume: 1
+  spellCastSound: {fileID: 8300000, guid: ee485f73e113c374ab9e580888de18c5, type: 3}
+  spellCastVolume: 1
 --- !u!1 &6242695862937120560
 GameObject:
   m_ObjectHideFlags: 0

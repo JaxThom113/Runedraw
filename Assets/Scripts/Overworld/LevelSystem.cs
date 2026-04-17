@@ -98,6 +98,13 @@ public class LevelSystem: Singleton<LevelSystem>
     public bool LootSelectionCompleted { get; private set; } = false;
     public bool CampfireInteractCompleted { get; private set; } = false;
 
+    // Tracks whether the currently-open loot session came from an enemy kill
+    // (true) or a chest interactable (false). Used by OnSkipButtonClicked so
+    // the skipped LootCardPickupGA carries the same fromEnemy flag a real
+    // pickup would, allowing all post-reaction subscribers (ShaderSystem,
+    // ManaSystem, Inventory, etc.) to clean up correctly.
+    private bool currentLootFromEnemy;
+
     private CreateLevel createLevel;
 
     void Start()
@@ -425,6 +432,7 @@ public class LevelSystem: Singleton<LevelSystem>
         LootView.SetActive(true);
         AudioSystem.Instance.PlayMusic("victory");
         LootSelectionCompleted = false;
+        currentLootFromEnemy = lootCardGA.fromEnemy;
         yield return null;
     }
 
@@ -439,9 +447,35 @@ public class LevelSystem: Singleton<LevelSystem>
     public void OnSkipButtonClicked()
     {
         AudioSystem.Instance.PlaySFX("click");
-        AudioSystem.Instance.PlayMusic("overworld", true);
-        LootView.SetActive(false);
-        LootSelectionCompleted = true;
+        // Route Skip through the same LootCardPickupGA as a real pickup (minus
+        // the "add card to deck" step) so every subscriber —
+        // LevelSystem.LootCardPickupPostReaction (hide LootView + music),
+        // ShaderSystem (end distortion), ManaSystem (reset mana), Inventory
+        // (refresh) — runs. Previously Skip just hid the view inline, which
+        // left the battle's shader/mana state dirty after an enemy kill.
+        StartCoroutine(SkipLootRoutine());
+    }
+
+    private IEnumerator SkipLootRoutine()
+    {
+        const float timeoutSec = 15f;
+        float deadline = Time.realtimeSinceStartup + timeoutSec;
+        while (ActionSystem.Instance != null && ActionSystem.Instance.IsPerforming && Time.realtimeSinceStartup < deadline)
+            yield return null;
+
+        if (ActionSystem.Instance == null)
+            yield break;
+
+        if (ActionSystem.Instance.IsPerforming)
+        {
+            Debug.LogWarning("Loot skip: action system stayed busy past timeout; falling back to inline hide.");
+            AudioSystem.Instance.PlayMusic("overworld", true);
+            LootView.SetActive(false);
+            LootSelectionCompleted = true;
+            yield break;
+        }
+
+        ActionSystem.Instance.Perform(new LootCardPickupGA(currentLootFromEnemy));
     }
 
     /*
