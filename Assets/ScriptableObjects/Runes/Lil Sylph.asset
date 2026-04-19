@@ -19,7 +19,7 @@ MonoBehaviour:
   cardDescription: 
   KeepBaseDescription: 0
   cardElement: 4
-  cardElementIcon: {fileID: 21300000, guid: 6904c290dbd2c324c9793f88052c3f04, type: 3}
+  cardElementIcon: {fileID: 21300000, guid: 8c033ef14828495408918f27f16541e4, type: 3}
   cardType: 2
   cardTypeIcon: {fileID: 21300000, guid: 418c3225accc6384aaa387623ca7ff53, type: 3}
   sound: {fileID: 8300000, guid: 97eb0116527e9a745ba73df0811126f9, type: 3}
