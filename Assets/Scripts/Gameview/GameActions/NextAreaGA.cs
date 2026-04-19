@@ -1,11 +1,11 @@
 public class NextAreaGA : GameAction
 {
-    public int nextLevel;
+    public int nextArea;
     public bool applyLevelTransition;
 
-    public NextAreaGA(int nextLevel, bool applyLevelTransition = true)
+    public NextAreaGA(int nextArea, bool applyLevelTransition = true)
     {
-        this.nextLevel = nextLevel;
+        this.nextArea = nextArea;
         this.applyLevelTransition = applyLevelTransition;
     }
 }
