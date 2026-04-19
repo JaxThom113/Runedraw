@@ -5,29 +5,29 @@ using UnityEngine;
 public class EnemyBank : MonoBehaviour
 {
     public List<EnemySO> enemies;
+    public List<EnemySO> rareEnemies;
 
-    private bool spawnWizardLizard;
+    private int rareRemaining;
 
-    public void SetupSpawnWeights()
+    public void InitializeRareEnemyCount()
     {
-        // this bool being true will make a CHANCE that an enemy will spawn
-        spawnWizardLizard = Random.value > 0.3f;
+        // always spawn 0 to 2 rare enemies (if rare enemies are specified)
+        if (rareEnemies.Count > 0)
+            rareRemaining = Random.Range(0, 3);
+        else
+            rareRemaining = 0;
     }
 
     public EnemySO GetRandomEnemy()
     {
-        int index;
-
-        if (spawnWizardLizard)
+        if (rareRemaining > 0)
         {
-            index = 2;
-            spawnWizardLizard = false;
-        }
-        else
-        {
-            index = Random.Range(0, enemies.Count-1);
+            // because of the way this is set up, rare enemies will always spawn
+            // on the top of the maze
+            rareRemaining--;
+            return rareEnemies[Random.Range(0, rareEnemies.Count)];
         }
 
-        return enemies[index];
+        return enemies[Random.Range(0, enemies.Count)];
     }
 }

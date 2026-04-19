@@ -20,7 +20,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Card Devil
+  m_Name: Card Devil First Form
   m_Shader: {fileID: -6465566751694194690, guid: 3be75b6a6ab093845ae1e0f4fd829e65, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0

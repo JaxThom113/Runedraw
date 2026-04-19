@@ -76,8 +76,8 @@ public class LevelSystem : Singleton<LevelSystem>
     // ManaSystem, Inventory, etc.) to clean up correctly.
     private bool currentLootFromEnemy;
 
-    // reference to the CreatLevel.cs script of the currently active area
-    private CreateLevel createLevel;
+    // invoke this event when ready to run DrawLevel() in CreateLevel
+    public event Action<TextAsset> OnReady; 
 
     void OnEnable()
     {
@@ -139,21 +139,22 @@ public class LevelSystem : Singleton<LevelSystem>
         SetActiveArea();
         SetActiveEnemyBank();
 
-        // get reference to the CreateLevel.cs script in the Board GameObject in the currently active area GameObject
-        createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
-
         if (currentAreaType == 0)
         {
             // load in Tutorial custom area
             TextAsset lvlFile = Resources.Load<TextAsset>("Levels/Tutorial");
-            createLevel.DrawLevel(lvlFile);
+            OnReady?.Invoke(lvlFile);
         }
         else if (currentAreaType == 6)
         {
             // load in FinalBoss custom area
             TextAsset finalBossFile = Resources.Load<TextAsset>("Levels/FinalBoss"); 
-            createLevel.DrawLevel(finalBossFile);
+            OnReady?.Invoke(finalBossFile);
             currentArea = 0;
+        }
+        else
+        {
+            OnReady?.Invoke(null); // generate the level  
         }
 
         StartCoroutine(ShowAreaIntro());
@@ -238,12 +239,11 @@ public class LevelSystem : Singleton<LevelSystem>
 
         SetActiveArea();
         SetActiveEnemyBank();
-        createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
 
         if (file != null)
-            createLevel.DrawLevel(file); // transition to custom area
+            OnReady?.Invoke(file); // transition to custom area
         else
-            createLevel.DrawLevel(); // transition to next random area
+            OnReady?.Invoke(null); // transition to next random area
         
         playerMovement.ResetMovePoint();
 
