@@ -42,7 +42,7 @@ MonoBehaviour:
         effectSelf: 0
         playWhenDrawnByEnemy: 1
         duration: 3
-        turnPhase: 1
+        turnPhase: 0
         effect:
           rid: 3988029065039183874
         ApplyToEnemy: 1
