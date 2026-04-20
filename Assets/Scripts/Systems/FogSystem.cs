@@ -1,17 +1,20 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.VFX;
+using DG.Tweening;
 
 public class FogSystem : Singleton<FogSystem>
 {
     const string TransformLocalProperty = "transform_Local";
     const string TransformWorldProperty = "transform_World";
+    const string TotalAlphaProperty = "TotalAlpha";
 
     [Header("Debug")]
     public bool DisableFog = true;
 
     [Header("Fog VFX")]
     [SerializeField] private VisualEffect vfx;
+    [SerializeField] float fogTweenDuration = 2f;
 
     [Header("Fog Presets by Area Type")]
     [Tooltip("Index guide: 0 Tutorial, 1 Neutral, 2 Fire, 3 Wind, 4 Water, 5 Earth, 6 Final Boss")]
@@ -33,6 +36,8 @@ public class FogSystem : Singleton<FogSystem>
     private void OnEnable()
     {
         ActionSystem.SubscribeReaction<NextAreaGA>(NextAreaPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
+        ActionSystem.SubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
         EnsureVfxReference();
         SyncFogToAreaType();
     }
@@ -40,6 +45,10 @@ public class FogSystem : Singleton<FogSystem>
     private void OnDisable()
     {
         ActionSystem.UnsubscribeReaction<NextAreaGA>(NextAreaPostReaction, ReactionTiming.POST);
+        ActionSystem.UnsubscribeReaction<StartRoundGA>(StartRoundPreReaction, ReactionTiming.PRE);
+        ActionSystem.UnsubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
+        if (vfx != null)
+            DOTween.Kill(vfx, false);
     }
 
     private void Update()
@@ -100,6 +109,42 @@ public class FogSystem : Singleton<FogSystem>
     {
         StartCoroutine(PostReactionRoutine());
     }
+    private void StartRoundPreReaction(StartRoundGA startRoundGA)
+    {
+        FogIn();
+    }
+    private void LootCardPickupPostReaction(LootCardPickupGA lootCardPickupGA)
+    {
+        FogOut();
+    }
+    private void FogIn()
+    {
+        if (!EnsureVfxReference() || !vfx.HasFloat(TotalAlphaProperty))
+            return;
+
+        DOTween.Kill(vfx, false);
+        DOTween.To(
+            () => vfx.GetFloat(TotalAlphaProperty),
+            x => vfx.SetFloat(TotalAlphaProperty, x),
+            0f,
+            fogTweenDuration
+        ).SetEase(Ease.InOutSine).SetTarget(vfx);
+    }
+
+    private void FogOut()
+    {
+        if (!EnsureVfxReference() || !vfx.HasFloat(TotalAlphaProperty))
+            return;
+
+        DOTween.Kill(vfx, false);
+        DOTween.To(
+            () => vfx.GetFloat(TotalAlphaProperty),
+            x => vfx.SetFloat(TotalAlphaProperty, x),
+            0.5f,
+            fogTweenDuration
+        ).SetEase(Ease.InOutSine).SetTarget(vfx);
+    }
+
     IEnumerator PostReactionRoutine(){ 
         firstUpdate = true;
         SyncFogToAreaType();

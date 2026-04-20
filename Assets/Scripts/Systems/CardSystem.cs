@@ -317,7 +317,7 @@ public class CardSystem : Singleton<CardSystem>
         if (lootCardGA.fromEnemy)
         {
             CardSO ultimateCard = EnemySystem.Instance.enemy?.ultimateCard;
-            lootCards = lootCardBank.GetRandomCardsEnemy(ultimateCard);
+            lootCards = lootCardBank.GetRandomCardsEnemy(ultimateCard, lootCardGA.amount);
         }
         else
         {
