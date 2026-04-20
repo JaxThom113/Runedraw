@@ -49,11 +49,15 @@ public class CreateLevel : MonoBehaviour
     
     void OnEnable()
     {
-        DrawLevel();
+        // make sure to only call DrawLevel() when ready, for things like enemy banks that are 
+        // activated and deactivated through LevelSystem
+        LevelSystem.Instance.OnReady += DrawLevel; // subscribe to the OnReady event in LevelSystem
     }
 
     void OnDisable()
     {
+        LevelSystem.Instance.OnReady -= DrawLevel; // unsubscribe from the OnReady event
+
         // destroy old containers generating new level
         Destroy(wallsContainer);
         Destroy(enemyContainer);
@@ -63,25 +67,9 @@ public class CreateLevel : MonoBehaviour
 
     void Update()
     {
-        // generate new random level
-        if (Input.GetKeyDown(KeyCode.G))
-        {
+        // LevelSystem debug checks
+        if (LevelSystem.Instance.debug && Input.GetKeyDown(KeyCode.G))
             DrawLevel();
-        }
-
-        // set current level to the format of Tutorial.csv
-        // if (Input.GetKeyDown(KeyCode.T))
-        // {
-        //     TextAsset lvlFile = Resources.Load<TextAsset>("Levels/Tutorial");
-        //     DrawLevel(lvlFile);
-        // }
-
-        // // set current level to the format of FinalBoss.csv
-        // if (Input.GetKeyDown(KeyCode.B))
-        // {
-        //     TextAsset lvlFile = Resources.Load<TextAsset>("Levels/FinalBoss");
-        //     DrawLevel(lvlFile);
-        // }
 
         if (LevelSystem.Instance.enemies)
             enemyContainer.SetActive(true);
@@ -114,6 +102,10 @@ public class CreateLevel : MonoBehaviour
         }
         
         gridSize = grid.Count;
+
+        // get the currently active enemy bank in the area gameobject (this was set up in LevelSystem)
+        enemyBank = transform.parent.GetComponentInChildren<EnemyBank>();
+        enemyBank.InitializeRareEnemyCount();  
 
         DrawMaze();
 
@@ -254,38 +246,6 @@ public class CreateLevel : MonoBehaviour
         }
         enemyContainer = new GameObject("EnemyContainer"); // recreate container
 
-        enemyBank = null;
-        GameObject bankRoot = GameObject.Find("Enemy Bank");
-        if (bankRoot != null)
-        {
-            for (int i = 0; i < bankRoot.transform.childCount; i++)
-            {
-                Transform child = bankRoot.transform.GetChild(i);  
-                
-                
-                if (!child.gameObject.activeInHierarchy)
-                    continue;
-                enemyBank = child.GetComponent<EnemyBank>(); 
-  
-                if (enemyBank != null)
-                    break; 
-                
-            }
-            if (enemyBank == null)
-                enemyBank = bankRoot.GetComponent<EnemyBank>();
-        }
-
-        if (enemyBank == null)
-        {
-            Debug.LogError("CreateLevel: No active Enemy Bank child found under \"Enemy Bank\".");
-            return;
-        }
-
-        // set up spawn weights for enemies like Wizard Lizard
-        enemyBank.SetupSpawnWeights();  
-        Debug.Log("Enemy Bank: " + enemyBank.GetRandomEnemy().name);
-        //Debug.Log("Area: " + LevelSystem.Instance.currentArea);
-        //Debug.Log("Enemy bank: " + enemyBank.name);
         for (int y = 0; y < gridSize; y++)
         {
             for (int x = 0; x < gridSize; x++)

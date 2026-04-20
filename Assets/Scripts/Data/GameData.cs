@@ -5,7 +5,6 @@ using UnityEngine;
 public static class GameData 
 { 
     // data for transitioning from CharacterMenu scene -> Overworld scene
-    public static int SelectedAreaType; 
     public static int SelectedPlayer;
     public static bool IsSeededRun;
     public static int SelectedSeed;
@@ -24,7 +23,6 @@ public static class GameData
 
     public static void InitializeData()
     {
-        SelectedAreaType = 0; 
         SelectedPlayer = 0;
         IsSeededRun = false;
         SelectedSeed = 0;

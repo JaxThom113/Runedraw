@@ -3,29 +3,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-using DG.Tweening;
 using TMPro;
 
-public class LevelSystem: Singleton<LevelSystem>
+public class LevelSystem : Singleton<LevelSystem>
 {
     [Header("Debug")]
+    public bool debug = false;
     public bool enemies = true;
     public bool interactables = true; 
-    public bool chooseLevel = true; 
-    public int level = 0; 
-    /// <summary>If true, clearing one floor in an area advances to the next area (same pacing as clearing floor 3). If false, play three floors per area.</summary>
-    public bool isConvergence = true;
+    public int debugAreaType = 1; 
+    public int debugAreaNum = 1;
 
     [Header("Areas")]
+    public GameObject tutorialArea;    
     public GameObject earthArea;
     public GameObject fireArea;
     public GameObject neutralArea;
     public GameObject waterArea;
     public GameObject windArea;
-
-    [Header("Custom Levels")]
-    public GameObject tutorialLevel;    
-    public GameObject finalBossLevel;
+    public GameObject finalBossArea;
 
     [Header("UI References")]
     public TextMeshProUGUI areaTitle;
@@ -53,46 +49,21 @@ public class LevelSystem: Singleton<LevelSystem>
     [Header("Script References")]
     public PlayerMovement playerMovement;
 
-
-
-    // current level and area
-    private int currentLevel = 1;
-    public int CurrentLevel => currentLevel;
-    public int currentArea = 1;
-
     /*
         Current area type
-            0 = Tutorial level
+            0 = tutorial
             1 = neutral
             2 = fire
             3 = wind
             4 = water
             5 = earth
-            6 = FinalBoss level
+            6 = final boss
     */
+    private int currentArea;
     private int currentAreaType;
-    public int CurrentAreaType => currentAreaType;
-
-    public GameObject ActiveArea
-    {
-        get
-        {
-            switch (currentAreaType)
-            {
-                case 0: return tutorialLevel;
-                case 1: return neutralArea;
-                case 2: return fireArea;
-                case 3: return windArea;
-                case 4: return waterArea;
-                case 5: return earthArea;
-                case 6: return finalBossLevel;
-                default: return null;
-            }
-        }
-    }
-
-
-    [SerializeField] private List<int> overworldMap = new List<int>();
+    public int CurrentArea => currentArea; // allow access from other scripts
+    public int CurrentAreaType => currentAreaType; // allow access from other scripts
+    private List<int> areaList;
 
     // interactable view variables
     public bool LootSelectionCompleted { get; private set; } = false;
@@ -105,91 +76,8 @@ public class LevelSystem: Singleton<LevelSystem>
     // ManaSystem, Inventory, etc.) to clean up correctly.
     private bool currentLootFromEnemy;
 
-    private CreateLevel createLevel;
-
-    void Start()
-    { 
-        if(chooseLevel) { 
-            currentAreaType = level;   
-            currentArea = level;
-        }
-        if (GameData.IsSeededRun)
-        {
-            // get the seed that was selected on the menu
-            UnityEngine.Random.InitState(GameData.SelectedSeed);
-        }
-        else
-        {
-            // generate a random seed from current TickCount and save it
-            GameData.SelectedSeed = Environment.TickCount;
-            UnityEngine.Random.InitState(GameData.SelectedSeed);
-        }
-
-        // set the active area GameObject in ---- Overworld ----
-        // this could be tutorial or a random level, depending on what button was clicked in CharacterMenu 
-        
-        if (!GameData.StartedFromTutorial)
-        { 
-            if(chooseLevel) { 
-                currentAreaType = level;   
-                currentArea = level; 
-                GameData.SelectedAreaType = level; 
-                GameData.Area1 = GameData.SelectedAreaType; 
-            } 
-            else{ 
-                GameData.SelectedAreaType = UnityEngine.Random.Range(1, 6);
-                GameData.Area1 = GameData.SelectedAreaType; 
-            }
-            
-        }
-        currentAreaType = GameData.SelectedAreaType;
-
-        if (chooseLevel && level == 6)
-        {
-            GameData.SelectedAreaType = 6;
-            GameData.Area1 = 6;
-            currentAreaType = 6;
-            currentArea = 3;
-            currentLevel = 3;
-        }
-
-        overworldMap.Clear();
-        overworldMap.AddRange(new[] { 1, 2, 3, 4, 5 });
-        for (int i = 4; i > 0; i--)
-        {
-            int j = UnityEngine.Random.Range(0, i + 1);
-            (overworldMap[i], overworldMap[j]) = (overworldMap[j], overworldMap[i]);
-        }
-        if (currentAreaType >= 1 && currentAreaType <= 5)
-            overworldMap.Remove(currentAreaType);
-
-        SetActiveArea();
-        SetActiveEnemyBank();
-        // get reference to the CreateLevel script in the currently active area GameObject (in Board)
-        createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
-
-        // go to tutorial if it was selected on main menu
-        if (currentAreaType == 0)
-        {
-            TextAsset lvlFile = Resources.Load<TextAsset>("Levels/Tutorial");
-            createLevel.DrawLevel(lvlFile);
-        }
-        else if (chooseLevel && level == 6)
-        {
-            TextAsset finalBossFile = Resources.Load<TextAsset>("Levels/FinalBoss"); 
-            createLevel.DrawLevel(finalBossFile);
-            
-        }
-
-
-        StartCoroutine(ShowAreaIntro(currentAreaType));
-
-        UpdateUI();
-
-        // Emit one startup area event so reactive systems (fog/shader) sync the initial area.
-        if (ActionSystem.Instance != null)
-            ActionSystem.Instance.Perform(new NextAreaGA(currentLevel, applyLevelTransition: false));
-    }
+    // invoke this event when ready to run DrawLevel() in CreateLevel
+    public event Action<TextAsset> OnReady; 
 
     void OnEnable()
     {
@@ -205,6 +93,76 @@ public class LevelSystem: Singleton<LevelSystem>
         ActionSystem.DetachPerformer<CampfireGA>();
         ActionSystem.DetachPerformer<NextAreaGA>();
         ActionSystem.UnsubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
+    }
+
+    void Start()
+    { 
+        if (GameData.IsSeededRun)
+        {
+            // get the seed that was selected on the menu
+            UnityEngine.Random.InitState(GameData.SelectedSeed);
+        }
+        else
+        {
+            // if unseeded run, generate a random seed from current TickCount and save it
+            GameData.SelectedSeed = Environment.TickCount;
+            UnityEngine.Random.InitState(GameData.SelectedSeed);
+        }
+
+        // refresh list available areas
+        areaList = new List<int>() { 1, 2, 3, 4, 5 };
+
+        if(debug) 
+        { 
+            // if debug active at start, just set the starting area type and number
+            currentAreaType = debugAreaType;   
+            currentArea = debugAreaNum;
+        }
+        else if (!GameData.StartedFromTutorial)
+        { 
+            currentArea = 1;
+
+            // if not starting from tutorial, roll a random dungeon type for first area
+            int randIndex = UnityEngine.Random.Range(0, areaList.Count);
+            currentAreaType = areaList[randIndex];
+            areaList.RemoveAt(randIndex);
+
+            GameData.Area1 = currentAreaType; 
+        }
+        else
+        {
+            // if starting in tutorial, first area type is 0
+            currentArea = 0;
+            currentAreaType = 0;
+        }
+
+        SetActiveArea();
+        SetActiveEnemyBank();
+
+        if (currentAreaType == 0)
+        {
+            // load in Tutorial custom area
+            TextAsset lvlFile = Resources.Load<TextAsset>("Levels/Tutorial");
+            OnReady?.Invoke(lvlFile);
+        }
+        else if (currentAreaType == 6)
+        {
+            // load in FinalBoss custom area
+            TextAsset finalBossFile = Resources.Load<TextAsset>("Levels/FinalBoss"); 
+            OnReady?.Invoke(finalBossFile);
+            currentArea = 0;
+        }
+        else
+        {
+            OnReady?.Invoke(null); // generate the level  
+        }
+
+        StartCoroutine(ShowAreaIntro());
+        UpdateUI();
+
+        // emit one startup area event so reactive systems (fog/shader) sync the initial area
+        if (ActionSystem.Instance != null)
+            ActionSystem.Instance.Perform(new NextAreaGA(currentArea, applyLevelTransition: false));
     }
 
     void UpdateUI()
@@ -226,8 +184,8 @@ public class LevelSystem: Singleton<LevelSystem>
 
         if (areaLevel != null)
         {
-            // (area) - (level) numbers
-            areaLevel.text = $"{currentArea} - {currentLevel}";
+            // area number in topbar
+            areaLevel.text = $"Area #{currentArea}";
         }
     }
 
@@ -235,59 +193,39 @@ public class LevelSystem: Singleton<LevelSystem>
         Level transition/coroutine
     */
 
-    public void NextLevel(int requestedNextLevel = -1)
+    public void NextArea()
     { 
-        if (requestedNextLevel > 0)
-            currentLevel = requestedNextLevel - 1;
-
         if (currentAreaType == 0)
         {
-            currentAreaType = 1;
-            overworldMap.Remove(1);
-
             // start the actual game once completing tutorial level
-            StartCoroutine(StartTransition(true));
+            currentAreaType = 1;
+            StartCoroutine(StartTransition());
         }
-        // Area "segment" complete: either finished floor 3, or Convergence mode (one floor per area then move on).
-        else if (currentLevel == 3 || (isConvergence))
+
+        if (currentArea == 3)
         {
-            // Final boss only after the third overworld area — do NOT key this on isConvergence (that skipped areas incorrectly).
-            if (currentArea == 3)
-            {
-                // transition to the final boss level 
-                currentAreaType = 6;
+            // transition to the final boss level 
+            currentAreaType = 6;
+            currentArea = 0;
 
-                TextAsset lvlFile = Resources.Load<TextAsset>("Levels/FinalBoss");
-                StartCoroutine(StartTransition(true, lvlFile));
-            }
-            else
-            {
-                currentArea++;
-                currentLevel = 1;
-
-                if (overworldMap.Count == 0)
-                {
-                    Debug.LogError("LevelSystem: overworld map exhausted (no area types left).");
-                    currentAreaType = 1;
-                }
-                else
-                {
-                    currentAreaType = overworldMap[0];
-                    overworldMap.RemoveAt(0);
-                }
-
-                if (currentArea == 2)
-                    GameData.Area2 = currentAreaType;
-                else if (currentArea == 3)
-                    GameData.Area3 = currentAreaType;
-
-                StartCoroutine(StartTransition(true));
-            }
-        }      
+            TextAsset lvlFile = Resources.Load<TextAsset>("Levels/FinalBoss");
+            StartCoroutine(StartTransition(lvlFile));
+        }
         else
         {
-            // go to the next level of the current area
-            currentLevel++;
+            currentArea++;
+
+            // pick the next random area, excluding areas that have already been picked
+            int randIndex = UnityEngine.Random.Range(0, areaList.Count);
+            currentAreaType = areaList[randIndex];
+            areaList.RemoveAt(randIndex);
+            
+            if (currentArea == 1)
+                GameData.Area1 = currentAreaType;
+            else if (currentArea == 2)
+                GameData.Area2 = currentAreaType;
+            else if (currentArea == 3)
+                GameData.Area3 = currentAreaType;
 
             StartCoroutine(StartTransition());
         }
@@ -295,67 +233,36 @@ public class LevelSystem: Singleton<LevelSystem>
         UpdateUI();
     }
 
-    IEnumerator StartTransition(bool areaTransition = false, TextAsset file = null)
+    IEnumerator StartTransition(TextAsset file = null)
     {
         // take control from player
         playerMovement.enabled = false;
-
-        // transition swipe effect
-        transitionScreen.SetActive(true);
-        transitionScreen.transform.DOMoveY(0, 0.5f).SetEase(Ease.OutCubic);
         yield return new WaitForSeconds(1f);
 
-        if (areaTransition)
-        {
-            SetActiveArea();
-            SetActiveEnemyBank();
-            createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Exclude);
-        }
+        SetActiveArea();
+        SetActiveEnemyBank();
 
-        // Same-area transitions never refreshed createLevel; inactive boards also fail Exclude searches.
-        if (createLevel == null)
-            createLevel = FindFirstObjectByType<CreateLevel>(FindObjectsInactive.Include);
-        if (createLevel == null)
-        {
-            Debug.LogError("LevelSystem: CreateLevel not found in scene — assign a CreateLevel or ensure the active area's board is enabled.");
-        }
-        else if (file != null)
-        {
-            // transition to a custome level from a file
-            createLevel.DrawLevel(file);
-        }
+        if (file != null)
+            OnReady?.Invoke(file); // transition to custom area
         else
-        {
-            // transition to next level in the current area
-            createLevel.DrawLevel();
-        }
+            OnReady?.Invoke(null); // transition to next random area
         
         playerMovement.ResetMovePoint();
 
         // show the intro for the next area if the player made it to a new area
-        if (areaTransition)
-            StartCoroutine(ShowAreaIntro(currentAreaType));
-
-        // transition swipe out and reset position
-        transitionScreen.transform.DOMoveY(50, 0.5f).SetEase(Ease.OutCubic);
+        StartCoroutine(ShowAreaIntro());
         yield return new WaitForSeconds(1f);
-        transitionScreen.SetActive(false);
-        transitionScreen.transform.position = new Vector3(0, -50, -5);
 
         // return control to the player  
         playerMovement.enabled = true;
-
         yield return null;
     }
 
-    IEnumerator ShowAreaIntro(int areaType)
+    IEnumerator ShowAreaIntro()
     {
-        // take control from player
-        playerMovement.enabled = false;
-
         areaIntros.SetActive(true);
 
-        switch (areaType)
+        switch (currentAreaType)
         {
             case 0: 
                 tutorialAreaIntro.SetActive(true); 
@@ -386,12 +293,7 @@ public class LevelSystem: Singleton<LevelSystem>
         }
 
         yield return StartCoroutine(FadeCanvas(1f));
-
         yield return new WaitForSeconds(1f);
-
-        // return control to the player  
-        playerMovement.enabled = true;
-
         yield return StartCoroutine(FadeCanvas(0f));
 
         neutralAreaIntro.SetActive(false);
@@ -403,7 +305,6 @@ public class LevelSystem: Singleton<LevelSystem>
         neutralAreaIntro.SetActive(false);
 
         areaIntros.SetActive(false);
-        
         yield return null;
     }
 
@@ -468,7 +369,6 @@ public class LevelSystem: Singleton<LevelSystem>
 
         if (ActionSystem.Instance.IsPerforming)
         {
-            Debug.LogWarning("Loot skip: action system stayed busy past timeout; falling back to inline hide.");
             AudioSystem.Instance.PlayMusic("overworld", true);
             LootView.SetActive(false);
             LootSelectionCompleted = true;
@@ -505,7 +405,7 @@ public class LevelSystem: Singleton<LevelSystem>
     public IEnumerator NextAreaPerformer(NextAreaGA nextAreaGA)
     {
         if (nextAreaGA.applyLevelTransition)
-            NextLevel(nextAreaGA.nextLevel);
+            NextArea();
         yield return null;
     }
 
@@ -515,30 +415,31 @@ public class LevelSystem: Singleton<LevelSystem>
 
     private void SetActiveArea()
     {
-        tutorialLevel.SetActive(false);
+        tutorialArea.SetActive(false);
         neutralArea.SetActive(false); 
         fireArea.SetActive(false); 
         windArea.SetActive(false); 
         waterArea.SetActive(false);
         earthArea.SetActive(false);
-        finalBossLevel.SetActive(false);
+        finalBossArea.SetActive(false);
 
         // transition to level 1 of the next area
         switch (currentAreaType)
         {
-            case 0: tutorialLevel.SetActive(true); break;
+            case 0: tutorialArea.SetActive(true); break;
             case 1: neutralArea.SetActive(true); break;
             case 2: fireArea.SetActive(true); break;
             case 3: windArea.SetActive(true); break;
             case 4: waterArea.SetActive(true); break;
             case 5: earthArea.SetActive(true); break;
-            case 6: finalBossLevel.SetActive(true); break;
+            case 6: finalBossArea.SetActive(true); break;
         }
     }
 
     private void SetActiveEnemyBank()
     {
-        GameObject areaRoot = null;
+        GameObject areaRoot;
+
         switch (currentAreaType)
         {
             case 1: areaRoot = neutralArea; break;
@@ -550,38 +451,20 @@ public class LevelSystem: Singleton<LevelSystem>
         }
 
         if (areaRoot == null)
-        {
-            Debug.LogWarning("LevelSystem.SetActiveEnemyBank: area root is null for currentAreaType " + currentAreaType);
             return;
-        }
 
-        Transform bankTransform = areaRoot.transform.Find("Enemy Bank");
-        if (bankTransform == null)
-        {
-            Debug.LogWarning("LevelSystem.SetActiveEnemyBank: no child named \"Enemy Bank\" under " + areaRoot.name + ". Check hierarchy spelling.");
-            return;
-        }
-
-        GameObject enemyBank = bankTransform.gameObject;
-        if (enemyBank.transform.childCount < 3)
-        {
-            Debug.LogWarning("LevelSystem.SetActiveEnemyBank: Enemy Bank needs 3 children (A1–A3). Found " + enemyBank.transform.childCount + ".");
-            return;
-        }
-
-        enemyBank.transform.GetChild(0).gameObject.SetActive(false); // A1 enemy bank
-        enemyBank.transform.GetChild(1).gameObject.SetActive(false); // A2 enemy bank
-        enemyBank.transform.GetChild(2).gameObject.SetActive(false); // A3 enemy bank
+        // access the enemy bank parent object
+        GameObject enemyBank = areaRoot.transform.Find("Enemy Bank").gameObject;
+        foreach (Transform child in enemyBank.transform)
+            child.gameObject.SetActive(false);
 
         // activate the correct area enemy bank for enemy difficulty scaling
         switch (currentArea)
         {
-            case 1: enemyBank.transform.GetChild(0).gameObject.SetActive(true); break;
-            case 2: enemyBank.transform.GetChild(1).gameObject.SetActive(true); break;
-            case 3: enemyBank.transform.GetChild(2).gameObject.SetActive(true); break;
+            case 1: enemyBank.transform.GetChild(0).gameObject.SetActive(true); break; // A1 enemy bank
+            case 2: enemyBank.transform.GetChild(1).gameObject.SetActive(true); break; // A2 enemy bank
+            case 3: enemyBank.transform.GetChild(2).gameObject.SetActive(true); break; // A3 enemy bank
             default: return;
         }
     }
-
-   
 }

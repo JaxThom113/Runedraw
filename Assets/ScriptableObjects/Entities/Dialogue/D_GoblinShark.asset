@@ -16,18 +16,16 @@ MonoBehaviour:
   - Time to hit the waves, dude!
   TurnStart:
   - "It\u2019s like my turn, dude - I draw!"
-  - "Getting seasick, dude\u2026 I draw!"
   LowHealthTurnStart:
+  - "Getting seasick, dude\u2026 I draw!"
+  Attack:
   - Like, attack shark-dude!
   - "Like, don\u2019t drown, broski!"
-  Attack:
-  - You shall not pass!
-  - Dark Cheese Attack!
   UltimateAttack:
   - Prepare to Goblin on this, dude!
   TakeDamage:
   - Gnarly!
-  - Not cool, dude!
+  - Righteous!
   EndTurn:
   - I, like, pass my turn to you, dude.
   LowHealthEndTurn:
