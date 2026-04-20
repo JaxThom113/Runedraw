@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Lil Gnome
   m_EditorClassIdentifier: 
   cardName: Lil Gnome
-  cardCost: 5
+  cardCost: 4
   cardBorder: {fileID: 21300000, guid: 88d2aab404442694ab4fce3c32c7370c, type: 3}
   cardIcon: {fileID: 21300000, guid: 0a5eff07039d1af43b2d058723424e96, type: 3}
-  cardDescription: 
-  KeepBaseDescription: 0
+  cardDescription: Plays Dirt at the start of your turn for 3 turns
+  KeepBaseDescription: 1
   cardElement: 3
   cardElementIcon: {fileID: 21300000, guid: 0ad7c8a63d1b7184b9944b0e7a08a71d, type: 3}
   cardType: 2

@@ -26,18 +26,16 @@ MonoBehaviour:
   IsUltimate: 1
   effects:
   - rid: 5118776926820106240
-  - rid: 474873963249139712
+  - rid: 3988029184162660354
   references:
     version: 2
     RefIds:
-    - rid: 474873963249139712
-      type: {class: VunerableStatusEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3988029184162660354
+      type: {class: ApplyShieldEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
-        duration: 2
-        turnPhase: 0
-        damage: 3
+        shieldAmount: 1
     - rid: 5118776926820106240
       type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
       data:

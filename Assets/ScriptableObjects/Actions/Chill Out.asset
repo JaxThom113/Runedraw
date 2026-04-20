@@ -25,14 +25,15 @@ MonoBehaviour:
   sound: {fileID: 8300000, guid: 751d5fbf2f970524f9619824858631ce, type: 3}
   IsUltimate: 1
   effects:
-  - rid: 474873963249139713
+  - rid: 3988029184162660355
   references:
     version: 2
     RefIds:
-    - rid: 474873963249139713
-      type: {class: StunStatusEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3988029184162660355
+      type: {class: VunerableStatusEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
-        duration: 2
+        duration: 3
         turnPhase: 1
+        damage: 1

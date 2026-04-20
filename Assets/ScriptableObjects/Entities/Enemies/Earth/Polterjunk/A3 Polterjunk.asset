@@ -20,7 +20,8 @@ MonoBehaviour:
   - enemyHand:
     - {fileID: 11400000, guid: 3081545fb87611047928679a6ccb8248, type: 2}
     - {fileID: 11400000, guid: e2bef04634a2a3745bd1f92b78fb1850, type: 2}
-    - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
+  - enemyHand:
+    - {fileID: 11400000, guid: 70c5d1eade82684499bf6e525c3de3af, type: 2}
   - enemyHand:
     - {fileID: 11400000, guid: 990923c63cd448142827dbcc53eeb495, type: 2}
   ultimateCard: {fileID: 11400000, guid: 3081545fb87611047928679a6ccb8248, type: 2}

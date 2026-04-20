@@ -18,10 +18,12 @@ MonoBehaviour:
   entityDialogue: {fileID: 0}
   playerDeck:
   - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
+  - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
+  - {fileID: 11400000, guid: 1c84116bc6771824f9a66347efc42561, type: 2}
   - {fileID: 11400000, guid: 1c84116bc6771824f9a66347efc42561, type: 2}
   - {fileID: 11400000, guid: 49ced29c338d02c4480d7a93ff94cdd3, type: 2}
+  - {fileID: 11400000, guid: 49ced29c338d02c4480d7a93ff94cdd3, type: 2}
+  - {fileID: 11400000, guid: 266fd6d7184f613428643540193b1ef5, type: 2}
   - {fileID: 11400000, guid: 266fd6d7184f613428643540193b1ef5, type: 2}
   - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
   - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
-  - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
-  - {fileID: 11400000, guid: 5aa3e428c818b3640bad561f8fe20a96, type: 2}

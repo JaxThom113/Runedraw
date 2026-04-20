@@ -68,7 +68,7 @@ MonoBehaviour:
   neutralThemes:
     overworld: {fileID: 8300000, guid: 665588b07f8a833439f3b5c664dc6ebb, type: 3}
     overworldVolume: 1
-    battle: {fileID: 8300000, guid: 8211cd390d90c534d81771d008b318a8, type: 3}
+    battle: {fileID: 8300000, guid: a06ba9f132c76f44ea002317a1e7bd73, type: 3}
     battleVolume: 0.5
   fireThemes:
     overworld: {fileID: 8300000, guid: fcc114328d1b8234d8a0ddd80bd4d892, type: 3}

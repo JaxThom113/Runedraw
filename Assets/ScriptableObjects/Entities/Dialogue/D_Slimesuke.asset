@@ -30,6 +30,6 @@ MonoBehaviour:
   LowHealthEndTurn:
   - I'm gooped out.
   Lose:
-  - FAHHH!
+  - Aw man...
   Win:
   - Loser! (Points at you)

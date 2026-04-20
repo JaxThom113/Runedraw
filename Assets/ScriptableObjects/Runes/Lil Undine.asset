@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Lil Undine
   m_EditorClassIdentifier: 
   cardName: Lil Undine
-  cardCost: 3
+  cardCost: 2
   cardBorder: {fileID: 21300000, guid: a259d248a8de13f4ab4ee295b30f072e, type: 3}
   cardIcon: {fileID: 21300000, guid: c53d4cfdfa755b14389a5844e281a272, type: 3}
-  cardDescription: 
-  KeepBaseDescription: 0
+  cardDescription: Plays Splash at the start of your turn for 3 turns
+  KeepBaseDescription: 1
   cardElement: 2
   cardElementIcon: {fileID: 21300000, guid: 82142cada99b54e4f86147d06c158e36, type: 3}
   cardType: 2
@@ -35,7 +35,7 @@ MonoBehaviour:
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
-        damageAmount: 3
+        damageAmount: 1
     - rid: 5118777032282996754
       type: {class: RuneStatusEffect, ns: , asm: Assembly-CSharp}
       data:
