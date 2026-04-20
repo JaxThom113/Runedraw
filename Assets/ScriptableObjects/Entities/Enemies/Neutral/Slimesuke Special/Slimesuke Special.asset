@@ -14,11 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityName: Slimesuke Special
   entityIcon: {fileID: 21300000, guid: aa4251c995f92ac498f149485acdada0, type: 3}
-  entityHealth: 14
+  entityHealth: 11
   entityDialogue: {fileID: 11400000, guid: 715c5a5fcc3623a43a151a047d4770f9, type: 2}
   enemyDeck:
   - enemyHand:
     - {fileID: 11400000, guid: b889d83e178372e44b4f8d02f14da4e7, type: 2}
+  - enemyHand:
+    - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
+    - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
   - enemyHand:
     - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
     - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}

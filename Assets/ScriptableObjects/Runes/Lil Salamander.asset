@@ -16,8 +16,8 @@ MonoBehaviour:
   cardCost: 5
   cardBorder: {fileID: 21300000, guid: 50c948eb6a4581e40a4444ec0b5d8b91, type: 3}
   cardIcon: {fileID: 21300000, guid: d0f0d685b397d3e42aacda86ca972fa5, type: 3}
-  cardDescription: 
-  KeepBaseDescription: 0
+  cardDescription: Plays Sparks at the start of your turn for 3 turns
+  KeepBaseDescription: 1
   cardElement: 1
   cardElementIcon: {fileID: 21300000, guid: 6904c290dbd2c324c9793f88052c3f04, type: 3}
   cardType: 2

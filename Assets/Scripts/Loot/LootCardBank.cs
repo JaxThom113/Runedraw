@@ -9,15 +9,15 @@ public class LootCardBank : MonoBehaviour
     public List<CardSO> GetRandomCards(int amount)
     { 
         List<CardSO> chosenCards = new List<CardSO>(); 
-        while(amount > 0){
+
+        while(chosenCards.Count < amount)
+        {
             CardSO chosenCard = cards[Random.Range(0, cards.Count)];
-            if(!chosenCards.Contains(chosenCard)){
+
+            if(!chosenCards.Contains(chosenCard))
                 chosenCards.Add(chosenCard);  
-                cards.Remove(chosenCard);
-                amount--;
-            }
         } 
-        cards.AddRange(chosenCards);
+
         return chosenCards;
     }
 

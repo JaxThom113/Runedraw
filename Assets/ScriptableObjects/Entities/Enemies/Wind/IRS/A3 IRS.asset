@@ -23,14 +23,6 @@ MonoBehaviour:
     - {fileID: 11400000, guid: 2c3d79989beade44eb6be39278bb9373, type: 2}
     - {fileID: 11400000, guid: 2c3d79989beade44eb6be39278bb9373, type: 2}
   - enemyHand:
-    - {fileID: 11400000, guid: d7625ae074e59714bbe928a75997f8ea, type: 2}
-  - enemyHand:
-    - {fileID: 11400000, guid: 01f8cb83a57da0846bbcd434cc506764, type: 2}
-    - {fileID: 11400000, guid: 01f8cb83a57da0846bbcd434cc506764, type: 2}
-    - {fileID: 11400000, guid: 01f8cb83a57da0846bbcd434cc506764, type: 2}
-  - enemyHand:
-    - {fileID: 11400000, guid: 01f8cb83a57da0846bbcd434cc506764, type: 2}
-    - {fileID: 11400000, guid: 01f8cb83a57da0846bbcd434cc506764, type: 2}
-    - {fileID: 11400000, guid: 01f8cb83a57da0846bbcd434cc506764, type: 2}
-  ultimateCard: {fileID: 11400000, guid: d7625ae074e59714bbe928a75997f8ea, type: 2}
+    - {fileID: 11400000, guid: 6d59212212b3f5a408ce9e704e8620bd, type: 2}
+  ultimateCard: {fileID: 11400000, guid: 2c3d79989beade44eb6be39278bb9373, type: 2}
   enemyMaterial: {fileID: 2100000, guid: f3c594738f2f75947859fa3a24857d4c, type: 2}

@@ -219,8 +219,10 @@ public class LevelSystem : Singleton<LevelSystem>
             int randIndex = UnityEngine.Random.Range(0, areaList.Count);
             currentAreaType = areaList[randIndex];
             areaList.RemoveAt(randIndex);
-
-            if (currentArea == 2)
+            
+            if (currentArea == 1)
+                GameData.Area1 = currentAreaType;
+            else if (currentArea == 2)
                 GameData.Area2 = currentAreaType;
             else if (currentArea == 3)
                 GameData.Area3 = currentAreaType;
