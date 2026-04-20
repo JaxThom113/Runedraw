@@ -10,6 +10,10 @@ public class MainMenuManager : MonoBehaviour
     {
         AudioSystem.Instance.PlayMusic("menu");
 
+        // load saved audio settings
+        AudioSystem.Instance.SetMusicVolume(PlayerPrefs.GetFloat("MusicVolume", 0.5f) / 100);
+        AudioSystem.Instance.SetSFXVolume(PlayerPrefs.GetFloat("SFXVolume", 0.5f) / 100);
+
         // reset data when main menu is loaded
         // Pause > Back to Menu and the Death both take you back here
         GameData.InitializeData();

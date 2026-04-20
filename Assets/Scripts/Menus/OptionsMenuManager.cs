@@ -24,7 +24,7 @@ public class OptionsMenuManager : MonoBehaviour
         LoadSettings();
     }
 
-    void LoadSettings()
+    public void LoadSettings()
     {
         musicSlider.value = PlayerPrefs.GetFloat("MusicVolume", 0.5f);
         sfxSlider.value = PlayerPrefs.GetFloat("SFXVolume", 0.5f);
@@ -51,7 +51,7 @@ public class OptionsMenuManager : MonoBehaviour
 
     public void OnMusicVolumeValueChanged()
     {
-        musicVolume =  musicSlider.value / 100;
+        musicVolume = musicSlider.value / 100;
         musicVolumeText.text = $"{musicVolume * 100}";
         AudioSystem.Instance.SetMusicVolume(musicVolume);
     }
