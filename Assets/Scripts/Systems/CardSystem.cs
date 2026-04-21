@@ -21,7 +21,10 @@ public class CardSystem : Singleton<CardSystem>
       POST: EnemyTurnPostReaction -> queues StartRoundGA (NOT DrawCardGA directly; comment was stale)
     - StartRoundGA PERFORM: SetupEnemyDeck (fills enemyDeck from GetCurrentEnemyHand for new enemyTurnCount),
       then queues player DrawCardGA, DrawEnemyCardGA, status follow-ups.
-    - enemyTurnCount advances in EnemyTurnHandler at end of enemy play phase (and KillEnemy reset). Enemy DrawCardsEffect uses DrawEnemyCardGA(AdvanceToNextHandBeforeDraw) so advance + SetupEnemyDeck run in the performer, not when the effect is queued.
+    - enemyTurnCount advances ONLY in EnemyTurnHandler at end of enemy play phase (and KillEnemy reset).
+      Enemy DrawCardsEffect uses DrawEnemyCardGA(UseNextHand: true) — the performer rebuilds enemyDeck from
+      hand[enemyTurnCount + 1] WITHOUT advancing the counter. Those drawn cards mirror what the enemy will
+      play on its next natural turn (same CardSO list, fresh Card instances rebuilt by SetupEnemyDeck).
     */     
 
     public Canvas cardCanvas; 
@@ -126,6 +129,19 @@ public class CardSystem : Singleton<CardSystem>
             Card card = new Card(cardSO);
             enemyDeck.Add(card);
         }
+    }
+
+    // Rebuilds enemyDeck from the PEEKED next-turn hand (no state mutation on EnemySystem).
+    // Mid-turn DrawCards effects use this so their draws match what the enemy will play next turn.
+    private void SetupEnemyDeckFromNextHand()
+    {
+        enemyDeck.Clear();
+        List<CardSO> nextHand = EnemySystem.Instance.GetNextEnemyHand();
+        foreach (var cardSO in nextHand)
+        {
+            Card card = new Card(cardSO);
+            enemyDeck.Add(card);
+        }
     } 
   
 
@@ -145,6 +161,12 @@ public class CardSystem : Singleton<CardSystem>
         {
             if (effect is StatusEffect statusEffect)
             {
+                // Runes need the source card's element + sound cached so StatusSystem can fire the matching
+                // spellcast VFX / SFX on every future tick. instigator flipping below is a targeting flag for
+                // the afflicted side; the real caster here is always the player.
+                if (statusEffect is RuneStatusEffect rune)
+                    rune.CaptureCastContext(playCardGA.card, casterIsPlayer: true);
+
                 if (statusEffect.effectSelf)
                     ActionSystem.Instance.AddReaction(new AddStatusEffect(statusEffect, statusEffect.duration, instigatorIsPlayer: false));
                 else
@@ -162,7 +184,7 @@ public class CardSystem : Singleton<CardSystem>
             ActionSystem.Instance.AddReaction(new SoundEffectGA(playCardGA.card.sound));
         }
 
-        ActionSystem.Instance.AddReaction(new SpendManaGA(manaAmount: playCardGA.card.cardCost));
+        ActionSystem.Instance.AddReaction(new SpendManaGA(magnitude: playCardGA.card.cardCost));
 
         foreach (var effect in playCardGA.card.effects)
         {
@@ -181,12 +203,12 @@ public class CardSystem : Singleton<CardSystem>
             yield break;
         }
 
-        int cardAmount = Mathf.Min(drawCardGA.Amount, drawPile.Count);  
-        if(cardAmount < drawCardGA.Amount) {  
+        int cardAmount = Mathf.Min(drawCardGA.magnitude, drawPile.Count);  
+        if(cardAmount < drawCardGA.magnitude) {  
             RefillDeck();
-            cardAmount = Mathf.Min(drawCardGA.Amount, drawPile.Count);
+            cardAmount = Mathf.Min(drawCardGA.magnitude, drawPile.Count);
         }
-        int notDrawnAmount = drawCardGA.Amount - cardAmount; 
+        int notDrawnAmount = drawCardGA.magnitude - cardAmount; 
         for (int i = 0; i < cardAmount; i++) 
         { 
             yield return DrawCard();
@@ -206,18 +228,19 @@ public class CardSystem : Singleton<CardSystem>
             yield break;
         }
 
-        if (drawEnemyCardGA.AdvanceToNextHandBeforeDraw)
+        if (drawEnemyCardGA.UseNextHand)
         {
-            EnemySystem.Instance.EnemyTurnHandler();
-            SetupEnemyDeck(EnemySystem.Instance.enemy.enemyDeck);
+            // Peek hand[enemyTurnCount + 1] without advancing the counter. The enemy's next natural
+            // turn will still progress onto that same hand, so these drawn cards match what they'll play.
+            SetupEnemyDeckFromNextHand();
         }
 
-        // Requested amount (inspector / StartRoundGA), data hand size, and cards in pile (after optional SetupEnemyDeck).
-        // DrawEnemyCard() uses DrawFront then Add — the list never shrinks, so looping past enemyDeck.Count repeats the same rotation.
-        int cardAmount = Mathf.Min(
-            drawEnemyCardGA.Amount,
-            EnemySystem.Instance.GetDrawAmount(),
-            enemyDeck.Count);
+        // Enemy-only: DO NOT cap by hand size. DrawEnemyCard() uses DrawFront + Add, which rotates the
+        // deck, so looping past enemyDeck.Count simply re-pulls earlier cards in the same peeked hand
+        // (e.g. magnitude=5 over a 3-card peek draws A,B,C,A,B). Only the empty-hand case is guarded
+        // to avoid an infinite loop.
+        if (enemyDeck.Count == 0) yield break;
+        int cardAmount = drawEnemyCardGA.magnitude;
         for (int i = 0; i < cardAmount; i++)
         {
             yield return DrawEnemyCard();

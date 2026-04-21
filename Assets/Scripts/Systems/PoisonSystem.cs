@@ -24,45 +24,28 @@ public class PoisonSystem : Singleton<PoisonSystem>
     {
         if (StatusSystem.Instance == null) return;
 
-        Dictionary<StatusEffect, int> stacksMap = StatusSystem.Instance.GetStacksMap(afflictedUnitIsPlayer);
-        Dictionary<StatusEffect, int> turnMap = StatusSystem.Instance.GetTurnMap(afflictedUnitIsPlayer);
-        GetStatusData(stacksMap, turnMap, out StatusEffect effect, out int poisonTicks, out int poisonStacks);
+        GetActivePoison(afflictedUnitIsPlayer, out StatusEffect effect, out StatusData data);
 
         StatusUI statusUI = StatusSystem.Instance.GetStatusUI(afflictedUnitIsPlayer);
         if (statusUI != null)
-            statusUI.UpdatePoison(poisonTicks, poisonStacks);
+            statusUI.UpdatePoison(data.duration, data.magnitude);
 
-        SyncEnemyPoisonVisual(afflictedUnitIsPlayer, effect, poisonTicks, poisonStacks);
+        SyncEnemyPoisonVisual(afflictedUnitIsPlayer, effect, data);
     }
 
-    private void GetStatusData(
-        Dictionary<StatusEffect, int> stacksMap,
-        Dictionary<StatusEffect, int> turnMap,
-        out StatusEffect effect,
-        out int ticks,
-        out int stacks)
+    private void GetActivePoison(bool afflictedUnitIsPlayer, out StatusEffect effect, out StatusData data)
     {
         effect = null;
-        stacks = 0;
-        ticks = 0;
-        foreach (var kvp in stacksMap)
+        data = default;
+        foreach (var kvp in StatusSystem.Instance.GetStatusMap(afflictedUnitIsPlayer))
         {
-            if (kvp.Key.GetType().Name == "PoisonStatusEffect")
+            if (kvp.Key is PoisonStatusEffect && kvp.Value.magnitude > 0)
             {
                 effect = kvp.Key;
-                stacks = kvp.Value;
-                break;
+                data = kvp.Value;
+                return;
             }
         }
-
-        if (effect == null || stacks <= 0)
-        {
-            stacks = 0;
-            ticks = 0;
-            return;
-        }
-
-        ticks = turnMap.TryGetValue(effect, out int remaining) ? remaining : effect.duration;
     }
 
     private IEnumerator PoisonPerformer(PoisonGA poisonGA)
@@ -75,37 +58,33 @@ public class PoisonSystem : Singleton<PoisonSystem>
         bool afflictedUnitIsPlayer = poisonGA.isPlayer;
         StatusUI statusUI = StatusSystem.Instance.GetStatusUI(afflictedUnitIsPlayer);
         bool damageHitsEnemy = !afflictedUnitIsPlayer;
-        Dictionary<StatusEffect, int> stacksMap = StatusSystem.Instance.GetStacksMap(afflictedUnitIsPlayer);
-        Dictionary<StatusEffect, int> turnMap = StatusSystem.Instance.GetTurnMap(afflictedUnitIsPlayer);
 
+        if (!StatusSystem.Instance.TryGet(poisonGA.statusEffect, afflictedUnitIsPlayer, out StatusData data) || data.magnitude <= 0)
+        {
+            StatusSystem.Instance.RemoveStatus(poisonGA.statusEffect, afflictedUnitIsPlayer);
+            yield break;
+        }
+
+        // Poison accumulates magnitude across its duration; the damage only fires on the last tick.
+        // Under the unified magnitude model, data.magnitude already represents the total damage to deal.
         if (poisonGA.duration == 1)
         {
-            if (!stacksMap.TryGetValue(poisonGA.statusEffect, out int stacks) || stacks <= 0)
-            {
-                turnMap.Remove(poisonGA.statusEffect);
-            }
-            else
-            {
-                int totalDamage = poisonGA.damage * stacks;
-                ActionSystem.Instance.AddReaction(new DealDamageGA(totalDamage, damageHitsEnemy));
-                if (statusUI != null) statusUI.ScreenShake();
-                stacksMap.Remove(poisonGA.statusEffect);
-                turnMap.Remove(poisonGA.statusEffect);
-                RefreshStatusUI(afflictedUnitIsPlayer);
-            }
+            int totalDamage = data.magnitude;
+            ActionSystem.Instance.AddReaction(new DealDamageGA(totalDamage, damageHitsEnemy));
+            if (statusUI != null) statusUI.ShakePoisonIcon();
+            StatusSystem.Instance.RemoveStatus(poisonGA.statusEffect, afflictedUnitIsPlayer);
         }
         else
         {
-            int turnsRemaining = turnMap.TryGetValue(poisonGA.statusEffect, out int turns) ? turns : poisonGA.duration;
-            turnsRemaining--;
-            turnMap[poisonGA.statusEffect] = turnsRemaining;
-            RefreshStatusUI(afflictedUnitIsPlayer);
+            StatusSystem.Instance.TickDuration(poisonGA.statusEffect, afflictedUnitIsPlayer);
+            if (statusUI != null) statusUI.ShakePoisonIcon();
         }
 
+        RefreshStatusUI(afflictedUnitIsPlayer);
         yield return null;
     }
 
-    private void SyncEnemyPoisonVisual(bool afflictedUnitIsPlayer, StatusEffect effect, int poisonTicks, int poisonStacks)
+    private void SyncEnemyPoisonVisual(bool afflictedUnitIsPlayer, StatusEffect effect, StatusData data)
     {
         if (afflictedUnitIsPlayer)
             return;
@@ -114,11 +93,12 @@ public class PoisonSystem : Singleton<PoisonSystem>
         if (overworldEnemy == null)
             return;
 
-        int maxPoisonDuration = effect != null ? StatusSystem.Instance.GetAppliedDuration(effect, afflictedUnitIsPlayer) : 0;
-        int turnsRemaining = poisonStacks > 0 ? poisonTicks : 0;
-        overworldEnemy.SetPoisonTurnsRemaining(turnsRemaining, maxPoisonDuration);
+        // Constant "first color of green" — pass (duration, duration) so the shader resolves to 1/duration intensity.
+        int turnsForVisual = data.magnitude > 0 ? Mathf.Max(1, data.duration) : 0;
+        int maxForVisual = data.magnitude > 0 ? Mathf.Max(1, data.duration) : 0;
+        overworldEnemy.SetPoisonTurnsRemaining(turnsForVisual, maxForVisual);
 
         if (overworldEnemy.poisonParticles != null)
-            overworldEnemy.poisonParticles.SetActive(poisonStacks > 0);
+            overworldEnemy.poisonParticles.SetActive(data.magnitude > 0);
     }
 }

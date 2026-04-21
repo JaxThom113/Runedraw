@@ -40,7 +40,7 @@ public class ShieldSystem : Singleton<ShieldSystem>
 
     private IEnumerator ApplyShieldPerformer(ApplyShieldGA applyShieldGA)
     {
-        int amount = applyShieldGA.Amount;
+        int amount = applyShieldGA.magnitude;
         if (applyShieldGA.isPlayer)
             playerView.AddShield(amount);
         else

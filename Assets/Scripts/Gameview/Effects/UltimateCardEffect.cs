@@ -10,7 +10,7 @@ public class UltimateCardEffect : Effect
         return ultimateGA;
 
     } 
-    public override string GetDescription()
+    protected override string GetBaseDescription()
     {
         return $"Ultimate Ability";
     }

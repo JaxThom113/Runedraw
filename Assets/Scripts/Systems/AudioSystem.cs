@@ -64,6 +64,17 @@ public class AudioSystem : PersistentSingleton<AudioSystem>
     private Dictionary<string, float> musicPlaybackTimes = new Dictionary<string, float>();
     private string currentTrack = null;
 
+    // When true, AudioSystem becomes a no-op (used while the end-credits video
+    // is active so its baked-in audio isn't competing with music/SFX).
+    public bool Suppressed { get; private set; }
+
+    public void SetSuppressed(bool suppressed)
+    {
+        Suppressed = suppressed;
+        if (suppressed && musicSource != null && musicSource.isPlaying)
+            musicSource.Stop();
+    }
+
     private void OnEnable()
     {
         music = new Dictionary<string, AudioClip>();
@@ -151,6 +162,7 @@ public class AudioSystem : PersistentSingleton<AudioSystem>
 
     public void PlayMusic(string clipName, bool resume = false)
     {
+        if (Suppressed) return;
         if (!music.ContainsKey(clipName) || musicSource == null)
             return;
 
@@ -188,6 +200,7 @@ public class AudioSystem : PersistentSingleton<AudioSystem>
 
     public void PlaySFX(string clipName)
     {
+        if (Suppressed) return;
         if (!sfx.ContainsKey(clipName) || sfxSource == null)
             return;
 
@@ -205,7 +218,7 @@ public class AudioSystem : PersistentSingleton<AudioSystem>
 
     private IEnumerator SoundEffectPerformer(SoundEffectGA soundEffectGA)
     {
-        if (soundEffectGA.sound != null && sfxSource != null)
+        if (!Suppressed && soundEffectGA.sound != null && sfxSource != null)
             sfxSource.PlayOneShot(soundEffectGA.sound);
 
         yield return null;
@@ -276,6 +289,7 @@ public class AudioSystem : PersistentSingleton<AudioSystem>
     {
         SetAreaThemes(areaType);
 
+        if (Suppressed) return;
         if (music == null || !music.ContainsKey("overworld") || musicSource == null)
             return;
 
@@ -317,6 +331,7 @@ public class AudioSystem : PersistentSingleton<AudioSystem>
 
     private void SpellCastPreReaction(SpellCastGA spellCastGA)
     {
+        if (Suppressed) return;
         PlaySFX("spellCast");
     }
 }

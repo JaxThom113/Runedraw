@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class DealDamageGA : GameAction
 {
-    public int Amount; 
+    public int magnitude;
     public bool isPlayer;
-    public DealDamageGA(int amount, bool isPlayer) { 
-        Amount = amount;
+    public DealDamageGA(int magnitude, bool isPlayer) { 
+        this.magnitude = magnitude;
         this.isPlayer = isPlayer;
     }
 }

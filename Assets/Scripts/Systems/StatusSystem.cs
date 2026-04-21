@@ -2,17 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Per-status runtime state. Stored once per (status, side) pair.
+// magnitude: stack count. Monotonically non-decreasing over the life of an entry; additions only until expiration.
+// duration: turns remaining. First-apply value is frozen — reapplication never refreshes it. Tick happens in subsystem performers.
+public struct StatusData
+{
+    public int magnitude;
+    public int duration;
+}
+
 public class StatusSystem : Singleton<StatusSystem>
-{ 
-    // How many stacks of each status (per unit). Not the same as turn countdown — see *TurnRemaining.
-    Dictionary<StatusEffect, int> enemyStatusEffects = new Dictionary<StatusEffect, int>();
-    Dictionary<StatusEffect, int> playerStatusEffects = new Dictionary<StatusEffect, int>();
-    // Turns remaining until this keyed effect procs (e.g. poison burst). Separate from stack count.
-    Dictionary<StatusEffect, int> enemyStatusTurnRemaining = new Dictionary<StatusEffect, int>();
-    Dictionary<StatusEffect, int> playerStatusTurnRemaining = new Dictionary<StatusEffect, int>();
-    // Original applied duration for the currently active status instance. Used for visual normalization.
-    Dictionary<StatusEffect, int> enemyStatusAppliedDuration = new Dictionary<StatusEffect, int>();
-    Dictionary<StatusEffect, int> playerStatusAppliedDuration = new Dictionary<StatusEffect, int>();
+{
+    // One dictionary per side. Entries are added/removed atomically — no desync risk.
+    Dictionary<StatusEffect, StatusData> playerStatus = new Dictionary<StatusEffect, StatusData>();
+    Dictionary<StatusEffect, StatusData> enemyStatus = new Dictionary<StatusEffect, StatusData>();
     public StatusUI playerStatusUI;
     public StatusUI enemyStatusUI;
 
@@ -36,29 +39,77 @@ public class StatusSystem : Singleton<StatusSystem>
         ActionSystem.UnsubscribeReaction<KillEnemyGA>(ClearAllStatusesPostReaction, ReactionTiming.POST);
     }
 
+    // --- Public facade: all reads/writes to status state must go through these. ---
+
+    public bool TryGet(StatusEffect effect, bool afflictedUnitIsPlayer, out StatusData data)
+    {
+        Dictionary<StatusEffect, StatusData> map = afflictedUnitIsPlayer ? playerStatus : enemyStatus;
+        return map.TryGetValue(effect, out data);
+    }
+
+    // Adds to magnitude if entry exists; creates a fresh entry with durationIfNew otherwise.
+    // Duration is never refreshed on reapply — first-apply duration wins.
+    public void AddMagnitude(StatusEffect effect, bool afflictedUnitIsPlayer, int amountToAdd, int durationIfNew)
+    {
+        Dictionary<StatusEffect, StatusData> map = afflictedUnitIsPlayer ? playerStatus : enemyStatus;
+        if (map.TryGetValue(effect, out StatusData data))
+        {
+            data.magnitude += amountToAdd;
+            map[effect] = data;
+        }
+        else
+        {
+            map[effect] = new StatusData { magnitude = amountToAdd, duration = durationIfNew };
+        }
+    }
+
+    public void RemoveStatus(StatusEffect effect, bool afflictedUnitIsPlayer)
+    {
+        Dictionary<StatusEffect, StatusData> map = afflictedUnitIsPlayer ? playerStatus : enemyStatus;
+        map.Remove(effect);
+    }
+
+    // Decrement duration by 1; remove the entry entirely if it hits 0.
+    public void TickDuration(StatusEffect effect, bool afflictedUnitIsPlayer)
+    {
+        Dictionary<StatusEffect, StatusData> map = afflictedUnitIsPlayer ? playerStatus : enemyStatus;
+        if (!map.TryGetValue(effect, out StatusData data)) return;
+        data.duration--;
+        if (data.duration <= 0)
+            map.Remove(effect);
+        else
+            map[effect] = data;
+    }
+
+    // Legacy wrapper preserved for existing callers (StatusEffect subclasses) — returns remaining turns, or the SO's declared duration as fallback.
     public int GetStatusTurnRemaining(StatusEffect effect, bool afflictedUnitIsPlayer)
-    { 
-        
-        Dictionary<StatusEffect, int> turnMap = afflictedUnitIsPlayer ? playerStatusTurnRemaining : enemyStatusTurnRemaining;
-        if (turnMap.TryGetValue(effect, out int turnsRemaining))
-            return turnsRemaining;
+    {
+        if (TryGet(effect, afflictedUnitIsPlayer, out StatusData data))
+            return data.duration;
         return effect.duration;
     }
 
-    public int GetAppliedDuration(StatusEffect effect, bool afflictedUnitIsPlayer)
+    // Read-only iteration access for subsystems that aggregate across multiple SOs of the same type
+    // (e.g. StunSystem summing magnitudes, VunerableSystem computing total additional damage).
+    // Callers must not mutate the returned dictionary directly — use the facade methods.
+    public Dictionary<StatusEffect, StatusData> GetStatusMap(bool afflictedUnitIsPlayer)
     {
-        Dictionary<StatusEffect, int> appliedDurationMap = afflictedUnitIsPlayer ? playerStatusAppliedDuration : enemyStatusAppliedDuration;
-        if (appliedDurationMap.TryGetValue(effect, out int appliedDuration))
-            return appliedDuration;
-        return effect.duration;
+        return afflictedUnitIsPlayer ? playerStatus : enemyStatus;
     }
+
+    public StatusUI GetStatusUI(bool afflictedUnitIsPlayer)
+    {
+        return afflictedUnitIsPlayer ? playerStatusUI : enemyStatusUI;
+    }
+
+    // --- Turn-phase performers ---
 
     // Called once at the start of the turn before shield clear so existing shield can absorb DOT.
     IEnumerator ApplyStatusDamagePerformer(ApplyStatusDamageGA applyStatusDamageGA)
-    {    
+    {
         VunerableSystem.Instance?.ResetAdditionalDamage();
-        ApplyStatusEffectsForSide(playerStatusEffects, true, StatusTurnPhase.Damage);
-        ApplyStatusEffectsForSide(enemyStatusEffects, false, StatusTurnPhase.Damage);
+        ApplyStatusEffectsForSide(true, StatusTurnPhase.Damage);
+        ApplyStatusEffectsForSide(false, StatusTurnPhase.Damage);
         VunerableSystem.Instance?.ResetAdditionalDamage();
         yield return null;
     }
@@ -67,11 +118,10 @@ public class StatusSystem : Singleton<StatusSystem>
     IEnumerator ApplyStatusEffectPerformer(ApplyStatusGA applyStatusGA)
     {
         VunerableSystem.Instance?.ResetAdditionalDamage();
-        ApplyStatusEffectsForSide(playerStatusEffects, true, StatusTurnPhase.Effect);
-        ApplyStatusEffectsForSide(enemyStatusEffects, false, StatusTurnPhase.Effect);
+        ApplyStatusEffectsForSide(true, StatusTurnPhase.Effect);
+        ApplyStatusEffectsForSide(false, StatusTurnPhase.Effect);
         VunerableSystem.Instance?.ResetAdditionalDamage();
 
-        // Refresh UI after all queued status GameActions for the turn finish.
         RefreshStatusUIGA refreshStatusUIGA = new RefreshStatusUIGA();
         ActionSystem.Instance.AddReaction(refreshStatusUIGA);
         yield return null;
@@ -80,8 +130,8 @@ public class StatusSystem : Singleton<StatusSystem>
     // Called after draws so delayed control/status effects can use the latest visible hand state.
     IEnumerator ApplyLateStatusEffectPerformer(ApplyStatusEffectGA applyStatusEffectGA)
     {
-        ApplyDeferredStatusEffectsForSide(playerStatusEffects, true);
-        ApplyDeferredStatusEffectsForSide(enemyStatusEffects, false);
+        ApplyDeferredStatusEffectsForSide(true);
+        ApplyDeferredStatusEffectsForSide(false);
 
         RefreshStatusUIGA refreshStatusUIGA = new RefreshStatusUIGA();
         ActionSystem.Instance.AddReaction(refreshStatusUIGA);
@@ -112,12 +162,8 @@ public class StatusSystem : Singleton<StatusSystem>
 
     private void ClearAllStatusesPostReaction(KillEnemyGA killEnemyGA)
     {
-        playerStatusEffects.Clear();
-        playerStatusTurnRemaining.Clear();
-        playerStatusAppliedDuration.Clear();
-        enemyStatusEffects.Clear();
-        enemyStatusTurnRemaining.Clear();
-        enemyStatusAppliedDuration.Clear();
+        playerStatus.Clear();
+        enemyStatus.Clear();
 
         if (playerStatusUI != null)
         {
@@ -136,110 +182,108 @@ public class StatusSystem : Singleton<StatusSystem>
         }
     }
 
-    private void ApplyStatusEffectsForSide(Dictionary<StatusEffect, int> statusMap, bool afflictedUnitIsPlayer, StatusTurnPhase turnPhase)
-    {  
-        foreach (KeyValuePair<StatusEffect, int> kvp in statusMap)
-        { 
-            int stacks = kvp.Value;
-            if (stacks <= 0) continue;
+    private void ApplyStatusEffectsForSide(bool afflictedUnitIsPlayer, StatusTurnPhase turnPhase)
+    {
+        Dictionary<StatusEffect, StatusData> map = afflictedUnitIsPlayer ? playerStatus : enemyStatus;
+        foreach (KeyValuePair<StatusEffect, StatusData> kvp in map)
+        {
+            int magnitude = kvp.Value.magnitude;
+            if (magnitude <= 0) continue;
             if (kvp.Key is VunerableStatusEffect || kvp.Key is StunStatusEffect) continue;
             if (kvp.Key.TurnPhase != turnPhase) continue;
-            VunerableSystem.Instance?.ResetAdditionalDamage(); //vunerable does not affect status damage
-            kvp.Key.PerformStatusEffects(this, stacks, afflictedUnitIsPlayer);
+            VunerableSystem.Instance?.ResetAdditionalDamage(); // vulnerable does not affect status damage
+
+            if (kvp.Key is RuneStatusEffect rune)
+                RuneCastVFX(rune);
+
+            kvp.Key.PerformStatusEffects(this, magnitude, afflictedUnitIsPlayer);
         }
     }
 
-    private void ApplyDeferredStatusEffectsForSide(Dictionary<StatusEffect, int> statusMap, bool afflictedUnitIsPlayer)
+    private void RuneCastVFX(RuneStatusEffect rune)
     {
-        foreach (KeyValuePair<StatusEffect, int> kvp in statusMap)
+        if (rune == null) return;
+        // Only the spellcast VFX replays each tick. The card SFX is intentionally
+        // *not* replayed: it already plays once through the normal card-play path
+        // (CardSystem) on initial cast, and repeating it every turn is noisy.
+        ActionSystem.Instance?.AddReaction(new SpellCastGA(rune.cachedElementIndex, rune.cachedCasterIsPlayer));
+    }
+
+    private void ApplyDeferredStatusEffectsForSide(bool afflictedUnitIsPlayer)
+    {
+        Dictionary<StatusEffect, StatusData> map = afflictedUnitIsPlayer ? playerStatus : enemyStatus;
+        foreach (KeyValuePair<StatusEffect, StatusData> kvp in map)
         {
-            int stacks = kvp.Value;
-            if (stacks <= 0) continue;
+            int magnitude = kvp.Value.magnitude;
+            if (magnitude <= 0) continue;
             if (kvp.Key is not VunerableStatusEffect && kvp.Key is not StunStatusEffect) continue;
-            kvp.Key.PerformStatusEffects(this, stacks, afflictedUnitIsPlayer);
+            kvp.Key.PerformStatusEffects(this, magnitude, afflictedUnitIsPlayer);
         }
     }
 
-    // Card adds stacks; turn countdown is set only on first application (same timer for all stacks).
+    // Card adds magnitude. On first application, duration is set; reapplication never refreshes duration.
+    // Rune no longer has a special refresh-on-reapply path — it follows the same rule as everything else.
     IEnumerator AddStatusEffectPerformer(AddStatusEffect addStatusEffect)
-    {  
+    {
         bool instigatorIsPlayer = addStatusEffect.instigatorIsPlayer;
         bool afflictedUnitIsPlayer = !instigatorIsPlayer;
-        Dictionary<StatusEffect, int> map = afflictedUnitIsPlayer ? playerStatusEffects : enemyStatusEffects;
-        Dictionary<StatusEffect, int> turnMap = afflictedUnitIsPlayer ? playerStatusTurnRemaining : enemyStatusTurnRemaining;
-        Dictionary<StatusEffect, int> appliedDurationMap = afflictedUnitIsPlayer ? playerStatusAppliedDuration : enemyStatusAppliedDuration;
         StatusEffect key = addStatusEffect.statusEffect;
+        int durationToApply = addStatusEffect.duration > 0 ? addStatusEffect.duration : key.duration;
+
+        if (key is RuneStatusEffect)
+        {
+            GameData.RunesPlayed++;
+        }
+
+        // Per-application magnitude comes from the SO (e.g. PoisonStatusEffect.magnitude = 5 adds +5 per cast).
+        // Stun/Rune default to 1 via their SO, Poison/Bleed/Vulnerable carry their per-application damage amount.
+        int magnitudeToAdd = key.Magnitude;
 
         // Enemy does not use mana, so stun converts into random enemy card discard instead.
         if (key is StunStatusEffect && !afflictedUnitIsPlayer)
         {
-            map[key] = map.TryGetValue(key, out int sEnemy) ? sEnemy + 1 : 1;
-            if (!turnMap.ContainsKey(key))
-            {
-                int initialTurns = addStatusEffect.duration > 0 ? addStatusEffect.duration : key.duration;
-                turnMap[key] = initialTurns;
-                appliedDurationMap[key] = initialTurns;
-            }
+            AddMagnitude(key, afflictedUnitIsPlayer, magnitudeToAdd, durationToApply);
+            RefreshAllStatusUINow(afflictedUnitIsPlayer);
 
-            List<Card> shownEnemyCards = EnemyHandView.Instance.GetShownCards();
-            if (shownEnemyCards != null && shownEnemyCards.Count > 0)
+            int discardsToApply = Mathf.Max(1, magnitudeToAdd);
+            for (int i = 0; i < discardsToApply; i++)
             {
+                List<Card> shownEnemyCards = EnemyHandView.Instance.GetShownCards();
+                if (shownEnemyCards == null || shownEnemyCards.Count <= 0) break;
+
                 Card randomCard = shownEnemyCards[Random.Range(0, shownEnemyCards.Count)];
                 CardSystem.Instance.enemyDeck.Remove(randomCard);
                 yield return StartCoroutine(EnemyHandView.Instance.RemoveEnemyCard(randomCard));
             }
 
-            RefreshStatusUIGA refreshStatusAfterEnemyStunDiscard = new RefreshStatusUIGA(afflictedUnitIsPlayer);
-            ActionSystem.Instance.AddReaction(refreshStatusAfterEnemyStunDiscard);
+            RefreshAllStatusUINow(afflictedUnitIsPlayer);
             yield return null;
             yield break;
         }
 
-        int durationToApply = addStatusEffect.duration > 0 ? addStatusEffect.duration : key.duration;
+        AddMagnitude(key, afflictedUnitIsPlayer, magnitudeToAdd, durationToApply);
 
-        if (key is RuneStatusEffect)
+        // Immediate synchronous UI refresh so the applied status is visible in the same frame as the card resolution,
+        // not deferred behind other reactions queued by the card (SpendMana, PerformEffect, etc.).
+        RefreshAllStatusUINow(afflictedUnitIsPlayer);
+
+        // On-cast immediate fire for vulnerable/stun only — effect fires now with the new magnitude, but duration is not consumed.
+        // Runes intentionally do NOT fire on cast; they only trigger at the start of subsequent turns.
+        if (key is VunerableStatusEffect || key is StunStatusEffect)
         {
-            // Reapplying a rune refreshes it to one active instance with the latest duration.
-            map[key] = 1;
-            turnMap[key] = durationToApply;
-            appliedDurationMap[key] = durationToApply;
-            GameData.RunesPlayed++;
+            TryGet(key, afflictedUnitIsPlayer, out StatusData data);
+            key.PerformStatusEffects(this, data.magnitude, afflictedUnitIsPlayer, consumeDuration: false);
         }
-        else
-        {
-            map[key] = map.TryGetValue(key, out int s) ? s + 1 : 1;
-
-            if (!turnMap.ContainsKey(key))
-            {
-                turnMap[key] = durationToApply;
-                appliedDurationMap[key] = durationToApply;
-            }
-        }
-
-        if (key is VunerableStatusEffect || key is StunStatusEffect || key is RuneStatusEffect)
-        {
-            bool consumeDuration = key is VunerableStatusEffect || key is StunStatusEffect ? false : true;
-            key.PerformStatusEffects(this, map[key], afflictedUnitIsPlayer, consumeDuration);
-        }
-
-        // Queued last: runs after PerformStatusEffects (StunEffectGA, VunerableGA, …) added above.
-        RefreshStatusUIGA refreshStatusAfterApply = new RefreshStatusUIGA(afflictedUnitIsPlayer);
-        ActionSystem.Instance.AddReaction(refreshStatusAfterApply);
         yield return null;
     }
 
-    public Dictionary<StatusEffect, int> GetStacksMap(bool afflictedUnitIsPlayer)
+    // Synchronous UI fan-out across all status subsystems for the given side. Use when the UI must reflect
+    // a status change in the same frame rather than waiting for a queued RefreshStatusUIGA to drain.
+    private void RefreshAllStatusUINow(bool afflictedUnitIsPlayer)
     {
-        return afflictedUnitIsPlayer ? playerStatusEffects : enemyStatusEffects;
-    }
-
-    public Dictionary<StatusEffect, int> GetTurnMap(bool afflictedUnitIsPlayer)
-    {
-        return afflictedUnitIsPlayer ? playerStatusTurnRemaining : enemyStatusTurnRemaining;
-    }
-
-    public StatusUI GetStatusUI(bool afflictedUnitIsPlayer)
-    {
-        return afflictedUnitIsPlayer ? playerStatusUI : enemyStatusUI;
+        PoisonSystem.Instance?.RefreshStatusUI(afflictedUnitIsPlayer);
+        BleedSystem.Instance?.RefreshStatusUI(afflictedUnitIsPlayer);
+        VunerableSystem.Instance?.RefreshStatusUI(afflictedUnitIsPlayer);
+        StunSystem.Instance?.RefreshStatusUI(afflictedUnitIsPlayer);
     }
 }

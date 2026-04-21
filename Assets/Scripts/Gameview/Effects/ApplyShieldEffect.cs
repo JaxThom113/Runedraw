@@ -1,17 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ApplyShieldEffect : Effect
 {
-    [SerializeField] public int shieldAmount;
+    [FormerlySerializedAs("shieldAmount")]
+    [SerializeField] public int magnitude;
+    public override int Magnitude => magnitude;
 
     public override GameAction GetGameAction()
     {
-        return new ApplyShieldGA(shieldAmount, isPlayer);
+        return new ApplyShieldGA(magnitude, isPlayer);
     } 
-    public override string GetDescription()
+    protected override string GetBaseDescription()
     {
-        return $"Apply {shieldAmount} shield";
+        return $"Apply {magnitude} shield";
     }
 }

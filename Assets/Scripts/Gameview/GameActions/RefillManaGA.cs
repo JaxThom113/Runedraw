@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class RefillManaGA : GameAction
 {
-    public int manaAmount; 
-    public RefillManaGA(int manaAmount)
+    public int magnitude;
+    public RefillManaGA(int magnitude)
     {
-        this.manaAmount = manaAmount;
+        this.magnitude = magnitude;
     }
 }

@@ -79,14 +79,14 @@ public class ManaSystem : Singleton<ManaSystem>
  
     private IEnumerator SpendManaPerformer(SpendManaGA spendManaGA)
     { 
-        int totalSpend = spendManaGA.manaAmount + additionalMana;
+        int totalSpend = spendManaGA.magnitude + additionalMana;
         currentMana -= totalSpend; 
         yield return StartCoroutine(manaUI.WaitForSpendMana(totalSpend));
         manaUI.UpdateMana(currentMana);
     } 
     private IEnumerator RefillManaPerformer(RefillManaGA refillManaGA)
     {
-        currentMana = refillManaGA.manaAmount;
+        currentMana = refillManaGA.magnitude;
         manaUI.UpdateMana(currentMana);
         if (manaUI.gameObject.activeInHierarchy)
             yield return StartCoroutine(manaUI.WaitForStartRound());

@@ -20,32 +20,35 @@ public class RuneSystem : Singleton<RuneSystem>
         {
             effectTargetsPlayer = !effectTargetsPlayer;
         }
-        Dictionary<StatusEffect, int> stacksMap = StatusSystem.Instance.GetStacksMap(afflictedUnitIsPlayer); 
-        Dictionary<StatusEffect, int> turnMap = StatusSystem.Instance.GetTurnMap(afflictedUnitIsPlayer);  
+
         if (runeGA.duration > 0) { 
-            if (!stacksMap.TryGetValue(runeGA.statusEffect, out int stacks) || stacks <= 0) { 
-                turnMap.Remove(runeGA.statusEffect);
+            if (!StatusSystem.Instance.TryGet(runeGA.statusEffect, afflictedUnitIsPlayer, out StatusData data) || data.magnitude <= 0) { 
+                StatusSystem.Instance.RemoveStatus(runeGA.statusEffect, afflictedUnitIsPlayer);
+                yield break;
             }
-            else { 
-                int turnsRemaining = turnMap.TryGetValue(runeGA.statusEffect, out int turns) ? turns : runeGA.duration;
-                turnsRemaining--; 
-                turnMap[runeGA.statusEffect] = turnsRemaining; 
+
+            // data.magnitude is stored in "inner effect units" (see RuneStatusEffect.Magnitude). Divide by the
+            // inner's base magnitude to recover the cast count, so 2 rune casts of a DealDamage(5) rune fires
+            // the inner effect twice. If the inner effect has no numeric magnitude, fall back to treating the
+            // stored value as the raw fire count (old behavior).
+            int baseInner = runeGA.effect != null ? runeGA.effect.Magnitude : 0;
+            int fireCount = baseInner > 0
+                ? Mathf.Max(1, data.magnitude / baseInner)
+                : Mathf.Max(1, data.magnitude);
+            for (int i = 0; i < fireCount; i++)
+            {
                 PerformEffectGA performEffectGA = new(runeGA.effect, effectTargetsPlayer);
                 ActionSystem.Instance.AddReaction(performEffectGA);
-                if (turnsRemaining <= 0) { 
-                    stacksMap.Remove(runeGA.statusEffect);
-                    turnMap.Remove(runeGA.statusEffect);
-                }
+            }
+
+            if (runeGA.consumeDuration)
+            {
+                StatusSystem.Instance.TickDuration(runeGA.statusEffect, afflictedUnitIsPlayer);
             }
         }
         else { 
-            if (!stacksMap.TryGetValue(runeGA.statusEffect, out int stacks) || stacks <= 0) { 
-                turnMap.Remove(runeGA.statusEffect);
-            }
-            else { 
-                stacksMap.Remove(runeGA.statusEffect);
-            } 
-             turnMap.Remove(runeGA.statusEffect);
+            // Dispel path: remove unconditionally.
+            StatusSystem.Instance.RemoveStatus(runeGA.statusEffect, afflictedUnitIsPlayer);
         }
        
         yield return null;

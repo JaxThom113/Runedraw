@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Lil Sylph
   m_EditorClassIdentifier: 
   cardName: Lil Sylph
-  cardCost: 4
+  cardCost: 3
   cardBorder: {fileID: 21300000, guid: d48326ba42e455447b0ccce8fad6f2e4, type: 3}
   cardIcon: {fileID: 21300000, guid: d33f0a2ee5e7a074da97e42c63302deb, type: 3}
   cardDescription: Plays Gust at the start of your turn for 3 turns
@@ -36,30 +36,32 @@ MonoBehaviour:
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
-        drawAmount: 1
+        magnitude: 1
     - rid: 3988029065039183876
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
-        damageAmount: 3
+        magnitude: 3
     - rid: 3988029111534354436
       type: {class: RuneStatusEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0
-        playWhenDrawnByEnemy: 1
+        playWhenDrawnByEnemy: 0
         duration: 3
         turnPhase: 1
         effect:
           rid: 474873962761551873
-        ApplyToEnemy: 1
+        ApplyToEnemy: 0
+        magnitude: 1
     - rid: 5118777032282996754
       type: {class: RuneStatusEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0
-        playWhenDrawnByEnemy: 1
+        playWhenDrawnByEnemy: 0
         duration: 3
         turnPhase: 1
         effect:
           rid: 3988029065039183876
         ApplyToEnemy: 0
+        magnitude: 1

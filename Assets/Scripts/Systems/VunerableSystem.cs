@@ -38,13 +38,13 @@ public class VunerableSystem : Singleton<VunerableSystem>
     {
         if (StatusSystem.Instance == null) return 0;
 
-        Dictionary<StatusEffect, int> stacksMap = StatusSystem.Instance.GetStacksMap(afflictedUnitIsPlayer);
         int totalAdditionalDamage = 0;
-        foreach (var kvp in stacksMap)
+        foreach (var kvp in StatusSystem.Instance.GetStatusMap(afflictedUnitIsPlayer))
         {
-            if (kvp.Key is not VunerableStatusEffect vunerableEffect) continue;
-            if (kvp.Value <= 0) continue;
-            totalAdditionalDamage += kvp.Value * vunerableEffect.Damage;
+            if (kvp.Key is not VunerableStatusEffect) continue;
+            if (kvp.Value.magnitude <= 0) continue;
+            // Magnitude is already the pre-aggregated damage bonus under the unified magnitude model.
+            totalAdditionalDamage += kvp.Value.magnitude;
         }
 
         return totalAdditionalDamage;
@@ -56,29 +56,21 @@ public class VunerableSystem : Singleton<VunerableSystem>
         StatusUI statusUI = StatusSystem.Instance.GetStatusUI(afflictedUnitIsPlayer);
         if (statusUI == null) return;
 
-        Dictionary<StatusEffect, int> stacksMap = StatusSystem.Instance.GetStacksMap(afflictedUnitIsPlayer);
-        Dictionary<StatusEffect, int> turnMap = StatusSystem.Instance.GetTurnMap(afflictedUnitIsPlayer);
-        GetStatusData(stacksMap, turnMap, out int vunerableTicks, out int vunerableStacks);
-        statusUI.UpdateVunerable(vunerableTicks, vunerableStacks);
+        GetAggregateVunerable(afflictedUnitIsPlayer, out int ticks, out int stacks);
+        statusUI.UpdateVunerable(ticks, stacks);
     }
 
-    private void GetStatusData(
-        Dictionary<StatusEffect, int> stacksMap,
-        Dictionary<StatusEffect, int> turnMap,
-        out int ticks,
-        out int stacks)
+    // Aggregate magnitude across all vulnerable SO instances; report the longest duration as "ticks remaining."
+    private void GetAggregateVunerable(bool afflictedUnitIsPlayer, out int ticks, out int stacks)
     {
         stacks = 0;
         ticks = 0;
-        foreach (var kvp in stacksMap)
+        foreach (var kvp in StatusSystem.Instance.GetStatusMap(afflictedUnitIsPlayer))
         {
-            if (kvp.Key.GetType().Name == "VunerableStatusEffect")
-            {
-                if (kvp.Value <= 0) continue;
-                stacks += kvp.Value;
-                int effectTicks = turnMap.TryGetValue(kvp.Key, out int remaining) ? remaining : kvp.Key.duration;
-                if (effectTicks > ticks) ticks = effectTicks;
-            }
+            if (kvp.Key is not VunerableStatusEffect) continue;
+            if (kvp.Value.magnitude <= 0) continue;
+            stacks += kvp.Value.magnitude;
+            if (kvp.Value.duration > ticks) ticks = kvp.Value.duration;
         }
     }
 
@@ -90,17 +82,15 @@ public class VunerableSystem : Singleton<VunerableSystem>
         }
 
         bool afflictedUnitIsPlayer = vunerableGA.isPlayer;
-        Dictionary<StatusEffect, int> stacksMap = StatusSystem.Instance.GetStacksMap(afflictedUnitIsPlayer);
-        Dictionary<StatusEffect, int> turnMap = StatusSystem.Instance.GetTurnMap(afflictedUnitIsPlayer);
 
         List<StatusEffect> vunerableEffects = new List<StatusEffect>();
         int totalStacks = 0;
-        foreach (var kvp in stacksMap)
+        foreach (var kvp in StatusSystem.Instance.GetStatusMap(afflictedUnitIsPlayer))
         {
-            if (kvp.Key.GetType().Name != "VunerableStatusEffect") continue;
-            if (kvp.Value <= 0) continue;
+            if (kvp.Key is not VunerableStatusEffect) continue;
+            if (kvp.Value.magnitude <= 0) continue;
             vunerableEffects.Add(kvp.Key);
-            totalStacks += kvp.Value;
+            totalStacks += kvp.Value.magnitude;
         }
 
         if (totalStacks <= 0)
@@ -109,7 +99,8 @@ public class VunerableSystem : Singleton<VunerableSystem>
             yield break;
         }
 
-        DamageSystem.Instance.additionalDamage = totalStacks * vunerableGA.damage;
+        // totalStacks already sums StatusData.magnitude across all vulnerable entries — no multiply needed.
+        DamageSystem.Instance.additionalDamage = totalStacks;
         DamageSystem.Instance.additionalDamageAfflictsPlayer = afflictedUnitIsPlayer;
 
         if (!vunerableGA.consumeDuration)
@@ -120,18 +111,11 @@ public class VunerableSystem : Singleton<VunerableSystem>
 
         foreach (StatusEffect effect in vunerableEffects)
         {
-            int turnsRemaining = turnMap.TryGetValue(effect, out int turns) ? turns : effect.duration;
-            turnsRemaining--;
-            if (turnsRemaining <= 0)
-            {
-                stacksMap.Remove(effect);
-                turnMap.Remove(effect);
-            }
-            else
-            {
-                turnMap[effect] = turnsRemaining;
-            }
+            StatusSystem.Instance.TickDuration(effect, afflictedUnitIsPlayer);
         }
+
+        StatusUI statusUI = StatusSystem.Instance.GetStatusUI(afflictedUnitIsPlayer);
+        if (statusUI != null) statusUI.ShakeVunerableIcon();
 
         yield return null;
     }

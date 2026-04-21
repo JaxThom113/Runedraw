@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class DrawCardGA : GameAction
 {
-    public int Amount {get; set;}  
-    public DrawCardGA(int amount){ 
-        Amount = amount;  
+    public int magnitude { get; set; }
+    public DrawCardGA(int magnitude){ 
+        this.magnitude = magnitude;  
     }
 }

@@ -4,16 +4,19 @@ using UnityEngine;
 
 public class DrawEnemyCardGA : GameAction
 {
-    public int Amount { get; set; }
+    public int magnitude { get; set; }
 
     /// <summary>
-    /// When true (enemy card Draw effect): advance enemy turn index, rebuild the in-battle enemy draw pile from that hand, then animate draws. Start-round draws leave this false.
+    /// When true (enemy card Draw effect): peek at hand[enemyTurnCount + 1] and rebuild the in-battle
+    /// enemy draw pile from that hand WITHOUT advancing enemyTurnCount. The enemy's next natural turn
+    /// will still land on that same hand, so the drawn cards match what they'll play next turn.
+    /// Start-round draws leave this false (they use the current turn's hand).
     /// </summary>
-    public bool AdvanceToNextHandBeforeDraw { get; set; }
+    public bool UseNextHand { get; set; }
 
-    public DrawEnemyCardGA(int amount, bool advanceToNextHandBeforeDraw = false)
+    public DrawEnemyCardGA(int magnitude, bool useNextHand = false)
     {
-        Amount = amount;
-        AdvanceToNextHandBeforeDraw = advanceToNextHandBeforeDraw;
+        this.magnitude = magnitude;
+        UseNextHand = useNextHand;
     }
 }

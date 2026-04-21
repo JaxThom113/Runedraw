@@ -14,13 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityName: Hot Wings
   entityIcon: {fileID: 21300000, guid: 711008ebbe96e1a4bbf37cb9f426f576, type: 3}
-  entityHealth: 9
+  entityHealth: 17
   entityDialogue: {fileID: 11400000, guid: 6ddc5e3273020064db3e66dddc7a1a3a, type: 2}
   enemyDeck:
+  - enemyHand:
+    - {fileID: 11400000, guid: bcb4aab32bff578499f3cb2b73b0978f, type: 2}
   - enemyHand:
     - {fileID: 11400000, guid: 2c53118e65cf5574c850df28382e26fd, type: 2}
     - {fileID: 11400000, guid: 9596292c1ef274d479f443e06b1bf2ea, type: 2}
   - enemyHand:
-    - {fileID: 11400000, guid: bcb4aab32bff578499f3cb2b73b0978f, type: 2}
+    - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
+    - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
+  - enemyHand:
+    - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
+    - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
+  - enemyHand:
+    - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
+    - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
   ultimateCard: {fileID: 11400000, guid: bcb4aab32bff578499f3cb2b73b0978f, type: 2}
   enemyMaterial: {fileID: 2100000, guid: 73ee6bbaae76d0e428e92bc47d37ad21, type: 2}

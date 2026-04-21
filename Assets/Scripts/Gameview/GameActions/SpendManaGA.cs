@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class SpendManaGA : GameAction
 {
-    public int manaAmount; 
+    public int magnitude;
 
-    public SpendManaGA(int manaAmount)
+    public SpendManaGA(int magnitude)
     {
-        this.manaAmount = manaAmount;
+        this.magnitude = magnitude;
     }
 }

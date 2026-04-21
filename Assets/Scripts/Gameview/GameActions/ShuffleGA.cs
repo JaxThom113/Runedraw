@@ -5,8 +5,8 @@ using UnityEngine;
 public class ShuffleGA : GameAction
 
 { 
-    public int Amount {get; set;}  
-    public ShuffleGA(int amount){ 
-        Amount = amount;  
+    public int magnitude { get; set; }
+    public ShuffleGA(int magnitude){ 
+        this.magnitude = magnitude;  
     }
 }

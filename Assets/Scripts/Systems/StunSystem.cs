@@ -36,63 +36,35 @@ public class StunSystem : Singleton<StunSystem>
 
     public void RefreshStatusUI(bool afflictedUnitIsPlayer)
     { 
-
         if (StatusSystem.Instance == null) return;
         StatusUI statusUI = StatusSystem.Instance.GetStatusUI(afflictedUnitIsPlayer);
         if (statusUI == null) return;
 
-        Dictionary<StatusEffect, int> stacksMap = StatusSystem.Instance.GetStacksMap(afflictedUnitIsPlayer);
-        Dictionary<StatusEffect, int> turnMap = StatusSystem.Instance.GetTurnMap(afflictedUnitIsPlayer);
-        GetStatusData(stacksMap, turnMap, out int stunTicks, out int stunStacks);
-        statusUI.UpdateStun(stunTicks, stunStacks);
+        GetActiveStun(afflictedUnitIsPlayer, out StatusData data);
+        statusUI.UpdateStun(data.duration, data.magnitude);
     }
 
-    private void GetStatusData(
-        Dictionary<StatusEffect, int> stacksMap,
-        Dictionary<StatusEffect, int> turnMap,
-        out int ticks,
-        out int stacks)
+    private void GetActiveStun(bool afflictedUnitIsPlayer, out StatusData data)
     {
-        StatusEffect effect = null;
-        stacks = 0;
-        ticks = 0;
-        foreach (var kvp in stacksMap)
+        data = default;
+        foreach (var kvp in StatusSystem.Instance.GetStatusMap(afflictedUnitIsPlayer))
         {
-            if (kvp.Key.GetType().Name == "StunStatusEffect")
+            if (kvp.Key is StunStatusEffect && kvp.Value.magnitude > 0)
             {
-                effect = kvp.Key;
-                stacks = kvp.Value;
-                break;
+                data = kvp.Value;
+                return;
             }
         }
-
-        if (effect == null || stacks <= 0)
-        {
-            stacks = 0;
-            ticks = 0;
-            return;
-        }
-
-        int remainingTurns;
-        if (turnMap.TryGetValue(effect, out remainingTurns))
-        {
-            ticks = remainingTurns;
-        }
-        else
-        {
-            ticks = effect.duration;
-        }
     }
 
-   
-    private static int GetTotalStunStacks(Dictionary<StatusEffect, int> stacksMap)
-    { 
-    
+    // Sum magnitude across every StunStatusEffect SO (supports multiple stun variants sharing the side).
+    private static int GetTotalStunMagnitude(bool afflictedUnitIsPlayer)
+    {
         int total = 0;
-        foreach (var kvp in stacksMap)
+        foreach (var kvp in StatusSystem.Instance.GetStatusMap(afflictedUnitIsPlayer))
         {
-            if (kvp.Key.GetType().Name != "StunStatusEffect") continue;
-            if (kvp.Value > 0) total += kvp.Value;
+            if (kvp.Key is StunStatusEffect && kvp.Value.magnitude > 0)
+                total += kvp.Value.magnitude;
         }
         return total;
     }
@@ -105,18 +77,16 @@ public class StunSystem : Singleton<StunSystem>
         }
 
         bool afflictedUnitIsPlayer = stunEffectGA.isPlayer;
-        Dictionary<StatusEffect, int> stacksMap = StatusSystem.Instance.GetStacksMap(afflictedUnitIsPlayer);
-        Dictionary<StatusEffect, int> turnMap = StatusSystem.Instance.GetTurnMap(afflictedUnitIsPlayer);
 
         if (!afflictedUnitIsPlayer)
         { 
-            if (!stacksMap.TryGetValue(stunEffectGA.statusEffect, out int enemyStacks) || enemyStacks <= 0)
+            if (!StatusSystem.Instance.TryGet(stunEffectGA.statusEffect, afflictedUnitIsPlayer, out StatusData enemyData) || enemyData.magnitude <= 0)
             {
-                turnMap.Remove(stunEffectGA.statusEffect);
+                StatusSystem.Instance.RemoveStatus(stunEffectGA.statusEffect, afflictedUnitIsPlayer);
                 yield break;
             }
 
-            int discardsToApply = enemyStacks;
+            int discardsToApply = enemyData.magnitude;
             for (int i = 0; i < discardsToApply; i++)
             {
                 List<Card> shownEnemyCards = EnemyHandView.Instance.GetShownCards();
@@ -130,52 +100,36 @@ public class StunSystem : Singleton<StunSystem>
                 yield return StartCoroutine(EnemyHandView.Instance.RemoveEnemyCard(randomCard));
             }
 
-            int turnsRemaining = turnMap.TryGetValue(stunEffectGA.statusEffect, out int turns) ? turns : stunEffectGA.duration;
             if (stunEffectGA.consumeDuration)
             {
-                turnsRemaining--;
-                if (turnsRemaining <= 0)
-                {
-                    stacksMap.Remove(stunEffectGA.statusEffect);
-                    turnMap.Remove(stunEffectGA.statusEffect);
-                }
-                else
-                {
-                    turnMap[stunEffectGA.statusEffect] = turnsRemaining;
-                }
+                StatusSystem.Instance.TickDuration(stunEffectGA.statusEffect, afflictedUnitIsPlayer);
+                StatusUI enemyStatusUI = StatusSystem.Instance.GetStatusUI(afflictedUnitIsPlayer);
+                if (enemyStatusUI != null) enemyStatusUI.ShakeStunIcon();
             }
 
             RefreshStatusUI(false);
             yield break;
         }
 
-        if (!stacksMap.TryGetValue(stunEffectGA.statusEffect, out int stacks) || stacks <= 0)
+        if (!StatusSystem.Instance.TryGet(stunEffectGA.statusEffect, afflictedUnitIsPlayer, out StatusData playerData) || playerData.magnitude <= 0)
         { 
-            turnMap.Remove(stunEffectGA.statusEffect);
-            ManaSystem.Instance?.SetAdditionalMana(GetTotalStunStacks(stacksMap));
+            StatusSystem.Instance.RemoveStatus(stunEffectGA.statusEffect, afflictedUnitIsPlayer);
+            ManaSystem.Instance?.SetAdditionalMana(GetTotalStunMagnitude(afflictedUnitIsPlayer));
             yield break;
         }
 
-        int playerTurnsRemaining = turnMap.TryGetValue(stunEffectGA.statusEffect, out int playerTurns) ? playerTurns : stunEffectGA.duration;
+        // Apply the mana penalty BEFORE ticking duration. On the final stunned turn, TickDuration
+        // removes the entry from the map; if we summed after the tick, GetTotalStunMagnitude would
+        // return 0 and the player would skip paying on the very turn the stun is still supposed to
+        // be in effect (causing N duration to only charge for N-1 turns).
+        int totalStun = GetTotalStunMagnitude(afflictedUnitIsPlayer);
+        ManaSystem.Instance?.SetAdditionalMana(totalStun > 0 ? totalStun : 0);
+
         if (stunEffectGA.consumeDuration)
         {
-            playerTurnsRemaining--;
-            if (playerTurnsRemaining <= 0)
-            {
-                stacksMap.Remove(stunEffectGA.statusEffect);
-                turnMap.Remove(stunEffectGA.statusEffect);
-            }
-            else
-            {
-                turnMap[stunEffectGA.statusEffect] = playerTurnsRemaining;
-            }
-        }
-         if(GetTotalStunStacks(stacksMap) > 0) { 
-            ManaSystem.Instance?.SetAdditionalMana(GetTotalStunStacks(stacksMap));
-         }
-        else
-        {
-            ManaSystem.Instance?.SetAdditionalMana(0);
+            StatusSystem.Instance.TickDuration(stunEffectGA.statusEffect, afflictedUnitIsPlayer);
+            StatusUI playerStatusUI = StatusSystem.Instance.GetStatusUI(afflictedUnitIsPlayer);
+            if (playerStatusUI != null) playerStatusUI.ShakeStunIcon();
         }
 
         RefreshStatusUI(true);

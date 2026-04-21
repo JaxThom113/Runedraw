@@ -14,7 +14,7 @@ public class FogSystem : Singleton<FogSystem>
 
     [Header("Fog VFX")]
     [SerializeField] private VisualEffect vfx;
-    [SerializeField] float fogTweenDuration = 2f;
+    [SerializeField] float fogTweenDuration = 0.5f;
 
     [Header("Fog Presets by Area Type")]
     [Tooltip("Index guide: 0 Tutorial, 1 Neutral, 2 Fire, 3 Wind, 4 Water, 5 Earth, 6 Final Boss")]

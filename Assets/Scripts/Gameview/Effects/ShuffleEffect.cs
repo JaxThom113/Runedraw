@@ -1,18 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 [System.Serializable]
 public class ShuffleEffect : Effect
 { 
-    [SerializeField] public int shuffleAmount;
+    [FormerlySerializedAs("shuffleAmount")]
+    [SerializeField] public int magnitude;
+    public override int Magnitude => magnitude;
+
     public override GameAction GetGameAction()
     {
-        ShuffleGA shuffleGA = new(shuffleAmount);
+        ShuffleGA shuffleGA = new(magnitude);
         return shuffleGA;
     }
 
-    public override string GetDescription()
+    protected override string GetBaseDescription()
     {
         return $"Draw a new hand of cards";
     }

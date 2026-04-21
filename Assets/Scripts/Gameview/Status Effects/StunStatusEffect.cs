@@ -4,20 +4,23 @@ using UnityEngine;
 
 public class StunStatusEffect : StatusEffect
 {
-    public override void PerformStatusEffects(StatusSystem statusSystem, int stacks, bool afflictedUnitIsPlayer, bool consumeDuration = true)
+    [SerializeField] int magnitude = 1;
+    public override int Magnitude => magnitude;
+
+    public override void PerformStatusEffects(StatusSystem statusSystem, int magnitude, bool afflictedUnitIsPlayer, bool consumeDuration = true)
     {
-        if (stacks <= 0) return;
+        if (magnitude <= 0) return;
         isPlayer = afflictedUnitIsPlayer;
         int turnsRemaining = statusSystem.GetStatusTurnRemaining(this, afflictedUnitIsPlayer);
-        ActionSystem.Instance.AddReaction(new StunEffectGA(turnsRemaining, afflictedUnitIsPlayer, this, consumeDuration));
+        ActionSystem.Instance.AddReaction(new StunEffectGA(magnitude, turnsRemaining, afflictedUnitIsPlayer, this, consumeDuration));
     }
 
     public override GameAction GetGameAction()
     {
-        return new StunEffectGA(duration, isPlayer, this);
+        return new StunEffectGA(magnitude, duration, isPlayer, this);
     }
 
-    public override string GetDescription()
+    protected override string GetBaseDescription()
     {
         return $"Apply Stun for {duration} turns";
     }

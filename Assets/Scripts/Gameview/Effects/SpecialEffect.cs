@@ -13,7 +13,7 @@ public class SpecialEffect : Effect
         return new SpecialGA(specialSpriteMaterial, domainExpansionMaterial, isPlayer, Boss);
     }
 
-    public override string GetDescription()
+    protected override string GetBaseDescription()
     {
         return "Unleash special";
     }

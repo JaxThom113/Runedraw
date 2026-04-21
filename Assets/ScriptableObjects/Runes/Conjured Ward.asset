@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Conjured Ward
   m_EditorClassIdentifier: 
   cardName: Conjured Ward
-  cardCost: 5
+  cardCost: 4
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
   cardIcon: {fileID: 21300000, guid: d85af894eb9b2fb489eaa38f1b74bc04, type: 3}
   cardDescription: 
@@ -35,14 +35,15 @@ MonoBehaviour:
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 1
-        duration: 3
+        duration: 5
         turnPhase: 1
         effect:
           rid: 5118777032282996755
         ApplyToEnemy: 0
+        magnitude: 1
     - rid: 5118777032282996755
       type: {class: ApplyShieldEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
-        shieldAmount: 2
+        magnitude: 2

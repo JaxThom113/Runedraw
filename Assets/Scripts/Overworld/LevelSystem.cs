@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 using TMPro;
 
@@ -85,6 +86,7 @@ public class LevelSystem : Singleton<LevelSystem>
         ActionSystem.AttachPerformer<CampfireGA>(CampfirePerformer);
         ActionSystem.AttachPerformer<NextAreaGA>(NextAreaPerformer);
         ActionSystem.SubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
+        ActionSystem.SubscribeReaction<KillEnemyGA>(KillEnemyPreReaction, ReactionTiming.PRE);
     }
 
     void OnDisable()
@@ -93,6 +95,16 @@ public class LevelSystem : Singleton<LevelSystem>
         ActionSystem.DetachPerformer<CampfireGA>();
         ActionSystem.DetachPerformer<NextAreaGA>();
         ActionSystem.UnsubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
+        ActionSystem.UnsubscribeReaction<KillEnemyGA>(KillEnemyPreReaction, ReactionTiming.PRE);
+    }
+
+    private void KillEnemyPreReaction(KillEnemyGA killEnemyGA)
+    {
+        // final boss area cleared -> roll credits
+        if (currentAreaType == 6)
+        {
+            SceneManager.LoadScene("EndCredits");
+        }
     }
 
     void Start()

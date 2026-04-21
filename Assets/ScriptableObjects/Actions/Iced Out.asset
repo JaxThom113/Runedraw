@@ -35,10 +35,10 @@ MonoBehaviour:
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
-        shieldAmount: 1
+        magnitude: 1
     - rid: 5118776926820106240
       type: {class: DrawCardsEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0
-        playWhenDrawnByEnemy: 1
-        drawAmount: 1
+        playWhenDrawnByEnemy: 0
+        magnitude: 1

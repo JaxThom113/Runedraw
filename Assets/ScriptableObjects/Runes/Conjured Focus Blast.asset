@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Conjured Focus Blast
   m_EditorClassIdentifier: 
   cardName: Conjured Focus Blast
-  cardCost: 5
+  cardCost: 4
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
   cardIcon: {fileID: 21300000, guid: fc636ec359b5ca240b7d64b76f81a3e1, type: 3}
   cardDescription: 
@@ -35,14 +35,15 @@ MonoBehaviour:
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
-        damageAmount: 2
+        magnitude: 2
     - rid: 5118777032282996754
       type: {class: RuneStatusEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 1
-        duration: 3
+        duration: 5
         turnPhase: 0
         effect:
           rid: 3988029065039183874
         ApplyToEnemy: 1
+        magnitude: 1

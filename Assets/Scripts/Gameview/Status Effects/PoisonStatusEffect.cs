@@ -1,29 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PoisonStatusEffect : StatusEffect
 {
-   [SerializeField] int damage;
-   public int Damage => damage;
+   [FormerlySerializedAs("damage")]
+   [SerializeField] int magnitude;
+   public override int Magnitude => magnitude;
    public override StatusTurnPhase TurnPhase => StatusTurnPhase.Damage;
 
-   public override void PerformStatusEffects(StatusSystem statusSystem, int stacks, bool afflictedUnitIsPlayer, bool consumeDuration = true)
+   public override void PerformStatusEffects(StatusSystem statusSystem, int magnitude, bool afflictedUnitIsPlayer, bool consumeDuration = true)
    { 
-      
-      if (stacks <= 0) return;
+      if (magnitude <= 0) return;
       isPlayer = afflictedUnitIsPlayer;
       int turnsRemaining = statusSystem.GetStatusTurnRemaining(this, afflictedUnitIsPlayer);
-      ActionSystem.Instance.AddReaction(new PoisonGA(Damage, turnsRemaining, afflictedUnitIsPlayer, this));
+      ActionSystem.Instance.AddReaction(new PoisonGA(magnitude, turnsRemaining, afflictedUnitIsPlayer, this));
    }
 
    public override GameAction GetGameAction()  
    { 
-    return new PoisonGA(damage, duration, isPlayer, this);
+    return new PoisonGA(magnitude, duration, isPlayer, this);
    } 
 
-   public override string GetDescription()
+   protected override string GetBaseDescription()
    {
-    return $"Apply {damage} Poison for {duration} turns";
+    return $"Apply {magnitude} Poison for {duration} turns";
    }
 }

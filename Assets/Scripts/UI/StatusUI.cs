@@ -103,20 +103,24 @@ public class StatusUI : MonoBehaviour
   } 
   
 
-  public void ScreenShake()
-  {
-    if (PoisonIcon == null) return;
+  public void ShakePoisonIcon() => ShakeIcon(PoisonIcon);
+  public void ShakeBleedIcon() => ShakeIcon(BleedIcon);
+  public void ShakeVunerableIcon() => ShakeIcon(VunerableIcon);
+  public void ShakeStunIcon() => ShakeIcon(StunIcon);
 
-    RectTransform rt = PoisonIcon.GetComponent<RectTransform>();
+  private void ShakeIcon(GameObject icon)
+  {
+    if (icon == null) return;
+
+    RectTransform rt = icon.GetComponent<RectTransform>();
     if (rt == null) return;
-    // Save current placement so we don't permanently move the icon.
+
     Vector2 originalAnchorMin = rt.anchorMin;
     Vector2 originalAnchorMax = rt.anchorMax;
     Vector2 originalAnchoredPos = rt.anchoredPosition;
 
-    rt.DOKill(); // cancel any tweens on the icon
+    rt.DOKill();
 
-    // Center it, then shake.
     rt.anchorMin = new Vector2(0.5f, 0.5f);
     rt.anchorMax = new Vector2(0.5f, 0.5f);
     rt.anchoredPosition = Vector2.zero;

@@ -22,14 +22,12 @@ public class DialogueSystem : Singleton<DialogueSystem>
         ActionSystem.SubscribeReaction<DrawEnemyCardGA>(TurnStartDialogue, ReactionTiming.PRE);
         ActionSystem.SubscribeReaction<DiscardCardGA>(AttackDialogue, ReactionTiming.POST); 
         ActionSystem.SubscribeReaction<PlayEnemyCardGA>(UltimateAttackDialogue, ReactionTiming.POST);
-        ActionSystem.SubscribeReaction<KillEnemyGA>(LoseDialogue, ReactionTiming.POST);
     }
     void OnDisable()
     {
         ActionSystem.UnsubscribeReaction<DrawEnemyCardGA>(TurnStartDialogue, ReactionTiming.PRE);
         ActionSystem.UnsubscribeReaction<DiscardCardGA>(AttackDialogue, ReactionTiming.POST); 
         ActionSystem.UnsubscribeReaction<PlayEnemyCardGA>(UltimateAttackDialogue, ReactionTiming.POST);
-        ActionSystem.UnsubscribeReaction<KillEnemyGA>(LoseDialogue, ReactionTiming.POST);
     }
     string GetRandomDialogue(List<string> dialogue)
     {  
@@ -100,11 +98,6 @@ public class DialogueSystem : Singleton<DialogueSystem>
             dialogueText.text = GetRandomDialogue(dialogueSO.EndTurn);
         }
     } 
-    private void LoseDialogue(KillEnemyGA killEnemyGA)
-    {
-        if (dialogueSO == null || dialogueText == null) return;
-        dialogueText.text = GetRandomDialogue(dialogueSO.Lose);
-    }
     public void TakeDamageDialogue(){ 
         if (dialogueSO == null || dialogueText == null || enemyView == null) return;
         if(enemyView.currentHealth <= 0) return;

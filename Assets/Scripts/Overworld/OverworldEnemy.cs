@@ -31,6 +31,7 @@ public class OverworldEnemy : MonoBehaviour
     public EnemySO enemyData;    
     private Material runtimeMaterial;
     private Vector3 baseVisualScale = Vector3.one;
+    private Vector3 baseLocalPosition;
     private Color baseMaterialColor = Color.white;
     private bool stunActive;
     private bool vulnerableActive;
@@ -58,6 +59,7 @@ public class OverworldEnemy : MonoBehaviour
             visualRoot = transform;
 
         baseVisualScale = visualRoot.localScale;
+        baseLocalPosition = transform.localPosition;
         CacheMaterialDefaults();
 
         if (bleedParticles != null)
@@ -251,6 +253,20 @@ public class OverworldEnemy : MonoBehaviour
             material.SetFloat(poisonMaterialProperty, 0f);
 
         ApplyStatusMaterialColor();
+    }
+
+    // Kills any active position tweens (e.g. lingering DOShakePosition from
+    // UISystem.TransformShake) and tweens the transform back to the position
+    // captured in Awake. Prevents cumulative shake drift between rounds.
+    public void ResetPositionToBase(float duration = 0.25f)
+    {
+        transform.DOKill();
+        if (duration <= 0f)
+        {
+            transform.localPosition = baseLocalPosition;
+            return;
+        }
+        transform.DOLocalMove(baseLocalPosition, duration).SetEase(Ease.OutQuad);
     }
 
     public void DisableSphereCollider()

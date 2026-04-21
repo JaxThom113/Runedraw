@@ -1,19 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 
 public class DealDamageEffect : Effect
 {
-    [SerializeField] public int damageAmount;   
+    [FormerlySerializedAs("damageAmount")]
+    [SerializeField] public int magnitude;
+    public override int Magnitude => magnitude;
     public override GameAction GetGameAction()
     {
-        DealDamageGA dealDamageGA = new(damageAmount, isPlayer);  
+        DealDamageGA dealDamageGA = new(magnitude, isPlayer);  
         return dealDamageGA;
 
     } 
-    public override string GetDescription()
+    protected override string GetBaseDescription()
     {
-        return $"Deal {GetDisplayDamageAmount(damageAmount)} damage";
+        return $"Deal {GetDisplayDamageAmount(magnitude)} damage";
     }
 }

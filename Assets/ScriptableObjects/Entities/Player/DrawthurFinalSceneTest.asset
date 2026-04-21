@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03bd711dd01a1994f8317a7fba6bda5a, type: 3}
+  m_Name: DrawthurFinalSceneTest
+  m_EditorClassIdentifier: 
+  entityName: Drawthur
+  entityIcon: {fileID: 21300000, guid: b269de6822b14374bade18365a208d41, type: 3}
+  entityHealth: 32
+  entityDialogue: {fileID: 0}
+  playerDeck:
+  - {fileID: 11400000, guid: 2c3d79989beade44eb6be39278bb9373, type: 2}
+  - {fileID: 11400000, guid: f79dca31ec16d6044bca19a2ce40b022, type: 2}
+  - {fileID: 11400000, guid: c3b6184dd09d05249acac87ae3c434c8, type: 2}
+  - {fileID: 11400000, guid: 3081545fb87611047928679a6ccb8248, type: 2}
+  - {fileID: 11400000, guid: 001b8828778f4bf41b21b26cd3ffb074, type: 2}
+  - {fileID: 11400000, guid: d2a9fdd0102bf71479ded96d4b5213ac, type: 2}
+  - {fileID: 11400000, guid: bf29c8471eb201e4e8c61dc6f4112fcd, type: 2}
+  - {fileID: 11400000, guid: 01f8cb83a57da0846bbcd434cc506764, type: 2}
+  - {fileID: 11400000, guid: 098ff1a47372b8e43989fca01f99249f, type: 2}
+  - {fileID: 11400000, guid: 49ced29c338d02c4480d7a93ff94cdd3, type: 2}
+  - {fileID: 11400000, guid: 70c5d1eade82684499bf6e525c3de3af, type: 2}
+  - {fileID: 11400000, guid: 861f6fc1084f97f4fb9d858bd3c5729f, type: 2}
+  - {fileID: 11400000, guid: d7625ae074e59714bbe928a75997f8ea, type: 2}
+  - {fileID: 11400000, guid: 03a78d3ab156695438ed8657d059fdc2, type: 2}
+  - {fileID: 11400000, guid: f4e7d6c2b887292449193dae79bc29c4, type: 2}
+  - {fileID: 11400000, guid: eea40f4121fa3644dab1139acd761b57, type: 2}
+  - {fileID: 11400000, guid: e7f1d61b3ffc2604c8b6012c691c491d, type: 2}

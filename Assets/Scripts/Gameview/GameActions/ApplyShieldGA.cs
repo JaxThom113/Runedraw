@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class ApplyShieldGA : GameAction
 {
-    public int Amount;
+    public int magnitude;
     public bool isPlayer;
 
-    public ApplyShieldGA(int amount, bool isPlayer)
+    public ApplyShieldGA(int magnitude, bool isPlayer)
     {
-        Amount = amount;
+        this.magnitude = magnitude;
         this.isPlayer = isPlayer;
     }
 }

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityName: Beppo the Flaming Clown
   entityIcon: {fileID: 21300000, guid: 7641d5fa37ae62449b227dbd955eb623, type: 3}
-  entityHealth: 10
+  entityHealth: 12
   entityDialogue: {fileID: 11400000, guid: bfe3d14a379b88e428b6d543389bd7ca, type: 2}
   enemyDeck:
   - enemyHand:

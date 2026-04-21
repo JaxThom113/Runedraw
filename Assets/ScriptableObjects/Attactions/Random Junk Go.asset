@@ -35,19 +35,19 @@ MonoBehaviour:
       type: {class: BleedStatusEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0
-        playWhenDrawnByEnemy: 0
+        playWhenDrawnByEnemy: 1
         duration: 3
         turnPhase: 0
-        damage: 1
+        magnitude: 1
     - rid: 3988029111534354434
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
-        damageAmount: 3
+        magnitude: 3
     - rid: 3988029111534354435
       type: {class: ApplyShieldEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
-        shieldAmount: 3
+        magnitude: 3

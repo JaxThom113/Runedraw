@@ -25,6 +25,27 @@ public class UISystem : Singleton<UISystem>
     [SerializeField] private TextMeshProUGUI timesRested;
     [SerializeField] private TextMeshProUGUI runesPlayed;
 
+    void OnEnable()
+    {
+        ActionSystem.SubscribeReaction<StartRoundGA>(StartRoundPostReaction, ReactionTiming.POST);
+    }
+
+    void OnDisable()
+    {
+        ActionSystem.UnsubscribeReaction<StartRoundGA>(StartRoundPostReaction, ReactionTiming.POST);
+    }
+
+    private void StartRoundPostReaction(StartRoundGA startRoundGA)
+    {
+        // Resets any position drift accumulated from overlapping DOShakePosition
+        // calls in TransformShake (e.g. ShaderSystem's per-hit shake on the
+        // OverworldEnemy) so the enemy always starts a fresh round at origin.
+        if (EnemySystem.Instance != null && EnemySystem.Instance.overworldEnemy != null)
+        {
+            EnemySystem.Instance.overworldEnemy.ResetPositionToBase();
+        }
+    }
+
     void Update()
     {
         // start tracking time

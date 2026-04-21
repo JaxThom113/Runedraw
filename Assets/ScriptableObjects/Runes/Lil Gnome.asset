@@ -36,7 +36,7 @@ MonoBehaviour:
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
-        damageAmount: 2
+        magnitude: 2
     - rid: 3988029111534354436
       type: {class: RuneStatusEffect, ns: , asm: Assembly-CSharp}
       data:
@@ -46,13 +46,14 @@ MonoBehaviour:
         turnPhase: 1
         effect:
           rid: 3988029111534354437
-        ApplyToEnemy: 1
+        ApplyToEnemy: 0
+        magnitude: 1
     - rid: 3988029111534354437
       type: {class: ApplyShieldEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
-        shieldAmount: 1
+        magnitude: 1
     - rid: 5118777032282996754
       type: {class: RuneStatusEffect, ns: , asm: Assembly-CSharp}
       data:
@@ -63,3 +64,4 @@ MonoBehaviour:
         effect:
           rid: 3988029065039183876
         ApplyToEnemy: 0
+        magnitude: 1

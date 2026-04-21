@@ -30,7 +30,7 @@ public class DamageSystem : Singleton<DamageSystem>
         bool applyAdditionalDamage =
             (damageHitsPlayer && additionalDamageAfflictsPlayer) ||
             (!damageHitsPlayer && !additionalDamageAfflictsPlayer);
-        int damageAmount = dealDamageGA.Amount + (applyAdditionalDamage ? additionalDamage : 0);   
+        int damageAmount = dealDamageGA.magnitude + (applyAdditionalDamage ? additionalDamage : 0);   
         if(dealDamageGA.isPlayer) { 
             if (enemyView == null || killQueued || enemyView.currentHealth <= 0)
             {
@@ -44,6 +44,13 @@ public class DamageSystem : Singleton<DamageSystem>
                 ActionSystem.Instance.AddReaction(killEnemyGA);
             }
         } else { 
+            // Drop player-directed damage once the enemy has been killed this flow.
+            // Fire-card "deal X to self" effects are queued as sibling reactions of the
+            // enemy-damage effect on the same PlayCardGA; without this guard the self
+            // damage still resolves *after* KillEnemyGA has wrapped up the battle
+            // (storedHealth already captured, EndBattleView queued), causing the
+            // delayed hurt animation and the stale health on the next battle enter.
+            if (playerView == null || killQueued) yield break;
             playerView.TakeDamage(damageAmount); 
             if(playerView.currentHealth <= 0) {   
                 UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");

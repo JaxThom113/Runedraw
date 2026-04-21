@@ -12,11 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ac92f85d5c46e74283afb23a91a686b, type: 3}
   m_Name: Shield
   m_EditorClassIdentifier: 
-  cardName: Draw
+  cardName: Shield
   cardCost: 1
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
   cardIcon: {fileID: 21300000, guid: 3eba5dfd6c3fd284ab27501387a1a861, type: 3}
   cardDescription: 
+  KeepBaseDescription: 0
   cardElement: 0
   cardElementIcon: {fileID: 21300000, guid: 7b6c5390240409445a46abfb97e084ec, type: 3}
   cardType: 1
@@ -33,4 +34,4 @@ MonoBehaviour:
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 1
-        shieldAmount: 2
+        magnitude: 2

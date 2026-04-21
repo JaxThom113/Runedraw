@@ -97,6 +97,11 @@ public class EnemySystem : Singleton<EnemySystem>
             {
                 if (effect is StatusEffect statusEffect)
                 { 
+                    // Match CardSystem: cache the enemy card's element + sound on any rune so StatusSystem
+                    // can replay the spellcast VFX / SFX on each future tick, attributed to the enemy side.
+                    if (statusEffect is RuneStatusEffect rune)
+                        rune.CaptureCastContext(card, casterIsPlayer: false);
+
                     if(effect.effectSelf)
                         ActionSystem.Instance.AddReaction(new AddStatusEffect(statusEffect, statusEffect.duration, instigatorIsPlayer: true));
                     else
@@ -177,6 +182,15 @@ public class EnemySystem : Singleton<EnemySystem>
             enemyTurnCount = 0;
         } 
         return enemy.enemyDeck[enemyTurnCount].enemyHand.Count;
+    }
+
+    // Peek the hand the enemy WILL draw on its next natural turn, without advancing enemyTurnCount.
+    // Used by mid-turn enemy DrawCards effects so their draws preview (and match) next turn's hand.
+    public List<CardSO> GetNextEnemyHand()
+    {
+        if (enemy.enemyDeck == null || enemy.enemyDeck.Count == 0) return new List<CardSO>();
+        int nextIndex = (enemyTurnCount + 1) % enemy.enemyDeck.Count;
+        return enemy.enemyDeck[nextIndex].enemyHand;
     }
 
 }

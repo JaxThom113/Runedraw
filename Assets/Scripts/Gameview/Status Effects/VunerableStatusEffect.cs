@@ -1,24 +1,26 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class VunerableStatusEffect : StatusEffect
 {
-    [SerializeField] int damage;
-    public int Damage => damage;
-    public override void PerformStatusEffects(StatusSystem statusSystem, int stacks, bool afflictedUnitIsPlayer, bool consumeDuration = true)
+    [FormerlySerializedAs("damage")]
+    [SerializeField] int magnitude;
+    public override int Magnitude => magnitude;
+    public override void PerformStatusEffects(StatusSystem statusSystem, int magnitude, bool afflictedUnitIsPlayer, bool consumeDuration = true)
     {
-        if (stacks <= 0) return;
+        if (magnitude <= 0) return;
         isPlayer = afflictedUnitIsPlayer;
         int turnsRemaining = statusSystem.GetStatusTurnRemaining(this, afflictedUnitIsPlayer);
-        ActionSystem.Instance.AddReaction(new VunerableGA(Damage, turnsRemaining, afflictedUnitIsPlayer, this, consumeDuration));
+        ActionSystem.Instance.AddReaction(new VunerableGA(magnitude, turnsRemaining, afflictedUnitIsPlayer, this, consumeDuration));
     }
 
     public override GameAction GetGameAction()
     {
-        return new VunerableGA(damage, duration, isPlayer, this);
+        return new VunerableGA(magnitude, duration, isPlayer, this);
     }
 
-    public override string GetDescription()
+    protected override string GetBaseDescription()
     {
-        return $"Apply {damage} Vulnerable for {duration} turns";
+        return $"Apply {magnitude} Vulnerable for {duration} turns";
     }
 }

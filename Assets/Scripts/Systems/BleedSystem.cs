@@ -24,40 +24,24 @@ public class BleedSystem : Singleton<BleedSystem>
     {
         if (StatusSystem.Instance == null) return;
 
-        Dictionary<StatusEffect, int> stacksMap = StatusSystem.Instance.GetStacksMap(afflictedUnitIsPlayer);
-        Dictionary<StatusEffect, int> turnMap = StatusSystem.Instance.GetTurnMap(afflictedUnitIsPlayer);
-        int bleedTicks = 0;
-        int bleedStacks = 0;
-        GetStatusData(stacksMap, turnMap, out bleedTicks, out bleedStacks);
+        GetActiveBleed(afflictedUnitIsPlayer, out StatusData data);
 
         StatusUI statusUI = StatusSystem.Instance.GetStatusUI(afflictedUnitIsPlayer);
         if (statusUI != null)
-            statusUI.UpdateBleed(bleedTicks, bleedStacks);
+            statusUI.UpdateBleed(data.duration, data.magnitude);
     }
 
-    private void GetStatusData(Dictionary<StatusEffect, int> stacksMap, Dictionary<StatusEffect, int> turnMap, out int ticks, out int stacks)
+    private void GetActiveBleed(bool afflictedUnitIsPlayer, out StatusData data)
     {
-        StatusEffect effect = null;
-        stacks = 0;
-        ticks = 0;
-        foreach (var kvp in stacksMap)
+        data = default;
+        foreach (var kvp in StatusSystem.Instance.GetStatusMap(afflictedUnitIsPlayer))
         {
-            if (kvp.Key.GetType().Name == "BleedStatusEffect")
+            if (kvp.Key is BleedStatusEffect && kvp.Value.magnitude > 0)
             {
-                effect = kvp.Key;
-                stacks = kvp.Value;
-                break;
+                data = kvp.Value;
+                return;
             }
         }
-
-        if (effect == null || stacks <= 0)
-        {
-            stacks = 0;
-            ticks = 0;
-            return;
-        }
-
-        ticks = turnMap.TryGetValue(effect, out int remaining) ? remaining : effect.duration;
     }
 
     private IEnumerator BleedPerformer(BleedGA bleedGA)
@@ -70,44 +54,29 @@ public class BleedSystem : Singleton<BleedSystem>
         bool afflictedUnitIsPlayer = bleedGA.isPlayer;
         StatusUI statusUI = StatusSystem.Instance.GetStatusUI(afflictedUnitIsPlayer);
         bool damageHitsEnemy = !afflictedUnitIsPlayer;
-        Dictionary<StatusEffect, int> stacksMap = StatusSystem.Instance.GetStacksMap(afflictedUnitIsPlayer);
-        Dictionary<StatusEffect, int> turnMap = StatusSystem.Instance.GetTurnMap(afflictedUnitIsPlayer);
 
         if (bleedGA.duration > 0)
         {
-            if (!stacksMap.TryGetValue(bleedGA.statusEffect, out int stacks) || stacks <= 0)
+            if (!StatusSystem.Instance.TryGet(bleedGA.statusEffect, afflictedUnitIsPlayer, out StatusData data) || data.magnitude <= 0)
             {
-                turnMap.Remove(bleedGA.statusEffect);
+                StatusSystem.Instance.RemoveStatus(bleedGA.statusEffect, afflictedUnitIsPlayer);
+                yield break;
             }
-            else
-            {
-                int turnsRemaining = turnMap.TryGetValue(bleedGA.statusEffect, out int turns) ? turns : bleedGA.duration;
-                turnsRemaining--;
-                turnMap[bleedGA.statusEffect] = turnsRemaining;
-                int totalDamage = bleedGA.damage * stacks;
-                ActionSystem.Instance.AddReaction(new DealDamageGA(totalDamage, damageHitsEnemy));
-                if (damageHitsEnemy && EnemySystem.Instance.overworldEnemy != null)
-                    EnemySystem.Instance.overworldEnemy.PlayBleedHitFlash();
-                if (statusUI != null) statusUI.ScreenShake();
-                if (turnsRemaining <= 0)
-                {
-                    stacksMap.Remove(bleedGA.statusEffect);
-                    turnMap.Remove(bleedGA.statusEffect);
-                }
-                RefreshStatusUI(afflictedUnitIsPlayer);
-            }
+
+            // data.magnitude is the pre-aggregated per-tick damage under the unified magnitude model.
+            int totalDamage = data.magnitude;
+            ActionSystem.Instance.AddReaction(new DealDamageGA(totalDamage, damageHitsEnemy));
+            if (damageHitsEnemy && EnemySystem.Instance.overworldEnemy != null)
+                EnemySystem.Instance.overworldEnemy.PlayBleedHitFlash();
+            if (statusUI != null) statusUI.ShakeBleedIcon();
+
+            StatusSystem.Instance.TickDuration(bleedGA.statusEffect, afflictedUnitIsPlayer);
+            RefreshStatusUI(afflictedUnitIsPlayer);
         }
         else
         {
-            if (!stacksMap.TryGetValue(bleedGA.statusEffect, out int stacks) || stacks <= 0)
-            {
-                turnMap.Remove(bleedGA.statusEffect);
-            }
-            else
-            {
-                stacksMap.Remove(bleedGA.statusEffect);
-            }
-            turnMap.Remove(bleedGA.statusEffect);
+            // Dispel path: remove unconditionally.
+            StatusSystem.Instance.RemoveStatus(bleedGA.statusEffect, afflictedUnitIsPlayer);
             RefreshStatusUI(afflictedUnitIsPlayer);
         }
 

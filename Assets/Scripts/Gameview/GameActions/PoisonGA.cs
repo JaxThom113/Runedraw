@@ -1,13 +1,13 @@
 public class PoisonGA : GameAction
 {
-    public int damage;
+    public int magnitude;
     public int duration;
     public bool isPlayer;
     public StatusEffect statusEffect;
 
-    public PoisonGA(int damage, int duration, bool isPlayer, StatusEffect statusEffect)
+    public PoisonGA(int magnitude, int duration, bool isPlayer, StatusEffect statusEffect)
     {
-        this.damage = damage;
+        this.magnitude = magnitude;
         this.duration = duration;
         this.isPlayer = isPlayer;
         this.statusEffect = statusEffect;

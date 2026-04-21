@@ -12,12 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8ffff4e899a37b4d95d00cf1a992051, type: 3}
   m_Name: Egg Timer
   m_EditorClassIdentifier: 
-  cardName: Fire Arrow
+  cardName: EggTimer
   cardCost: 5
   cardBorder: {fileID: 21300000, guid: 50c948eb6a4581e40a4444ec0b5d8b91, type: 3}
   cardIcon: {fileID: 21300000, guid: 15e15aa6ecf80ac48881afc1d3337500, type: 3}
-  cardDescription: 
-  KeepBaseDescription: 0
+  cardDescription: Explodes in 5 Turns!
+  KeepBaseDescription: 1
   cardElement: 1
   cardElementIcon: {fileID: 21300000, guid: 6904c290dbd2c324c9793f88052c3f04, type: 3}
   cardType: 0
@@ -37,7 +37,7 @@ MonoBehaviour:
         playWhenDrawnByEnemy: 0
         duration: 5
         turnPhase: 0
-        damage: 10
+        magnitude: 30
     - rid: 474873960734654470
       type: {class: PoisonStatusEffect, ns: , asm: Assembly-CSharp}
       data:
@@ -45,4 +45,4 @@ MonoBehaviour:
         playWhenDrawnByEnemy: 0
         duration: 5
         turnPhase: 0
-        damage: 10
+        magnitude: 30
