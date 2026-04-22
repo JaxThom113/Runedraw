@@ -56,7 +56,16 @@ public class FogSystem : Singleton<FogSystem>
         if (!EnsureVfxReference())
             return;
 
-        if (DisableFog)
+        // only update the bool when in areas 1-3
+        bool specialSeedFogEnabledOnArea = false;
+        if (GameData.SpecialSeed != null)
+        {
+            if (LevelSystem.Instance.CurrentArea != 0 && LevelSystem.Instance.CurrentArea <= SeedSystem.Instance.GetSpecialSeed(GameData.SpecialSeed).areas.Count)
+                specialSeedFogEnabledOnArea = GameData.SpecialSeed != null && !SeedSystem.Instance.GetSpecialSeed(GameData.SpecialSeed).areas[LevelSystem.Instance.CurrentArea-1].fog;
+        }
+        
+        // if debug DisableFog is enabled or if a SpecialSeed has fog disabled on an area, turn off fog
+        if (DisableFog || specialSeedFogEnabledOnArea)
         {
             if (vfx.gameObject.activeSelf)
                 vfx.gameObject.SetActive(false);

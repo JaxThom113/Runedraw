@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fccf3669131c9e4d9893284bd540a68, type: 3}
+  m_Name: DeathWish
+  m_EditorClassIdentifier: 
+  areas:
+  - areaType: 5
+    enemies:
+    - {fileID: 11400000, guid: 729eb741b8d5483458065ad94cced9cd, type: 2}
+    rareEnemies:
+    - {fileID: 11400000, guid: 720ba196e8f97ca44ad8f84a2695ab0e, type: 2}
+    levelCsv: {fileID: 4900000, guid: 0f05f7cc90b19d546b7da40621a7945e, type: 3}
+    numTorches: 30
+    fog: 0
