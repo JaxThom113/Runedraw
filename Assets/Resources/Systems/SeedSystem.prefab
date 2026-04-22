@@ -46,7 +46,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   specialSeeds:
   - {fileID: 11400000, guid: 1d876c8b1ac20584ea1d34b07ee5aa42, type: 2}
-  - {fileID: 11400000, guid: 6d206c7d21e6d7848af88d1729fa40d5, type: 2}
   - {fileID: 11400000, guid: 00151245bdbd81f4582e7cdbf5d2aed7, type: 2}
   - {fileID: 11400000, guid: aff97e9931de6ea4e9a88fd9c33ee1d1, type: 2}
   - {fileID: 11400000, guid: b22edc122bb4ee64db1de9266f8f285e, type: 2}
@@ -56,4 +55,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 7c9591bf64c1aad48aaf003f9e34c231, type: 2}
   - {fileID: 11400000, guid: dd2c374d8a48def4a861f226b9ca78ea, type: 2}
   - {fileID: 11400000, guid: d85a89677f2af884bbba2a1aa8c0c90e, type: 2}
+  - {fileID: 11400000, guid: 6d206c7d21e6d7848af88d1729fa40d5, type: 2}
   - {fileID: 11400000, guid: f9cea0ecb327ee54a8174f6666a9bd53, type: 2}

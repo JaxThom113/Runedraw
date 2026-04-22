@@ -43459,6 +43459,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b79a10b8e943b1408310dbd86330012, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cursorImage: {fileID: 2800000, guid: 4a02140ab11375b4d86a42d9bb9cb890, type: 3}
   pauseMenuCanvas: {fileID: 1802452882}
   runInfoCanvas: {fileID: 300575163}
   time: {fileID: 1433945452}
@@ -74865,8 +74866,8 @@ MonoBehaviour:
   debug: 0
   enemies: 1
   interactables: 1
-  debugAreaType: 2
-  debugAreaNum: 3
+  debugAreaType: 1
+  debugAreaNum: 1
   tutorialArea: {fileID: 1515620471}
   earthArea: {fileID: 834984853}
   fireArea: {fileID: 262285419}

@@ -16,7 +16,7 @@ MonoBehaviour:
   cardCost: 5
   cardBorder: {fileID: 21300000, guid: 50c948eb6a4581e40a4444ec0b5d8b91, type: 3}
   cardIcon: {fileID: 21300000, guid: 15e15aa6ecf80ac48881afc1d3337500, type: 3}
-  cardDescription: Explodes in 5 Turns!
+  cardDescription: User explodes in 3 turns!
   KeepBaseDescription: 1
   cardElement: 1
   cardElementIcon: {fileID: 21300000, guid: 6904c290dbd2c324c9793f88052c3f04, type: 3}
@@ -35,7 +35,7 @@ MonoBehaviour:
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
-        duration: 5
+        duration: 3
         turnPhase: 0
         magnitude: 30
     - rid: 474873960734654470
@@ -43,6 +43,6 @@ MonoBehaviour:
       data:
         effectSelf: 1
         playWhenDrawnByEnemy: 0
-        duration: 5
+        duration: 3
         turnPhase: 0
         magnitude: 30
