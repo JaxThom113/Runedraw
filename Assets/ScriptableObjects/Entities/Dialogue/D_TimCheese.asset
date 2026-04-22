@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: D_TimCheese
   m_EditorClassIdentifier: 
   Intro:
-  - "It\u2019s time to D-D-D-D-Duel!"
+  - I'm back!
   TurnStart:
   - "It\u2019s my turn to draw!"
   LowHealthTurnStart:
@@ -32,7 +32,6 @@ MonoBehaviour:
   LowHealthEndTurn:
   - "I\u2026 I\u2026 I end my turn!"
   Lose:
-  - "I-I Lose\u2026. "
-  - I guess this ending is a bit cheesy..
+  - You truly are the greatest at Runedraw!
   Win:
   - You are no match for my cheese!
