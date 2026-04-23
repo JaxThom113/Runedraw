@@ -32,7 +32,7 @@ public class MatchSetupSystem : MonoBehaviour
         
         enemyView.Setup(enemyData, overworldEnemy);  
         
-        
+        LevelSystem.Instance.StartFinalBossFight();
          StartCoroutine(SetupCards());
     }
  

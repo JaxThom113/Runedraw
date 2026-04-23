@@ -74862,7 +74862,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 757c759cfc94e974b8dbeabdade42e72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debug: 0
+  debug: 1
   enemies: 1
   interactables: 1
   debugAreaType: 6
@@ -74894,6 +74894,7 @@ MonoBehaviour:
   waterAreaNumber: {fileID: 2020588897}
   windAreaNumber: {fileID: 1477050566}
   playerMovement: {fileID: 1544774762}
+  FinalBossFightStarted: 0
 --- !u!1 &1285040819
 GameObject:
   m_ObjectHideFlags: 0

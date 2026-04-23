@@ -78,7 +78,9 @@ public class LevelSystem : Singleton<LevelSystem>
     private bool currentLootFromEnemy;
 
     // invoke this event when ready to run DrawLevel() in CreateLevel
-    public event Action<TextAsset, int, List<EnemySO>, List<EnemySO>> OnReady; 
+    public event Action<TextAsset, int, List<EnemySO>, List<EnemySO>> OnReady;  
+
+    public bool FinalBossFightStarted = false;
 
     private TextAsset tutorialFile;
     private TextAsset finalBossFile;
@@ -404,7 +406,13 @@ public class LevelSystem : Singleton<LevelSystem>
         currentLootFromEnemy = lootCardGA.fromEnemy;
         yield return null;
     }
-
+    public void StartFinalBossFight()
+    { 
+        if(currentAreaType == 6)
+        {
+            FinalBossFightStarted = true;
+        }
+    }
     private void LootCardPickupPostReaction(LootCardPickupGA lootCardPickupGA)
     {
         AudioSystem.Instance.PlaySFX("click");
@@ -413,7 +421,7 @@ public class LevelSystem : Singleton<LevelSystem>
         LootSelectionCompleted = true;
 
         // final boss area cleared -> roll credits
-        if (currentAreaType == 6)
+        if (FinalBossFightStarted)
         {
             SceneManager.LoadScene("EndCredits");
         }
