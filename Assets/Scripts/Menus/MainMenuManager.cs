@@ -8,6 +8,9 @@ public class MainMenuManager : MonoBehaviour
 {
     void Start()
     {
+        Screen.fullScreen = true;
+        Screen.fullScreenMode = FullScreenMode.ExclusiveFullScreen;
+
         AudioSystem.Instance.PlayMusic("menu");
 
         // load saved audio settings
