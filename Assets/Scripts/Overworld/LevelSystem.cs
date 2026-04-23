@@ -86,7 +86,6 @@ public class LevelSystem : Singleton<LevelSystem>
         ActionSystem.AttachPerformer<CampfireGA>(CampfirePerformer);
         ActionSystem.AttachPerformer<NextAreaGA>(NextAreaPerformer);
         ActionSystem.SubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
-        ActionSystem.SubscribeReaction<KillEnemyGA>(KillEnemyPreReaction, ReactionTiming.PRE);
     }
 
     void OnDisable()
@@ -95,16 +94,6 @@ public class LevelSystem : Singleton<LevelSystem>
         ActionSystem.DetachPerformer<CampfireGA>();
         ActionSystem.DetachPerformer<NextAreaGA>();
         ActionSystem.UnsubscribeReaction<LootCardPickupGA>(LootCardPickupPostReaction, ReactionTiming.POST);
-        ActionSystem.UnsubscribeReaction<KillEnemyGA>(KillEnemyPreReaction, ReactionTiming.PRE);
-    }
-
-    private void KillEnemyPreReaction(KillEnemyGA killEnemyGA)
-    {
-        // final boss area cleared -> roll credits
-        if (currentAreaType == 6)
-        {
-            SceneManager.LoadScene("EndCredits");
-        }
     }
 
     void Start()
@@ -355,6 +344,12 @@ public class LevelSystem : Singleton<LevelSystem>
         AudioSystem.Instance.PlayMusic("overworld", true);
         LootView.SetActive(false);
         LootSelectionCompleted = true;
+
+        // final boss area cleared -> roll credits
+        if (currentAreaType == 6)
+        {
+            SceneManager.LoadScene("EndCredits");
+        }
     }
 
     public void OnSkipButtonClicked()

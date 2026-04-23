@@ -74863,7 +74863,7 @@ MonoBehaviour:
   debug: 0
   enemies: 1
   interactables: 1
-  debugAreaType: 2
+  debugAreaType: 6
   debugAreaNum: 3
   tutorialArea: {fileID: 1515620471}
   earthArea: {fileID: 834984853}

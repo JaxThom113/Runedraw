@@ -48,6 +48,6 @@ MonoBehaviour:
     - rid: 3988029111534354435
       type: {class: ApplyShieldEffect, ns: , asm: Assembly-CSharp}
       data:
-        effectSelf: 0
+        effectSelf: 1
         playWhenDrawnByEnemy: 0
         magnitude: 3
