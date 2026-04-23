@@ -16,7 +16,8 @@ MonoBehaviour:
   - areaType: 1
     enemies:
     - {fileID: 11400000, guid: 63ea31d727c30ad4ea253723d9192121, type: 2}
-    rareEnemies: []
+    rareEnemies:
+    - {fileID: 11400000, guid: 63ea31d727c30ad4ea253723d9192121, type: 2}
     levelCsv: {fileID: 4900000, guid: 6b602f014be454044ba00d446fdd46ab, type: 3}
     numTorches: 30
     fog: 0
