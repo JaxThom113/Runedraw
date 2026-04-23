@@ -37,7 +37,7 @@ MonoBehaviour:
         playWhenDrawnByEnemy: 0
         duration: 3
         turnPhase: 1
-        damage: 2
+        magnitude: 2
     - rid: 5118777032282996754
       type: {class: RuneStatusEffect, ns: , asm: Assembly-CSharp}
       data:
@@ -48,3 +48,4 @@ MonoBehaviour:
         effect:
           rid: 3988029111534354438
         ApplyToEnemy: 0
+        magnitude: 1

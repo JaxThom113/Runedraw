@@ -1,0 +1,63 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7fccf3669131c9e4d9893284bd540a68, type: 3}
+  m_Name: Test3
+  m_EditorClassIdentifier: 
+  areas:
+  - areaType: 1
+    enemies:
+    - {fileID: 11400000, guid: 2c1f280d611e8724fa31ae009f5e2a94, type: 2}
+    - {fileID: 11400000, guid: 78447ce8294b9444d9faebdf39ccf656, type: 2}
+    - {fileID: 11400000, guid: f9a33ed2794e3c24dbb52a0b943352bd, type: 2}
+    - {fileID: 11400000, guid: 979e4e307e0a4f844949633be3ac89c8, type: 2}
+    - {fileID: 11400000, guid: 212f3b31e8777e84daaae13205bf5d5a, type: 2}
+    - {fileID: 11400000, guid: 865104b2f3248ac41933b0c1bff316dc, type: 2}
+    - {fileID: 11400000, guid: 7b10642f3ad044c48b57b60dea24c211, type: 2}
+    - {fileID: 11400000, guid: 7c351b06671a8ef4d98e27914f83f592, type: 2}
+    - {fileID: 11400000, guid: 1842a786c5724e448b213101d8cf646f, type: 2}
+    - {fileID: 11400000, guid: 399d25e74ff9eff43b5eaa9e61a7a273, type: 2}
+    rareEnemies: []
+    levelCsv: {fileID: 4900000, guid: 4fa8f89ef8c25e94da962db8e1d2dab8, type: 3}
+    numTorches: 30
+    fog: 0
+  - areaType: 1
+    enemies:
+    - {fileID: 11400000, guid: cbc5e903a0d99434f9c2cd295577fae1, type: 2}
+    - {fileID: 11400000, guid: 9358d0453915f0d4b8108f83daa45aa3, type: 2}
+    - {fileID: 11400000, guid: f6bf1fa85d62fa74aaed850cc1415149, type: 2}
+    - {fileID: 11400000, guid: 1c0ce2490132c1c41ad94112ba95677d, type: 2}
+    - {fileID: 11400000, guid: 55647ccbc245d5c448575e5dd1aa4883, type: 2}
+    - {fileID: 11400000, guid: cf9a5d5edb594bc4fba470f8dc0000db, type: 2}
+    - {fileID: 11400000, guid: c4afb3240b3ecb74a9a0487c2844b372, type: 2}
+    - {fileID: 11400000, guid: c2abe13c27beeb744969899eeaaeab22, type: 2}
+    - {fileID: 11400000, guid: 89e38f71d94a937478d16976023a3629, type: 2}
+    - {fileID: 11400000, guid: 4852252660d2e74488ea1fd389884734, type: 2}
+    rareEnemies: []
+    levelCsv: {fileID: 4900000, guid: 4fa8f89ef8c25e94da962db8e1d2dab8, type: 3}
+    numTorches: 30
+    fog: 0
+  - areaType: 1
+    enemies:
+    - {fileID: 11400000, guid: a690809d2443dd44f8ac8bf0a209f620, type: 2}
+    - {fileID: 11400000, guid: 0307baed30a2b824f8989a2b33451a95, type: 2}
+    - {fileID: 11400000, guid: 57a5a31833a15044194e2f19fab99dc9, type: 2}
+    - {fileID: 11400000, guid: a7ce6dbc45b6d4846b66fe175903688b, type: 2}
+    - {fileID: 11400000, guid: c02354e3b5f8b654a9e54d66d3ed9fc2, type: 2}
+    - {fileID: 11400000, guid: 720ba196e8f97ca44ad8f84a2695ab0e, type: 2}
+    - {fileID: 11400000, guid: 20767dfb7d9eb1341ba61706054fc4f7, type: 2}
+    - {fileID: 11400000, guid: 1a3cd44b550b22d45a387762488e6bed, type: 2}
+    - {fileID: 11400000, guid: af2fa3a01f1052d47a3e74add14afc77, type: 2}
+    - {fileID: 11400000, guid: c69f84d31cfebc143a44255abe3e5b44, type: 2}
+    rareEnemies: []
+    levelCsv: {fileID: 4900000, guid: 4fa8f89ef8c25e94da962db8e1d2dab8, type: 3}
+    numTorches: 30
+    fog: 0

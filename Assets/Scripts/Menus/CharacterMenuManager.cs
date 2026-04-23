@@ -4,6 +4,7 @@ using UnityEngine;
 
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.IO;
 
 public class CharacterMenuManager : MonoBehaviour
 {
@@ -21,7 +22,6 @@ public class CharacterMenuManager : MonoBehaviour
         2 = Shufflynn
     */
     private int playerIndex = 0;
-
     private bool validSeed = false;
 
     public void OnBackClicked()
@@ -99,16 +99,19 @@ public class CharacterMenuManager : MonoBehaviour
     {
         if (int.TryParse(seedInput.GetComponent<TMP_InputField>().text, out int result))
         {
-            validSeed = true;
+            // number given as a seed
             GameData.SelectedSeed = result;
+            validSeed = true;
         }
-        else if (seedInput.GetComponent<TMP_InputField>().text == "Test")
+        else if (SeedSystem.Instance.GetSpecialSeed(seedInput.GetComponent<TMP_InputField>().text) != null)
         {
-            // TODO: Make specific seed name load a game with custom level csvs
-            validSeed = false;
+            // unique name given as a seed, check if it exists in SeedSystem as a special seed
+            GameData.SpecialSeed = seedInput.GetComponent<TMP_InputField>().text;
+            validSeed = true;
         }
         else
         {
+            // invalid seed given, ignore
             validSeed = false;
         }
     }

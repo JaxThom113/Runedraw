@@ -82,7 +82,7 @@ public class CreateLevel : MonoBehaviour
             interactableContainer.SetActive(false);
     }
 
-    public void DrawLevel(TextAsset csv = null)
+    public void DrawLevel(TextAsset csv = null, int numTorches = 30, List<EnemySO> enemiesOverride = null, List<EnemySO> rareEnemiesOverride = null)
     {
         if (csv != null)
         {
@@ -105,6 +105,13 @@ public class CreateLevel : MonoBehaviour
 
         // get the currently active enemy bank in the area gameobject (this was set up in LevelSystem)
         enemyBank = transform.parent.GetComponentInChildren<EnemyBank>();
+    
+        // override enemybank if special seed is active
+        if (enemiesOverride != null && enemiesOverride.Count > 0)
+            enemyBank.enemies = enemiesOverride;
+        if (rareEnemiesOverride != null && rareEnemiesOverride.Count > 0)
+            enemyBank.rareEnemies = rareEnemiesOverride;
+
         enemyBank.InitializeRareEnemyCount();  
 
         DrawMaze();
@@ -113,7 +120,7 @@ public class CreateLevel : MonoBehaviour
 
         AddEnemies();
 
-        AddModels();
+        AddModels(numTorches);
     }
 
     private void DrawMaze()
@@ -298,7 +305,7 @@ public class CreateLevel : MonoBehaviour
         }
     }
 
-    private void AddModels()
+    private void AddModels(int numTorches)
     {
         if (torchContainer != null)
         {
@@ -349,8 +356,8 @@ public class CreateLevel : MonoBehaviour
                 if (!neighbors.Contains(true))
                     continue;
 
-                // ignore if this is a correct path tile on the top/bottom edge to avoid floating torched spawning at start/end of level
-                if ((y == 0 || y == gridSize - 1) && grid[y][x] == 2)
+                // ignore if this is the tile in front of the start/end of a level
+                if ((y == 0 && topEdge[x] == 0) || (y == gridSize - 1 && bottomEdge[x] == 0))
                     continue;
 
                 // add this position, with its neighboring tiles, as a valid place to put a torch
@@ -358,7 +365,6 @@ public class CreateLevel : MonoBehaviour
             }
         }
 
-        int numTorches = 30;
         for (int i = 0; i < numTorches; i++)
         {
             int randPos = Random.Range(0, availableTorchPositions.Count);

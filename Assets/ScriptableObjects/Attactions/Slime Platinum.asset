@@ -13,20 +13,21 @@ MonoBehaviour:
   m_Name: Slime Platinum
   m_EditorClassIdentifier: 
   cardName: Slime Platinum
-  cardCost: 3
+  cardCost: 6
   cardBorder: {fileID: 21300000, guid: 2176399aeb7a3454ba98f54de1dc0982, type: 3}
   cardIcon: {fileID: 21300000, guid: d8eeb4c580857b64c8c657f105f00733, type: 3}
-  cardDescription: Summons SLIME PLATINUM
+  cardDescription: Plays Goop 10 times
   KeepBaseDescription: 1
   cardElement: 0
   cardElementIcon: {fileID: 21300000, guid: 7b6c5390240409445a46abfb97e084ec, type: 3}
-  cardType: 1
+  cardType: 0
   cardTypeIcon: {fileID: 21300000, guid: e9991a45ec777704292b3ff19c127d84, type: 3}
   sound: {fileID: 8300000, guid: d280378c07ecefd44a2c0e2d40bc061d, type: 3}
   IsUltimate: 1
   effects:
   - rid: 474873960734654464
-  - rid: 474874055799078913
+  - rid: 3988029246781521920
+  - rid: 3988029246781521921
   references:
     version: 2
     RefIds:
@@ -38,22 +39,17 @@ MonoBehaviour:
         specialSpriteMaterial: {fileID: 2100000, guid: 908c272b25069b749b3754d75fe998a1, type: 2}
         domainExpansionMaterial: {fileID: 2100000, guid: 2710845b3af5b4140a9f23d302b6ad91, type: 2}
         Boss: 0
-    - rid: 474874055799078913
-      type: {class: RuneStatusEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3988029246781521920
+      type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
-        duration: 999
-        turnPhase: 0
-        effect:
-          rid: 474874061984890880
-        ApplyToEnemy: 1
-        magnitude: 1
-    - rid: 474874061984890880
-      type: {class: VunerableStatusEffect, ns: , asm: Assembly-CSharp}
+        magnitude: 10
+    - rid: 3988029246781521921
+      type: {class: PoisonStatusEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0
         playWhenDrawnByEnemy: 0
-        duration: 999
+        duration: 3
         turnPhase: 0
-        magnitude: 1
+        magnitude: 10

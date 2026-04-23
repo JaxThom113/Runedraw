@@ -40,5 +40,5 @@ MonoBehaviour:
       type: {class: DealDamageEffect, ns: , asm: Assembly-CSharp}
       data:
         effectSelf: 0
-        playWhenDrawnByEnemy: 1
+        playWhenDrawnByEnemy: 0
         magnitude: 4
