@@ -78,7 +78,14 @@ public class LevelSystem : Singleton<LevelSystem>
     private bool currentLootFromEnemy;
 
     // invoke this event when ready to run DrawLevel() in CreateLevel
-    public event Action<TextAsset> OnReady; 
+    public event Action<TextAsset, int, List<EnemySO>, List<EnemySO>> OnReady; 
+
+    private TextAsset tutorialFile;
+    private TextAsset finalBossFile;
+    private SpecialSeedSO specialSeed;
+    private const int DEFAULT_NUM_TORCHES = 30;
+    private const int TUTORIAL_NUM_TORCHES = 10;
+    private const int FINALBOSS_NUM_TORCHES = 20;
 
     void OnEnable()
     {
@@ -98,8 +105,22 @@ public class LevelSystem : Singleton<LevelSystem>
 
     void Start()
     { 
+        specialSeed = null;
+        tutorialFile = Resources.Load<TextAsset>("Levels/Tutorial");
+        finalBossFile = Resources.Load<TextAsset>("Levels/FinalBoss");
+
         if (GameData.IsSeededRun)
         {
+            if (GameData.SpecialSeed != null)
+            {
+                // apply a special seed if one was given in the menu
+                specialSeed = SeedSystem.Instance.GetSpecialSeed(GameData.SpecialSeed);
+
+                // special seeds can contain random areas, make it so these areas are differeny every time
+                GameData.SelectedSeed = Environment.TickCount;
+                UnityEngine.Random.InitState(GameData.SelectedSeed);
+            }
+
             // get the seed that was selected on the menu
             UnityEngine.Random.InitState(GameData.SelectedSeed);
         }
@@ -113,28 +134,35 @@ public class LevelSystem : Singleton<LevelSystem>
         // refresh list available areas
         areaList = new List<int>() { 1, 2, 3, 4, 5 };
 
-        if(debug) 
+        if (debug) 
         { 
             // if debug active at start, just set the starting area type and number
             currentAreaType = debugAreaType;   
             currentArea = debugAreaNum;
         }
-        else if (!GameData.StartedFromTutorial)
+        else if (GameData.StartedFromTutorial)
         { 
-            currentArea = 1;
-
-            // if not starting from tutorial, roll a random dungeon type for first area
-            int randIndex = UnityEngine.Random.Range(0, areaList.Count);
-            currentAreaType = areaList[randIndex];
-            areaList.RemoveAt(randIndex);
-
-            GameData.Area1 = currentAreaType; 
-        }
-        else
-        {
             // if starting in tutorial, first area type is 0
             currentArea = 0;
             currentAreaType = 0;
+        }
+        else
+        {
+            currentArea = 1;
+
+            if (specialSeed != null)
+            {
+                currentAreaType = specialSeed.areas[0].GetAreaTypeIndex();
+            }
+            else
+            {
+                // if not starting from tutorial, roll a random dungeon type for first area
+                int randIndex = UnityEngine.Random.Range(0, areaList.Count);
+                currentAreaType = areaList[randIndex];
+                areaList.RemoveAt(randIndex);
+            }
+
+            GameData.Area1 = currentAreaType; 
         }
 
         SetActiveArea();
@@ -143,19 +171,29 @@ public class LevelSystem : Singleton<LevelSystem>
         if (currentAreaType == 0)
         {
             // load in Tutorial custom area
-            TextAsset lvlFile = Resources.Load<TextAsset>("Levels/Tutorial");
-            OnReady?.Invoke(lvlFile);
+            OnReady?.Invoke(tutorialFile, TUTORIAL_NUM_TORCHES, null, null);
         }
         else if (currentAreaType == 6)
         {
-            // load in FinalBoss custom area
-            TextAsset finalBossFile = Resources.Load<TextAsset>("Levels/FinalBoss"); 
-            OnReady?.Invoke(finalBossFile);
+            // load in FinalBoss custom area (finalboss being the first area is only possible by setting through LevelSystem Debug)
+            OnReady?.Invoke(finalBossFile, FINALBOSS_NUM_TORCHES, null, null);
             currentArea = 0;
+        }
+        else if (specialSeed != null)
+        {
+            // use level layout and number of torches from the first area specified in given SpecialSeedSO
+            // if levelCsv is null, a random level is generated in CreateLevel
+            OnReady?.Invoke(
+                specialSeed.areas[0].levelCsv, 
+                specialSeed.areas[0].numTorches,
+                specialSeed.areas[0].enemies,
+                specialSeed.areas[0].rareEnemies
+            ); 
         }
         else
         {
-            OnReady?.Invoke(null); // generate the level  
+            // generate random level
+            OnReady?.Invoke(null, DEFAULT_NUM_TORCHES, null, null);
         }
 
         StartCoroutine(ShowAreaIntro());
@@ -196,37 +234,50 @@ public class LevelSystem : Singleton<LevelSystem>
 
     public void NextArea()
     { 
-        if (currentAreaType == 0)
-        {
-            // start the actual game once completing tutorial level
-            currentAreaType = 1;
-            StartCoroutine(StartTransition());
-        }
-
-        if (currentArea == 3)
+        if (specialSeed == null && currentArea == 3)
         {
             // transition to the final boss level 
             currentAreaType = 6;
             currentArea = 0;
 
-            TextAsset lvlFile = Resources.Load<TextAsset>("Levels/FinalBoss");
-            StartCoroutine(StartTransition(lvlFile));
+            StartCoroutine(StartTransition(finalBossFile));
         }
         else
         {
             currentArea++;
 
-            // pick the next random area, excluding areas that have already been picked
-            int randIndex = UnityEngine.Random.Range(0, areaList.Count);
-            currentAreaType = areaList[randIndex];
-            areaList.RemoveAt(randIndex);
-            
-            if (currentArea == 1)
-                GameData.Area1 = currentAreaType;
-            else if (currentArea == 2)
-                GameData.Area2 = currentAreaType;
-            else if (currentArea == 3)
-                GameData.Area3 = currentAreaType;
+            if (specialSeed != null)
+            {
+                if (currentArea > specialSeed.areas.Count)
+                {
+                    // this is the last area in a special seed
+                    currentAreaType = 6;
+                    currentArea = 0;
+
+                    StartCoroutine(StartTransition(finalBossFile));
+                    UpdateUI();
+                    return;
+                }
+                else
+                {
+                    currentAreaType = specialSeed.areas[currentArea-1].GetAreaTypeIndex(); 
+                }
+            }
+            else
+            {
+                // pick the next random area, excluding areas that have already been picked
+                int randIndex = UnityEngine.Random.Range(0, areaList.Count);
+                currentAreaType = areaList[randIndex];
+                areaList.RemoveAt(randIndex);
+            }
+
+            // update run info
+            switch (currentArea)
+            {
+                case 1: GameData.Area1 = currentAreaType; break;
+                case 2: GameData.Area2 = currentAreaType; break;
+                case 3: GameData.Area3 = currentAreaType; break;
+            }
 
             StartCoroutine(StartTransition());
         }
@@ -244,9 +295,25 @@ public class LevelSystem : Singleton<LevelSystem>
         SetActiveEnemyBank();
 
         if (file != null)
-            OnReady?.Invoke(file); // transition to custom area
+        {
+            // transition to a hard-coded custom area (FinalBoss)
+            OnReady?.Invoke(file, FINALBOSS_NUM_TORCHES, null, null); 
+        }
+        else if (specialSeed != null)
+        {
+            // transition to next area in SpecialSeedSO
+            OnReady?.Invoke(
+                specialSeed.areas[currentArea-1].levelCsv, 
+                specialSeed.areas[currentArea-1].numTorches,
+                specialSeed.areas[currentArea-1].enemies,
+                specialSeed.areas[currentArea-1].rareEnemies
+            ); 
+        }
         else
-            OnReady?.Invoke(null); // transition to next random area
+        {
+            // transition to next random area
+            OnReady?.Invoke(null, DEFAULT_NUM_TORCHES, null, null); 
+        }
         
         playerMovement.ResetMovePoint();
 

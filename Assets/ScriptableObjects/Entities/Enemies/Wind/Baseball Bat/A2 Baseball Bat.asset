@@ -14,14 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entityName: Baseball Bat
   entityIcon: {fileID: 21300000, guid: 0f8f25f5f5abc454194588d8863c5ee3, type: 3}
-  entityHealth: 8
+  entityHealth: 7
   entityDialogue: {fileID: 11400000, guid: 2698b003abdfb54478c1234e98abcd50, type: 2}
   enemyDeck:
   - enemyHand:
     - {fileID: 11400000, guid: 6d59212212b3f5a408ce9e704e8620bd, type: 2}
-    - {fileID: 11400000, guid: f2c682364162f5244a87cb0072b35dd8, type: 2}
   - enemyHand:
-    - {fileID: 11400000, guid: d7625ae074e59714bbe928a75997f8ea, type: 2}
+    - {fileID: 11400000, guid: 698240f82eb500c4b967a94db73c8b39, type: 2}
+  - enemyHand:
+    - {fileID: 11400000, guid: 99b0a958da40c4045a1aed9a97d28af4, type: 2}
+    - {fileID: 11400000, guid: 99b0a958da40c4045a1aed9a97d28af4, type: 2}
     - {fileID: 11400000, guid: 698240f82eb500c4b967a94db73c8b39, type: 2}
   ultimateCard: {fileID: 11400000, guid: d7625ae074e59714bbe928a75997f8ea, type: 2}
   enemyMaterial: {fileID: 2100000, guid: a5c8630fedc616247be8173fe07eae1d, type: 2}

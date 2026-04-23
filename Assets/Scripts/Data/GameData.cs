@@ -8,6 +8,7 @@ public static class GameData
     public static int SelectedPlayer;
     public static bool IsSeededRun;
     public static int SelectedSeed;
+    public static string SpecialSeed;
 
     // data for the Run Info panel in Overworld
     public static float PlayTime;
@@ -26,6 +27,7 @@ public static class GameData
         SelectedPlayer = 0;
         IsSeededRun = false;
         SelectedSeed = 0;
+        SpecialSeed = null;
 
         PlayTime = 0;
         StartedFromTutorial = false;

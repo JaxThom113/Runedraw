@@ -15,6 +15,7 @@ public class UISystem : Singleton<UISystem>
 
     [Header("Run Info Panel References")]
     [SerializeField] private TextMeshProUGUI runInfoTime;
+    [SerializeField] private TextMeshProUGUI runInfoSeed;
     [SerializeField] private TextMeshProUGUI startedFromTutorial;
     [SerializeField] private TextMeshProUGUI area1;
     [SerializeField] private TextMeshProUGUI area2;
@@ -111,6 +112,11 @@ public class UISystem : Singleton<UISystem>
         int minutes = (int)(GameData.PlayTime % 3600) / 60;
         int seconds = (int)(GameData.PlayTime % 60);
         runInfoTime.text = $"Play time: {hours:00}:{minutes:00}:{seconds:00}";
+        
+        if (GameData.SpecialSeed != null)
+            runInfoSeed.text = $"Seed: {GameData.SpecialSeed}";
+        else
+            runInfoSeed.text = $"Seed: {GameData.SelectedSeed}";
 
         startedFromTutorial.text = GameData.StartedFromTutorial ? "Yes" : "No";
         area1.text = GameData.Area1.ToString();
