@@ -43,7 +43,7 @@ Material:
     - _ScrolFreq: 1
     - _Smooth: 0.117
     - _TintStrength: 0.705
-    - _TotalDistortion: 0.7
+    - _TotalDistortion: 0
     - _Transition: 1
     - _TwirlStep: 0
     m_Colors:
